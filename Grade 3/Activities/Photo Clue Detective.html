@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photo Clue Detective</title>
+<style>
+:root{--ink:#1d2a44;--go:#2e9e57;--stop:#d93a3a;--head:#5a4fcf}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f1effd;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+header h1{margin:0;font-size:26px}.score{font-size:22px;font-weight:bold}
+main{max-width:960px;margin:16px auto;padding:0 16px;text-align:center}
+p.lead{font-size:20px}
+svg{width:100%;max-width:900px;background:#fff;border-radius:18px;box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.hot{cursor:pointer}.found{outline:none}
+.fb{font-size:21px;margin-top:12px;padding:12px;border-radius:12px;min-height:54px;background:#fff}
+button{font-size:20px;font-weight:bold;border:none;border-radius:14px;padding:14px 20px;cursor:pointer;color:#fff;background:var(--ink);margin:10px 6px}
+.note{font-size:16px;color:#56627a}
+</style></head>
+<body><header><h1>Photo Clue Detective</h1><div class="score" id="score">Clues: 0 / 5</div></header>
+<main>
+<p class="lead" id="lead">Scene 1: Sara wants to post this photo. Click every <b>private clue</b> that shows who she is or where she lives.</p>
+<div id="scene"></div>
+<div class="fb" id="fb">Click on things in the picture.</div>
+<button id="nextScene" onclick="go(1)" style="display:none">Next scene</button>
+<button onclick="go(0)" style="background:#8a95a8">Restart</button>
+<p class="note">All pictures are drawings. Nothing is saved or sent.</p>
+</main>
+<script>
+var SCENES=[
+{lead:'Scene 1: Sara wants to post this photo. Click every <b>private clue</b> that shows who she is or where she lives.',
+ svg:'<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">'+
+ '<rect width="900" height="520" fill="#cfeaff"/><rect y="380" width="900" height="140" fill="#9bd27a"/>'+
+ '<rect x="80" y="170" width="360" height="230" fill="#f3d9b1" stroke="#b08850" stroke-width="4"/><polygon points="60,175 260,60 460,175" fill="#c4563a"/>'+
+ '<rect x="220" y="280" width="80" height="120" fill="#8a5a33"/>'+
+ '<g class="hot" data-id="house"><rect x="315" y="285" width="90" height="44" rx="6" fill="#fff" stroke="#333" stroke-width="3"/><text x="360" y="315" font-size="22" text-anchor="middle" font-family="Arial">No. 25</text></g>'+
+ '<g class="hot" data-id="street"><rect x="560" y="200" width="16" height="190" fill="#666"/><rect x="490" y="160" width="160" height="50" rx="6" fill="#2a7a3b"/><text x="570" y="193" font-size="22" fill="#fff" text-anchor="middle" font-family="Arial">Gul Road</text></g>'+
+ '<g><circle cx="700" cy="250" r="34" fill="#f2c9a0"/><rect x="665" y="285" width="70" height="105" rx="10" fill="#e9f0ff"/>'+
+ '<g class="hot" data-id="badge"><circle cx="715" cy="315" r="13" fill="#1f4fa3"/><text x="715" y="320" font-size="11" fill="#fff" text-anchor="middle" font-family="Arial">BPS</text></g></g>'+
+ '<g class="hot" data-id="car"><rect x="90" y="420" width="200" height="60" rx="14" fill="#d33"/><circle cx="130" cy="485" r="16" fill="#222"/><circle cx="250" cy="485" r="16" fill="#222"/><rect x="150" y="455" width="80" height="22" fill="#fff" stroke="#333"/><text x="190" y="472" font-size="15" text-anchor="middle" font-family="Arial">LEA 1234</text></g>'+
+ '<g class="hot" data-id="cake"><rect x="470" y="430" width="150" height="60" rx="8" fill="#ffd1e0"/><text x="545" y="466" font-size="17" text-anchor="middle" font-family="Arial">Happy 8th Sara</text></g>'+
+ '<g class="hot" data-id="cat"><ellipse cx="790" cy="455" rx="40" ry="26" fill="#f0a030"/><circle cx="825" cy="430" r="18" fill="#f0a030"/></g>'+
+ '<g class="hot" data-id="tree"><rect x="30" y="300" width="22" height="90" fill="#7a4b26"/><circle cx="41" cy="280" r="40" fill="#3f9b3f"/></g>'+
+ '</svg>',
+ clues:{house:'House number: shows exactly where Sara lives.',street:'Street sign: shows her road.',badge:'School badge: shows which school she goes to.',car:'Car number plate: can be used to find her family.',cake:'Cake with her name and age: name plus age is private.'},
+ safe:{cat:'The cat is fine. It does not show who Sara is.',tree:'A tree is fine. Lots of places have trees.'}},
+{lead:'Scene 2: Ali is about to share a photo of his desk. Click every <b>private clue</b>.',
+ svg:'<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">'+
+ '<rect width="900" height="520" fill="#fff4dc"/><rect y="330" width="900" height="190" fill="#b07a4a"/>'+
+ '<g class="hot" data-id="window"><rect x="620" y="40" width="240" height="170" fill="#bfe3ff" stroke="#555" stroke-width="5"/><rect x="660" y="110" width="160" height="40" fill="#fff" stroke="#333"/><text x="740" y="137" font-size="18" text-anchor="middle" font-family="Arial">City Model School</text></g>'+
+ '<rect x="230" y="150" width="300" height="190" rx="10" fill="#333"/><rect x="245" y="165" width="270" height="160" fill="#7cc7ff"/>'+
+ '<g class="hot" data-id="note"><rect x="455" y="160" width="90" height="70" fill="#ffef6e" transform="rotate(8 500 195)"/><text x="500" y="195" font-size="14" text-anchor="middle" font-family="Arial" transform="rotate(8 500 195)">pass:</text><text x="500" y="214" font-size="14" text-anchor="middle" font-family="Arial" transform="rotate(8 500 195)">tiger99</text></g>'+
+ '<g class="hot" data-id="letter"><rect x="60" y="360" width="170" height="110" fill="#fff" stroke="#888" stroke-width="2"/><text x="145" y="400" font-size="15" text-anchor="middle" font-family="Arial">To: Ali, House 7,</text><text x="145" y="422" font-size="15" text-anchor="middle" font-family="Arial">Street 4, G-9</text></g>'+
+ '<g class="hot" data-id="bform"><rect x="600" y="370" width="190" height="110" rx="8" fill="#d9f2d9" stroke="#2e7d32" stroke-width="3"/><text x="695" y="410" font-size="17" text-anchor="middle" font-family="Arial">B-FORM</text><text x="695" y="435" font-size="15" text-anchor="middle" font-family="Arial">No. 35202-XXXX</text></g>'+
+ '<g class="hot" data-id="phone"><rect x="330" y="390" width="70" height="110" rx="10" fill="#222"/><rect x="337" y="400" width="56" height="80" fill="#e8f6ff"/><text x="365" y="435" font-size="11" text-anchor="middle" font-family="Arial">Ammi</text><text x="365" y="452" font-size="11" text-anchor="middle" font-family="Arial">0300 1234</text></g>'+
+ '<g class="hot" data-id="ball"><circle cx="500" cy="440" r="36" fill="#fff" stroke="#333" stroke-width="3"/><path d="M470 425 L530 455" stroke="#d33" stroke-width="4"/></g>'+
+ '<g class="hot" data-id="books"><rect x="40" y="250" width="40" height="80" fill="#3b7dd8"/><rect x="85" y="260" width="40" height="70" fill="#e07a1f"/><rect x="130" y="240" width="40" height="90" fill="#2e9e57"/></g>'+
+ '</svg>',
+ clues:{window:'School sign through the window: shows his school.',note:'Password on a sticky note: never show passwords.',letter:'Letter with his address.',bform:'B-Form number: an ID document, always private.',phone:'Phone screen showing a phone number.'},
+ safe:{ball:'A cricket ball is fine.',books:'Plain books are fine.'}}
+];
+var s=0,found={};
+function el(x){return document.getElementById(x)}
+function render(){var sc=SCENES[s];found={};el('lead').innerHTML=sc.lead;el('scene').innerHTML=sc.svg;el('score').textContent='Clues: 0 / 5';el('fb').textContent='Click on things in the picture.';el('fb').style.background='#fff';el('nextScene').style.display='none';
+ document.querySelectorAll('.hot').forEach(function(g){g.addEventListener('click',function(){hit(g)})})}
+function hit(g){var id=g.getAttribute('data-id'),sc=SCENES[s];
+ if(sc.clues[id]){if(!found[id]){found[id]=1;var b=g.getBBox();var r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x',b.x-6);r.setAttribute('y',b.y-6);r.setAttribute('width',b.width+12);r.setAttribute('height',b.height+12);r.setAttribute('fill','none');r.setAttribute('stroke','#d93a3a');r.setAttribute('stroke-width','6');r.setAttribute('rx','10');g.appendChild(r)}
+  var n=Object.keys(found).length;el('score').textContent='Clues: '+n+' / 5';el('fb').textContent='Clue found! '+sc.clues[id];el('fb').style.background='#dff5e6';
+  if(n===5){el('fb').textContent='All 5 clues found! Before posting, crop or cover these, or choose a different photo.';el('nextScene').style.display=s<SCENES.length-1?'inline-block':'none';if(s===SCENES.length-1)el('fb').textContent+=' You are a Photo Clue Detective!'}}
+ else if(sc.safe[id]){el('fb').textContent=sc.safe[id];el('fb').style.background='#eef2f8'}}
+function go(n){s=n?s+1:0;render()}
+render();
+</script></body></html>

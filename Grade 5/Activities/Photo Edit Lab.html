@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photo Edit Lab</title>
+<style>
+:root{--ink:#1d2a44;--head:#d2570f}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#fff3ea;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+header h1{margin:0;font-size:26px}#count{font-size:20px;font-weight:bold}
+main{max-width:1150px;margin:14px auto;padding:0 14px;display:grid;grid-template-columns:1fr 330px;gap:16px}
+@media(max-width:880px){main{grid-template-columns:1fr}}
+.box{background:#fff;border-radius:16px;padding:14px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+svg{width:100%;border-radius:12px;display:block}
+.tools button{display:block;width:100%;text-align:left;font-size:18px;font-weight:bold;padding:11px 12px;margin:6px 0;border-radius:12px;border:3px solid #f1c7a8;background:#fff8f2;cursor:pointer;color:var(--ink)}
+.tools button.on{background:#ffe1c7;border-color:var(--head)}
+input{font-size:18px;padding:9px;border-radius:10px;border:3px solid #c9cfdb;width:100%}
+.big{font-size:20px;font-weight:bold;border:none;border-radius:14px;padding:12px 18px;cursor:pointer;color:#fff;margin:8px 8px 0 0}
+.tag{position:absolute;left:0;right:0;top:8px;text-align:center}
+.check{font-size:18px;line-height:1.5}.check li{margin:4px 0}
+#list{font-size:17px;min-height:24px}
+</style></head>
+<body><header><h1>Photo Edit Lab</h1><div id="count">Edits: 0</div></header>
+<main>
+<div class="box">
+<svg viewBox="0 0 800 480" id="pic">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop id="s1" offset="0" stop-color="#7cc4ff"/><stop id="s2" offset="1" stop-color="#d8f0ff"/></linearGradient></defs>
+  <rect width="800" height="480" fill="url(#g)"/>
+  <circle id="sun" cx="680" cy="80" r="45" fill="#ffd23f"/>
+  <g id="ufo" style="display:none"><ellipse cx="250" cy="95" rx="80" ry="22" fill="#9aa6bd"/><ellipse cx="250" cy="80" rx="38" ry="25" fill="#bfe9ff"/><path d="M215 115 L170 300 L330 300 L285 115Z" fill="#fff59d" opacity=".55"/></g>
+  <rect y="300" width="800" height="180" fill="#6fbf5a" id="grass"/>
+  <ellipse cx="560" cy="390" rx="140" ry="38" fill="#3f8fd6"/>
+  <g id="shark" style="display:none"><path d="M540 380 L575 330 L590 380Z" fill="#55606e"/></g>
+  <g id="tree" style="transform-origin:150px 330px"><rect x="135" y="220" width="30" height="110" fill="#8b5a2b"/><circle cx="150" cy="200" r="65" fill="#2f8f3a"/></g>
+  <g id="kid"><circle cx="380" cy="300" r="20" fill="#c68a5d"/><rect x="364" y="320" width="32" height="50" rx="8" fill="#e5484d"/><rect x="366" y="370" width="10" height="35" fill="#1d2a44"/><rect x="384" y="370" width="10" height="35" fill="#1d2a44"/></g>
+  <g id="cat" style="display:none"><circle cx="650" cy="250" r="70" fill="#f39c3d"/><path d="M595 205 L605 140 L640 190Z M705 205 L695 140 L660 190Z" fill="#f39c3d"/><circle cx="625" cy="245" r="9" fill="#1d2a44"/><circle cx="675" cy="245" r="9" fill="#1d2a44"/><path d="M640 275 Q650 285 660 275" stroke="#1d2a44" stroke-width="4" fill="none"/></g>
+  <g id="snow" style="display:none"></g>
+  <g id="cap" style="display:none"><rect x="0" y="420" width="800" height="60" fill="#c62828"/><text id="capt" x="400" y="460" font-size="28" fill="#fff" font-weight="bold" text-anchor="middle" font-family="Arial">BREAKING NEWS</text></g>
+</svg>
+<div style="margin-top:8px">
+  <button class="big" style="background:#2f6fd6" onmousedown="orig(true)" onmouseup="orig(false)" onmouseleave="orig(false)" ontouchstart="orig(true)" ontouchend="orig(false)">Hold to see the original</button>
+  <button class="big" style="background:#56627a" onclick="reset()">Start again</button>
+  <button class="big" style="background:#7a3fb0" onclick="hide=!hide;showList()">Hide or show my edit list</button>
+</div>
+<div id="list"></div>
+</div>
+<div class="box">
+  <b style="font-size:20px">Make a fake photo</b>
+  <div class="tools" id="tools"></div>
+  <b style="font-size:18px">Add a news headline</b>
+  <input id="head" maxlength="34" placeholder="GIANT CAT SEEN IN PARK" oninput="headline()">
+</div>
+<div class="box" style="grid-column:1/-1">
+  <b style="font-size:20px">How to check a photo before you believe it</b>
+  <ul class="check"><li>Does anything look odd? Look at sizes, shadows, edges and light.</li><li>Who posted it first? Is it a name you know and trust?</li><li>Do trusted news websites show the same photo?</li><li>Ask a grown-up to do a reverse image search. It finds where a photo first appeared.</li></ul>
+  <p style="font-size:15px;color:#56627a">Partner challenge: make three edits and hide your edit list. Ask your partner to hold the original button and find all three. Nothing is saved.</p>
+</div>
+</main>
+<script>
+var EDITS=[['sky','Change the sky colour'],['ufo','Add a UFO'],['tree','Make the tree giant'],['snow','Add snow'],['kid','Remove the child'],['shark','Add a shark in the pond'],['cat','Add a giant cat'],['sun','Remove the sun']];
+var on={},hide=false,skies=[['#7cc4ff','#d8f0ff'],['#ff7e5f','#feb47b'],['#5b6476','#a4acb9'],['#2a1b5e','#6a4cc2']],sky=0;
+function el(x){return document.getElementById(x)}
+(function(){var s=el('snow');for(var i=0;i<70;i++){var c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',Math.random()*800);c.setAttribute('cy',Math.random()*480);c.setAttribute('r',3+Math.random()*4);c.setAttribute('fill','#fff');s.appendChild(c)}
+ var T=el('tools');EDITS.forEach(function(e){var b=document.createElement('button');b.id='b_'+e[0];b.textContent=e[1];b.onclick=function(){toggle(e[0])};T.appendChild(b)})})();
+function toggle(k){if(k==='sky'){sky=(sky+1)%skies.length;on.sky=sky>0}else on[k]=!on[k];draw()}
+function draw(){el('s1').setAttribute('stop-color',skies[sky][0]);el('s2').setAttribute('stop-color',skies[sky][1]);
+ el('ufo').style.display=on.ufo?'':'none';el('tree').style.transform=on.tree?'scale(1.9)':'';el('snow').style.display=on.snow?'':'none';
+ el('kid').style.display=on.kid?'none':'';el('shark').style.display=on.shark?'':'none';el('cat').style.display=on.cat?'':'none';el('sun').style.display=on.sun?'none':'';
+ EDITS.forEach(function(e){el('b_'+e[0]).className=on[e[0]]?'on':''});showList()}
+function n(){var c=0;for(var k in on)if(on[k])c++;return c}
+function showList(){var c=n();el('count').textContent='Edits: '+c;var names=EDITS.filter(function(e){return on[e[0]]}).map(function(e){return e[1]});if(on.head)names.push('Add a headline');
+ el('list').textContent=hide?'Edit list hidden. Can your partner find '+c+' edit'+(c===1?'':'s')+'?':(c?'Your edits: '+names.join('; ')+'. It took seconds to make this fake.':'No edits yet. Click a tool on the right.')}
+function headline(){var v=el('head').value.trim();on.head=!!v;el('cap').style.display=v?'':'none';el('capt').textContent=v.toUpperCase();showList()}
+var saved=null;
+function orig(h){var ids=['ufo','snow','shark','cat','cap'];if(h){if(saved)return;saved={sky:sky,on:JSON.parse(JSON.stringify(on))};sky=0;on={};draw();el('cap').style.display='none'}else if(saved){sky=saved.sky;on=saved.on;saved=null;draw();el('cap').style.display=on.head?'':'none'}}
+function reset(){on={};sky=0;el('head').value='';headline();draw()}
+draw();
+</script></body></html>

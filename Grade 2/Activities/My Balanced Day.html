@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Balanced Day</title>
+<style>
+  :root { --ink:#1d2a44; --blue:#2f6fd6; --go:#2e9e57; --warn:#f2b632; --stop:#d93a3a; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI", Arial, sans-serif; background:#fff7ea; color:var(--ink); }
+  header { background:var(--blue); color:#fff; padding:14px 20px; }
+  header h1 { margin:0; font-size:26px; }
+  main { max-width:960px; margin:16px auto; padding:0 16px; }
+  p.lead { font-size:20px; }
+  .palette { display:flex; flex-wrap:wrap; gap:10px; margin:10px 0 18px; }
+  .act { font-size:19px; font-weight:bold; padding:14px 16px; border-radius:14px; border:4px solid transparent; cursor:pointer; color:#1d2a44; }
+  .act.sel { border-color:#1d2a44; transform:scale(1.06); }
+  .day { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
+  .slot { background:#fff; border:3px dashed #9aa6bd; border-radius:16px; min-height:96px; padding:10px; cursor:pointer; text-align:center; }
+  .slot .time { font-size:16px; color:#56627a; }
+  .slot .what { font-size:21px; font-weight:bold; margin-top:10px; }
+  .bed { background:#2d3a63; color:#fff; border-style:solid; cursor:default; }
+  .bed .time { color:#cfd7ee; }
+  .controls { display:flex; gap:12px; margin:18px 0; flex-wrap:wrap; }
+  button.big { font-size:22px; font-weight:bold; border:none; border-radius:14px; padding:14px 22px; cursor:pointer; color:#fff; }
+  .meter { height:34px; border-radius:17px; background:#e3e7ef; overflow:hidden; margin-top:8px; }
+  .fill { height:100%; width:0; transition:width .4s; }
+  .result { font-size:21px; margin-top:12px; padding:14px; border-radius:14px; background:#f1f4fa; }
+  @media (max-width:600px){ .day { grid-template-columns:repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<header><h1>My Balanced Day</h1></header>
+<main>
+  <p class="lead">Plan your afternoon and evening after school. Tap an activity, then tap a time box. When every box is full, tap <b>Check my day</b>.</p>
+  <div class="palette" id="palette"></div>
+  <div class="day" id="day"></div>
+  <div class="controls">
+    <button class="big" style="background:var(--go)" onclick="check()">Check my day</button>
+    <button class="big" style="background:#8a95a8" onclick="reset()">Start again</button>
+  </div>
+  <div><b style="font-size:20px">Balance meter</b><div class="meter"><div class="fill" id="fill"></div></div></div>
+  <div class="result" id="result">Fill all six boxes, then check your day.</div>
+  <p style="font-size:16px;color:#56627a">This is a practice page. Nothing is saved or sent.</p>
+</main>
+<script>
+var ACTS = [
+  {n:'Homework', c:'#ffd8a8'}, {n:'Play outside', c:'#b8f0c2'}, {n:'Screen time', c:'#c9d8ff'},
+  {n:'Reading', c:'#f6c7f0'}, {n:'Family time', c:'#ffe58a'}, {n:'Dinner', c:'#ffc2c2'}, {n:'Help at home', c:'#d6f0ff'}
+];
+var TIMES = ['3 to 4 pm','4 to 5 pm','5 to 6 pm','6 to 7 pm','7 to 8 pm','8 to 9 pm'];
+var plan = [null,null,null,null,null,null], pick = null;
+function el(id){ return document.getElementById(id); }
+function draw(){
+  var p = el('palette'); p.innerHTML='';
+  ACTS.forEach(function(a, k){
+    var b=document.createElement('div'); b.className='act'+(pick===k?' sel':''); b.style.background=a.c; b.textContent=a.n;
+    b.onclick=function(){ pick=k; draw(); }; p.appendChild(b);
+  });
+  var d = el('day'); d.innerHTML='';
+  TIMES.forEach(function(t, k){
+    var s=document.createElement('div'); s.className='slot';
+    var a = plan[k]===null ? null : ACTS[plan[k]];
+    if (a){ s.style.background=a.c; s.style.borderStyle='solid'; }
+    s.innerHTML='<div class="time">'+t+'</div><div class="what">'+(a?a.n:'Tap to fill')+'</div>';
+    s.onclick=function(){ if(pick!==null){ plan[k]=pick; draw(); } };
+    d.appendChild(s);
+  });
+  var bed=document.createElement('div'); bed.className='slot bed';
+  bed.innerHTML='<div class="time">9 pm</div><div class="what">Bedtime and sleep</div>'; d.appendChild(bed);
+}
+function count(name){ var n=0; plan.forEach(function(x){ if(x!==null && ACTS[x].n===name) n++; }); return n; }
+function check(){
+  if (plan.indexOf(null)>=0){ el('result').textContent='Some boxes are empty. Fill all six first.'; return; }
+  var score=100, tips=[];
+  var screen=count('Screen time');
+  if (screen===0) tips.push('No screen time is fine too!');
+  if (screen===2){ score-=25; tips.push('Two hours of screens is a lot. Can one be play or reading?'); }
+  if (screen>=3){ score-=55; tips.push('Too much screen time. Your eyes and body need other things.'); }
+  if (ACTS[plan[5]].n==='Screen time'){ score-=20; tips.push('No screens just before bed. They make it harder to sleep.'); }
+  if (count('Play outside')===0){ score-=15; tips.push('Add some time to move and play.'); }
+  if (count('Homework')===0){ score-=10; tips.push('Remember time for homework.'); }
+  if (count('Dinner')===0){ score-=10; tips.push('Do not forget dinner!'); }
+  var used={}; plan.forEach(function(x){ used[x]=1; }); if (Object.keys(used).length<4){ score-=10; tips.push('Try more different activities.'); }
+  if (score<0) score=0;
+  var f=el('fill'); f.style.width=score+'%';
+  f.style.background = score>=75 ? 'var(--go)' : (score>=45 ? 'var(--warn)' : 'var(--stop)');
+  var head = score>=75 ? 'Great balance! ' : (score>=45 ? 'Nearly balanced. ' : 'Not balanced yet. ');
+  el('result').textContent = head + (tips.length? tips.join(' ') : 'You have play, learning, family and rest.');
+}
+function reset(){ plan=[null,null,null,null,null,null]; pick=null; el('fill').style.width='0'; el('result').textContent='Fill all six boxes, then check your day.'; draw(); }
+draw();
+</script>
+</body>
+</html>

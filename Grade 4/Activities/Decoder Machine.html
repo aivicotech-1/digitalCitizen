@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decoder Machine</title>
+<style>
+:root{--ink:#1d2a44;--head:#5b3fc4;--from:#2e9e57;--to:#2f6fd6;--hop:#f2b705}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f1eefc;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px}header h1{margin:0;font-size:26px}
+main{max-width:1100px;margin:14px auto;padding:0 14px}
+.box{background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:14px}
+.tabs button{font-size:19px;font-weight:bold;border:none;border-radius:12px;padding:11px 16px;cursor:pointer;margin:0 6px 10px 0;background:#ddd6f6;color:var(--ink)}
+.tabs button.on{background:var(--head);color:#fff}
+.lab{font-size:15px;text-transform:uppercase;letter-spacing:1px;color:#56627a;margin:8px 0 4px}
+input.t{width:100%;font-size:24px;padding:10px;border-radius:12px;border:3px solid #c9cfdb;font-family:Consolas,monospace;text-transform:uppercase;letter-spacing:2px}
+.keys button{font-size:22px;font-weight:bold;width:52px;height:52px;border-radius:12px;border:3px solid var(--head);background:#fff;color:var(--head);cursor:pointer;margin:3px}
+.keys button.on{background:var(--head);color:#fff}
+.out{font-family:Consolas,monospace;font-size:26px;background:#f4f6fa;border-radius:12px;padding:10px;min-height:56px;letter-spacing:3px;word-break:break-all}
+.strip{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:12px}
+.strip div{width:36px;height:44px;border-radius:8px;background:#eef1f6;font:bold 22px Consolas,monospace;display:flex;align-items:center;justify-content:center}
+.strip div.from{background:var(--from);color:#fff}.strip div.hop{background:var(--hop)}.strip div.to{background:var(--to);color:#fff}
+.go{font-size:22px;font-weight:bold;border:none;border-radius:14px;padding:13px 22px;cursor:pointer;color:#fff;background:var(--head);margin-top:10px}
+.say{font-size:21px;min-height:32px;margin-top:10px;text-align:center}
+.ch{background:#fffbe6;border:2px dashed #d9c27a;border-radius:12px;padding:12px;margin:10px 0;font-size:19px}
+.ch code{font-size:24px;letter-spacing:3px}
+.ch input{font-size:20px;padding:8px;border-radius:10px;border:3px solid #c9cfdb;width:min(100%,360px);text-transform:uppercase}
+.ch button{font-size:18px;font-weight:bold;border:none;border-radius:10px;padding:9px 14px;cursor:pointer;color:#fff;background:var(--head)}
+.res{font-weight:bold;margin-left:6px}
+.row{display:flex;gap:12px;align-items:center;font-family:Consolas,monospace;font-size:22px;padding:10px;border-radius:10px;border:2px solid #e3e7ef;margin:6px 0;cursor:pointer;background:#fafbfd}
+.row:hover{background:#f0ecff}.row b{font-family:"Segoe UI",Arial;font-size:17px;min-width:70px}
+.row.good{background:#dff3e6;border-color:#2e9e57}.row.bad{background:#fde2e2;border-color:#d64545}
+.hide{display:none}
+</style></head>
+<body><header><h1>Decoder Machine</h1></header>
+<main>
+<div class="tabs"><button id="b1" class="on" onclick="tab(1)">1. Watch it decode</button><button id="b2" onclick="tab(2)">2. Decode the messages</button><button id="b3" onclick="tab(3)">3. No key? Try them all</button></div>
+
+<div id="t1" class="box">
+  <b style="font-size:20px">To decode, move each letter BACK by the key.</b>
+  <div class="lab">Secret code</div><input class="t" id="code" maxlength="20" value="KHOOR" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z ]/g,'')">
+  <div class="lab">Key (steps back)</div><div class="keys" id="keys"></div>
+  <button class="go" onclick="run()">Unlock it</button>
+  <div class="lab">Message</div><div class="out" id="out"></div>
+  <div class="say" id="say">Choose the key, then press Unlock it.</div>
+  <div class="strip" id="strip"></div>
+  <p style="font-size:17px;text-align:center;margin:8px 0 0">Green = code letter, yellow = steps back, blue = real letter. Before A we go round to Z.</p>
+</div>
+
+<div id="t2" class="box hide">
+  <b style="font-size:20px">Each message has its key. Move every letter back by the key. Use tab 1 or your alphabet strip to help.</b>
+  <div id="list"></div>
+</div>
+
+<div id="t3" class="box hide">
+  <b style="font-size:20px">A spy found this code but has no key:</b>
+  <div class="out" style="margin:10px 0" id="mystery"></div>
+  <div style="font-size:19px">The machine tries every key from 1 to 5. Click the line that makes sense.</div>
+  <div id="tries"></div>
+  <div class="say" id="say3"></div>
+</div>
+<p style="font-size:15px;color:#56627a;text-align:center">Use made-up words only. Never type a real password. Nothing is saved.</p>
+</main>
+<script>
+var A='ABCDEFGHIJKLMNOPQRSTUVWXYZ',key=3,busy=false;
+function el(x){return document.getElementById(x)}
+function shift(t,k){return t.split('').map(function(c){var p=A.indexOf(c);return p<0?c:A[(p+k+26)%26]}).join('')}
+function tab(n){for(var i=1;i<=3;i++){el('t'+i).className='box'+(i===n?'':' hide');el('b'+i).className=(i===n?'on':'')}}
+(function(){var k=el('keys');for(var i=1;i<=5;i++){(function(n){var b=document.createElement('button');b.textContent=n;b.onclick=function(){key=n;mark()};k.appendChild(b)})(i)}
+ var s=el('strip');for(var j=0;j<26;j++){var d=document.createElement('div');d.textContent=A[j];d.id='L'+j;s.appendChild(d)}mark()})();
+function mark(){var bs=el('keys').children;for(var i=0;i<bs.length;i++)bs[i].className=(i+1===key?'on':'');el('out').textContent=''}
+function clr(){for(var j=0;j<26;j++)el('L'+j).className=''}
+function run(){if(busy)return;var m=el('code').value.trim();if(!m){el('say').textContent='Type a code first.';return}
+ busy=true;el('out').textContent='';var i=0;
+ function next(){clr();if(i>=m.length){busy=false;el('say').textContent='Unlocked! Every letter moved back '+key+' step'+(key>1?'s':'')+'.';return}
+  var c=m[i];if(c===' '){el('out').textContent+=' ';i++;setTimeout(next,200);return}
+  var p=A.indexOf(c),s=0;el('L'+p).className='from';el('say').textContent=c+' moves back '+key+'...';
+  var iv=setInterval(function(){s++;var q=(p-s+26)%26;if(s<key){el('L'+q).className='hop'}else{clearInterval(iv);el('L'+q).className='to';el('say').textContent=c+' was really '+A[q];el('out').textContent+=A[q];i++;setTimeout(next,900)}},450)}
+ next()}
+var MSG=[['STAY SAFE',1],['TELL AN ADULT',2],['KEEP IT SECRET',3],['WELL DONE CYBER SQUAD',3]];
+(function(){var L=el('list');MSG.forEach(function(m,i){var d=document.createElement('div');d.className='ch';
+ d.innerHTML='<b>Message '+(i+1)+'</b> (key '+m[1]+'): <code>'+shift(m[0],m[1])+'</code><br><input id="a'+i+'" placeholder="Type the real message"> <button onclick="chk('+i+')">Check</button><span class="res" id="r'+i+'"></span>';L.appendChild(d)})})();
+function chk(i){var v=el('a'+i).value.toUpperCase().replace(/\s+/g,' ').trim(),r=el('r'+i);
+ if(v===MSG[i][0]){r.textContent='Correct!';r.style.color='#2e9e57'}else{r.textContent='Not yet. Move each letter back by '+MSG[i][1]+'.';r.style.color='#d64545'}}
+var SECRET='BE KIND ONLINE',SK=4,done=false;
+(function(){var code=shift(SECRET,SK);el('mystery').textContent=code;var T=el('tries');
+ for(var k=1;k<=5;k++){(function(k){var d=document.createElement('div');d.className='row';d.innerHTML='<b>Key '+k+'</b><span>'+shift(code,-k)+'</span>';
+  d.onclick=function(){if(done)return;if(k===SK){done=true;d.className='row good';el('say3').innerHTML='Cracked! The key was '+SK+'. With only a few keys, anyone can try them all.<br>Real encryption has so many possible keys that even fast computers cannot try them all. That keeps our messages safe.'}
+   else{d.className='row bad';el('say3').textContent='That is not a real message. Try another line.'}};T.appendChild(d)})(k)}})();
+</script></body></html>

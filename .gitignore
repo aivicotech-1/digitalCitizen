@@ -1,0 +1,24 @@
+# Optional local dependencies and diagnostic logs
+node_modules/
+*.log
+
+# Local preview screenshots (not used by the website)
+/preview/
+
+# Local environment configuration; keep a shareable example if added
+.env
+.env.*
+!.env.example
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary editor files
+*.swp
+*.swo
+*~
+
+# Keep activities.js in Git: the website needs this generated catalogue.
+# Keep all grade folders, assets, scripts and source files in Git.

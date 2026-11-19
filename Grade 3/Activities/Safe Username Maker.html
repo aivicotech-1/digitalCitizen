@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Safe Username Maker</title>
+<style>
+:root{--ink:#1d2a44;--go:#2e9e57;--warn:#e0a400;--stop:#d93a3a;--head:#c2337a}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#fdf0f6;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px}header h1{margin:0;font-size:26px}
+main{max-width:860px;margin:20px auto;padding:0 16px}
+.box{background:#fff;border-radius:18px;padding:22px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:18px}
+input{font-size:26px;padding:12px 14px;border-radius:12px;border:3px solid #c9cfdb;width:100%}
+button{font-size:20px;font-weight:bold;border:none;border-radius:14px;padding:14px 18px;cursor:pointer;color:#fff;margin:8px 8px 0 0}
+ul{list-style:none;padding:0;font-size:20px}li{padding:8px 0}
+.ok{color:var(--go);font-weight:bold}.bad{color:var(--stop);font-weight:bold}
+.verdict{font-size:24px;font-weight:bold;padding:14px;border-radius:12px;margin-top:10px}
+label{font-size:19px;display:block;padding:6px 0}
+.warn{background:#fff5d6;border:3px solid var(--warn);border-radius:12px;padding:12px;font-size:18px}
+</style></head>
+<body><header><h1>Safe Username Maker</h1></header>
+<main>
+<p class="warn"><b>Practice only.</b> Use made-up words. Do not type your real name, birthday, school or phone number. Nothing here is saved.</p>
+<div class="box">
+  <h2 style="margin-top:0">1. Try a username</h2>
+  <input id="u" placeholder="For example BraveFalcon42" maxlength="24" oninput="check()">
+  <div>
+    <button style="background:#2f6fd6" onclick="idea()">Give me an idea</button>
+    <button style="background:#8a95a8" onclick="clearIt()">Clear</button>
+  </div>
+  <ul id="list"></ul>
+</div>
+<div class="box">
+  <h2 style="margin-top:0">2. Check it yourself</h2>
+  <label><input type="checkbox" class="me" onchange="check()" style="width:auto;transform:scale(1.6);margin-right:12px"> It does not have my real name.</label>
+  <label><input type="checkbox" class="me" onchange="check()" style="width:auto;transform:scale(1.6);margin-right:12px"> It does not have my age or birthday.</label>
+  <label><input type="checkbox" class="me" onchange="check()" style="width:auto;transform:scale(1.6);margin-right:12px"> It does not have my school, city or address.</label>
+  <label><input type="checkbox" class="me" onchange="check()" style="width:auto;transform:scale(1.6);margin-right:12px"> It is kind and I would be happy for my teacher to see it.</label>
+  <div class="verdict" id="v">Type a username to start.</div>
+</div>
+</main>
+<script>
+var NAMES=['ali','sara','ahmed','ahmad','fatima','ayesha','aisha','hamza','zainab','usman','bilal','hina','omar','umar','zara','muhammad','mohammad','abdullah','maryam','hassan','hussain','hasan','ibrahim','khadija','amna','iqra','fatema','noor','zoya','ayan','rayyan','areeba','hadi','haider','khan','ahsan','saad','sana','asad','imran','mahnoor','laiba','eman','abdul','rehan','arham'];
+var PLACES=['school','lahore','karachi','islamabad','rawalpindi','peshawar','quetta','multan','faisalabad','grade','class','street','road','house','sector','block','town'];
+var ADJ=['Brave','Happy','Swift','Clever','Sunny','Mighty','Quiet','Bright','Lucky','Jolly'];
+var ANI=['Falcon','Tiger','Panda','Dolphin','Comet','Rocket','Kite','Mango','River','Star'];
+function el(x){return document.getElementById(x)}
+function idea(){var a=ADJ[Math.floor(Math.random()*ADJ.length)],b=ANI[Math.floor(Math.random()*ANI.length)],n=Math.floor(Math.random()*89)+10;el('u').value=a+b+n;check()}
+function clearIt(){el('u').value='';document.querySelectorAll('.me').forEach(function(c){c.checked=false});check()}
+function check(){
+  var u=el('u').value.trim(),low=u.toLowerCase(),r=[],bad=0;
+  if(!u){el('list').innerHTML='';el('v').textContent='Type a username to start.';el('v').style.background='#f1f4fa';return}
+  function add(ok,t){r.push('<li class="'+(ok?'ok':'bad')+'">'+(ok?'✔ ':'✖ ')+t+'</li>');if(!ok)bad++}
+  add(u.length>=6&&u.length<=16,'Between 6 and 16 letters and numbers long');
+  add(!/[\s@]/.test(u),'No spaces or @ signs');
+  var nm=NAMES.filter(function(n){return low.indexOf(n)>=0});
+  add(nm.length===0,nm.length?'Looks like a real name ('+nm[0]+'). Use a made-up word.':'No common real names found');
+  add(!/(19|20)\d\d/.test(u),'No birth year');
+  var pl=PLACES.filter(function(p){return low.indexOf(p)>=0});
+  add(pl.length===0,pl.length?'Has a place or school word ('+pl[0]+').':'No school or place words');
+  add(!/\d{5,}/.test(u),'No long number like a phone number');
+  el('list').innerHTML=r.join('');
+  var ticks=document.querySelectorAll('.me:checked').length;
+  var v=el('v');
+  if(bad>0){v.textContent='Not safe yet. Fix the red points.';v.style.background='#fde3e3'}
+  else if(ticks<4){v.textContent='Looking good! Now tick all four checks yourself.';v.style.background='#fff5d6'}
+  else{v.textContent='Safe username! Write it on your sheet.';v.style.background='#dff5e6'}
+}
+</script></body></html>

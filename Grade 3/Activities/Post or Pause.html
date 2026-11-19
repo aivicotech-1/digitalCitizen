@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Post or Pause</title><style>
+:root{--ink:#1d2a44;--blue:#2f6fd6;--go:#2e9e57;--warn:#e0a400;--stop:#d93a3a}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#fff3ea;color:var(--ink)}
+header{background:#b8561b;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+header h1{margin:0;font-size:26px}.score{font-size:22px;font-weight:bold}
+main{max-width:900px;margin:22px auto;padding:0 16px;text-align:center}
+.intro{font-size:21px}.note{font-size:16px;color:#56627a;margin-top:24px}
+.card{background:#fff;border-radius:20px;padding:26px;box-shadow:0 4px 16px rgba(0,0,0,.1);margin-top:10px}
+.who{font-size:17px;color:#56627a;margin-bottom:8px;font-weight:bold;text-transform:uppercase;letter-spacing:.5px}
+.text{font-size:27px;font-weight:bold;line-height:1.35}
+.opts{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.opts button,.go{font-size:21px;font-weight:bold;border:none;border-radius:16px;padding:16px 20px;cursor:pointer;color:#fff;min-width:200px}
+.fb{font-size:21px;margin-top:18px;padding:14px;border-radius:14px;display:none}
+.good{background:#dff5e6;border:3px solid var(--go)}.oops{background:#fde3e3;border:3px solid var(--stop)}
+.go{background:var(--ink);margin-top:14px;display:none}
+.big{font-size:30px;font-weight:bold}.stars{font-size:54px;color:#f2b632}
+.prog{font-size:17px;color:#56627a;margin-top:6px}
+</style></head>
+<body><header><h1>Post or Pause</h1><div class="score" id="score">Stars: 0</div></header>
+<main>
+<div id="start"><p class="intro">What we post online can stay for a long time, like footprints in cement. Decide: post it (with a grown-up's OK) or pause.</p><div class="opts"><button style="background:#b8561b" onclick="begin()">Start</button></div></div>
+<div id="play" style="display:none"><div class="card"><div class="who" id="who"></div><div class="text" id="text"></div><div class="prog" id="prog"></div></div>
+<div class="opts" id="opts"></div><div class="fb" id="fb"></div><button class="go" id="next" onclick="nxt()">Next</button></div>
+<div id="end" style="display:none"><div class="stars" id="stars"></div><p class="big" id="endmsg"></p><button class="go" style="display:inline-block" onclick="again()">Play again</button></div>
+<p class="note">A practice game for school. Nothing you do here is saved or sent.</p>
+</main><script>
+var C=[["Idea to post", "A drawing of your favourite animal, no name on it.", ["Post (with a grown-up OK)", "Pause"], 0, "A proud footprint. Safe and kind."], ["Idea to post", "A funny photo of your friend, without asking them.", ["Post", "Pause"], 1, "Always ask before posting someone else. It may hurt them."], ["Idea to post", "A photo of your new house with the door number.", ["Post", "Pause"], 1, "The door number shows where you live."], ["Idea to post", "A kind comment on a classmate's school project.", ["Post (with a grown-up OK)", "Pause"], 0, "Kind words leave a good footprint."], ["Idea to post", "An angry message when you are upset.", ["Post", "Pause"], 1, "Pause and calm down. Angry posts can stay for a long time."], ["Idea to post", "A video of your science model, no faces or school name.", ["Post (with a grown-up OK)", "Pause"], 0, "A proud footprint, with a grown-up's OK."], ["Idea to post", "Your full name and birthday so people can wish you.", ["Post", "Pause"], 1, "Name and birthday together are private."], ["Idea to post", "A joke about how someone looks.", ["Post", "Pause"], 1, "Unkind jokes hurt and can stay forever."], ["Idea to post", "A thank you message to your teacher on the class site.", ["Post (with a grown-up OK)", "Pause"], 0, "A kind and proud footprint."], ["Idea to post", "A photo of your B-Form to show you are old enough.", ["Post", "Pause"], 1, "Never post ID documents."]],i=0,score=0,done=false;function el(x){return document.getElementById(x)}
+function begin(){el('start').style.display='none';el('play').style.display='block';i=0;score=0;el('score').textContent='Stars: 0';show()}
+function show(){done=false;var c=C[i];el('who').textContent=c[0];el('text').textContent=c[1];el('prog').textContent='Card '+(i+1)+' of '+C.length;var o=el('opts');o.innerHTML='';
+ var cols=['#2f6fd6','#e07a1f','#7a3fd1'];c[2].forEach(function(l,k){var b=document.createElement('button');b.textContent=l;b.style.background=cols[k];b.onclick=function(){pick(k)};o.appendChild(b)});el('fb').style.display='none';el('next').style.display='none'}
+function pick(k){if(done)return;done=true;var c=C[i],ok=(k===c[3]);if(ok){score++;el('score').textContent='Stars: '+score}var f=el('fb');f.className='fb '+(ok?'good':'oops');
+ f.textContent=(ok?'Yes! ':'Think again. The safe choice is: '+c[2][c[3]]+'. ')+c[4];f.style.display='block';el('next').style.display='inline-block'}
+function nxt(){i++;if(i>=C.length){el('play').style.display='none';el('end').style.display='block';var s='';for(var k=0;k<score;k++)s+='\u2605';el('stars').textContent=s||'\u2606';el('endmsg').textContent='You got '+score+' out of '+C.length+'. Leave footprints you will be proud of. When unsure, pause and ask.'}else show()}
+function again(){el('end').style.display='none';begin()}
+</script></body></html>

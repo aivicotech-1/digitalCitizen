@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beat the Trickster</title>
+<style>
+:root{--ink:#1d2a44;--head:#6a2c91}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f4ecfa;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center}
+header h1{margin:0;font-size:26px}#sc{font-size:19px;font-weight:bold}
+main{max-width:1000px;margin:14px auto;padding:0 14px}
+.box{background:#fff;border-radius:16px;padding:18px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:14px}
+.pick button{font-size:19px;font-weight:bold;border:none;border-radius:12px;padding:11px 14px;cursor:pointer;margin:0 6px 8px 0;background:#e3d3ef;color:var(--ink)}
+.pick button.done{background:#c9ebd5}.pick button.lost{background:#f6cccc}
+.scene{font-size:22px;line-height:1.5;min-height:90px}
+.who{font-size:16px;text-transform:uppercase;letter-spacing:1px;color:#6a2c91;font-weight:bold}
+.ch button{display:block;width:100%;text-align:left;font-size:20px;padding:12px 14px;margin:8px 0;border-radius:12px;border:3px solid #d8c4e8;background:#fbf8fe;cursor:pointer}
+.ch button:hover{background:#efe4f8}
+.meter{height:26px;border-radius:13px;background:#e3e7ef;overflow:hidden}.meter div{height:100%;background:linear-gradient(90deg,#f2b705,#d64545);transition:width .5s}
+.end{border-radius:14px;padding:14px;font-size:20px;line-height:1.5;margin-top:10px}
+.win{background:#dff3e6;border:3px solid #2e9e57}.lose{background:#fde2e2;border:3px solid #d64545}
+</style></head>
+<body><header><h1>Beat the Trickster</h1><div id="sc">Tricks beaten: 0 of 4</div></header>
+<main>
+<div class="box pick" id="pick"></div>
+<div class="box">
+ <div style="font-size:17px;font-weight:bold;margin-bottom:4px">Trickster power</div><div class="meter"><div id="m" style="width:20%"></div></div>
+ <div class="who" id="who" style="margin-top:14px"></div>
+ <div class="scene" id="scene"></div>
+ <div class="ch" id="ch"></div>
+ <div id="end"></div>
+</div>
+<p style="font-size:15px;color:#56627a;text-align:center">Made-up stories for learning. Nothing is saved.</p>
+</main>
+<script>
+var S=[
+ {name:'The fake helper',trick:'Pretending (pretexting): the trickster pretends to be someone you trust (like support staff) and makes up a story.',start:'a',nodes:{
+  a:{who:'Phone call',t:'"Hello, I am from FunPlay Support. Your game account will be deleted today. Tell me your password and I will save it."',c:[['Give the password so the account is saved.','L',40],['Ask: "Which support team? What is your name?"','b',10],['Say no, hang up and tell a grown-up.','W',-10]]},
+  b:{who:'Phone call',t:'"I am Mr Khan from support. Hurry! You only have 5 minutes left!"',c:[['Hurry and give the password.','L',40],['Notice the hurry trick. Hang up and tell a grown-up.','W',-10]]}}},
+ {name:'The free prize',trick:'Bait: the trickster offers something exciting (free coins, a prize, a found USB stick) so you hand over information or plug something in.',start:'a',nodes:{
+  a:{who:'Pop-up in a game',t:'"Congratulations! You won 5000 free coins! Type your mum\'s phone number to claim."',c:[['Type the number. Free coins!','b',30],['Close the pop-up and tell a grown-up.','W',-10]]},
+  b:{who:'Pop-up in a game',t:'"Great! We sent a code to that phone. Type the code here to get your coins."',c:[['Get mum\'s phone and type the code.','L',40],['Stop. Real games never ask for codes like this. Tell mum.','W',-10]]}}},
+ {name:'Hold the door',trick:'Tailgating: the trickster follows you through a locked door or into your account by asking politely.',start:'a',nodes:{
+  a:{who:'Computer lab door',t:'An older person you do not know says: "I forgot my card. Can I come in behind you?"',c:[['Hold the door. They seem nice.','b',30],['Say: "Please ask the office or a teacher." Go in alone.','W',-10]]},
+  b:{who:'Inside the lab',t:'"Thanks! Can you log me in with your account? Mine is not working."',c:[['Log them in with your account.','L',40],['Say no and tell the teacher straight away.','W',-5]]}}},
+ {name:'The friend in trouble',trick:'Impersonation: the trickster uses a hacked or fake account that looks like a friend.',start:'a',nodes:{
+  a:{who:'Message from "Hamza"',t:'"It\'s me Hamza! I am locked out. A code just came to your phone. Send it to me quickly!"',c:[['Send the code. He is my friend.','L',45],['Check: call Hamza or ask him at school first.','b',0]]},
+  b:{who:'You call Hamza',t:'Hamza says: "That was not me! My account was hacked yesterday."',c:[['Do not send the code. Tell a grown-up and warn Hamza to report it.','W',-15]]}}}];
+var cur=-1,node='',pow=20,res=[];
+function el(x){return document.getElementById(x)}
+function pick(){el('pick').innerHTML='<b style="font-size:20px;display:block;margin-bottom:8px">Choose a story</b>'+S.map(function(s,i){return '<button class="'+(res[i]==='W'?'done':(res[i]==='L'?'lost':''))+'" onclick="go('+i+')">'+(i+1)+'. '+s.name+'</button>'}).join('');
+ el('sc').textContent='Tricks beaten: '+res.filter(function(r){return r==='W'}).length+' of 4'}
+function go(i){cur=i;pow=20;show(S[i].start)}
+function show(k){var s=S[cur];el('end').innerHTML='';el('m').style.width=pow+'%';
+ if(k==='W'||k==='L'){res[cur]=k;el('ch').innerHTML='';el('m').style.width=(k==='L'?100:0)+'%';
+  el('end').innerHTML='<div class="end '+(k==='W'?'win':'lose')+'"><b>'+(k==='W'?'You beat the trickster!':'The trickster won this time.')+'</b><br>'+s.trick+(k==='L'?'<br>Try the story again and choose differently.':'')+'</div>';pick();return}
+ var n=s.nodes[k];el('who').textContent=n.who;el('scene').textContent=n.t;
+ el('ch').innerHTML='';n.c.forEach(function(c){var b=document.createElement('button');b.textContent=c[0];b.onclick=function(){pow=Math.max(0,Math.min(100,pow+c[2]));show(c[1])};el('ch').appendChild(b)})}
+pick();el('scene').textContent='Pick a story above. Each choice makes the trickster stronger or weaker.';
+</script></body></html>

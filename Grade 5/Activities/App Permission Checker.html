@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App Permission Checker</title>
+<style>
+:root{--ink:#1d2a44;--head:#ef6c00}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#fff4e5;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px}header h1{margin:0;font-size:26px}
+main{max-width:1150px;margin:14px auto;padding:0 14px;display:grid;grid-template-columns:270px 1fr;gap:16px}
+@media(max-width:880px){main{grid-template-columns:1fr}}
+.box{background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.phone{border:10px solid #1d2a44;border-radius:32px;padding:16px 10px;background:#f4f6fa;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.app{border:none;background:none;cursor:pointer;text-align:center;font-size:15px;font-weight:bold;color:var(--ink)}
+.app .ic{width:64px;height:64px;border-radius:16px;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;font-weight:bold}
+.app.sel .ic{outline:4px solid var(--head);outline-offset:3px}.app.done .ic::after{content:"\2713";font-size:18px;position:relative;left:22px;top:-22px;background:#2e9e57;border-radius:50%;width:24px;height:24px;display:inline-block;line-height:24px}
+.req{border:2px solid #f0d2b0;border-radius:12px;padding:10px;margin:8px 0;background:#fffaf4;font-size:19px}
+.req .opts button{font-size:16px;font-weight:bold;border:2px solid #c9cfdb;border-radius:10px;padding:7px 10px;margin:6px 6px 0 0;cursor:pointer;background:#fff}
+.req .opts button.on{background:#1d2a44;color:#fff;border-color:#1d2a44}
+.req.good{border-color:#2e9e57;background:#eef9f1}.req.bad{border-color:#d64545;background:#fdeeee}
+.why{font-size:16px;margin-top:6px}
+button.big{font-size:20px;font-weight:bold;border:none;border-radius:14px;padding:12px 18px;cursor:pointer;color:#fff;margin:10px 8px 0 0}
+.meter{height:26px;border-radius:13px;background:#e3e7ef;overflow:hidden;margin-top:6px}.meter div{height:100%;transition:width .5s}
+</style></head>
+<body><header><h1>App Permission Checker</h1></header>
+<main>
+<div class="box"><b style="font-size:19px;display:block;margin-bottom:10px;text-align:center">Pretend phone</b><div class="phone" id="phone"></div>
+ <div style="font-size:16px;margin-top:10px">Tap an app. Decide what it may use. Ask: does this app really need this to do its job?</div>
+ <b style="font-size:17px;display:block;margin-top:12px">Data leak meter</b><div class="meter"><div id="leak" style="width:0;background:#d64545"></div></div><div id="leakt" style="font-size:16px"></div></div>
+<div class="box"><div id="panel" style="font-size:20px">Choose an app on the phone.</div></div>
+</main>
+<script>
+var APPS=[
+ {n:'Torch',c:'#f2b705',i:'T',d:'Turns on the phone light.',r:[['Contacts','deny','A torch does not need your contacts.'],['Location','deny','A torch does not need to know where you are.'],['Microphone','deny','A torch does not need to listen.']]},
+ {n:'Draw It',c:'#e0559a',i:'D',d:'A drawing game that saves pictures.',r:[['Photos','allow','It needs to save your drawings to Photos.'],['Contacts','deny','A drawing game does not need your contacts.'],['Microphone','deny','Drawing does not need sound.']]},
+ {n:'Maps',c:'#2e9e57',i:'M',d:'Shows the way to places.',r:[['Location','using','Maps needs your location, but only while you use it. "Always" lets it track you all day.'],['Contacts','deny','Maps does not need your contacts.']]},
+ {n:'Family Call',c:'#2f6fd6',i:'F',d:'Video calls with family, used with a grown-up.',r:[['Camera','allow','A video call needs the camera.'],['Microphone','allow','A call needs the microphone so family can hear you.'],['Location','deny','A call does not need your location.']]},
+ {n:'Weather',c:'#7a3fb0',i:'W',d:'Shows today\'s weather.',r:[['Location','using','Weather can use your location while open, or you can deny it and type your city.'],['Photos','deny','Weather does not need your photos.'],['Microphone','deny','Weather does not need to listen.']]}];
+var ch={},cur=-1,checked={};
+function el(x){return document.getElementById(x)}
+function phone(){el('phone').innerHTML=APPS.map(function(a,i){return '<button class="app'+(i===cur?' sel':'')+(checked[i]?' done':'')+'" onclick="open_('+i+')"><div class="ic" style="background:'+a.c+'">'+a.i+'</div>'+a.n+'</button>'}).join('')}
+function open_(i){cur=i;phone();var a=APPS[i],h='<b style="font-size:23px">'+a.n+'</b><div style="font-size:18px;margin:4px 0 8px">'+a.d+' It asks to use:</div>';
+ a.r.forEach(function(r,k){var opts=r[0]==='Location'?[['always','Allow all the time'],['using','Only while using'],['deny','Deny']]:[['allow','Allow'],['deny','Deny']];
+  h+='<div class="req" id="q'+k+'"><b>'+r[0]+'</b><div class="opts">'+opts.map(function(o){var on=ch[i+'_'+k]===o[0];return '<button class="'+(on?'on':'')+'" onclick="set('+k+',\''+o[0]+'\')">'+o[1]+'</button>'}).join('')+'</div><div class="why" id="w'+k+'"></div></div>'});
+ h+='<button class="big" style="background:var(--head)" onclick="check()">Check this app</button><div id="res" style="font-size:19px;margin-top:8px"></div>';el('panel').innerHTML=h;if(checked[i])check()}
+function set(k,v){ch[cur+'_'+k]=v;var keep=checked[cur];open_(cur);if(keep)check()}
+function check(){var a=APPS[cur],ok=0,miss=false;a.r.forEach(function(r,k){var v=ch[cur+'_'+k];if(!v){miss=true;return}var good=v===r[1]||(r[1]==='using'&&v==='deny'&&a.n==='Weather');
+  el('q'+k).className='req '+(good?'good':'bad');el('w'+k).textContent=(good?'Good choice. ':'Think again. ')+r[2];if(good)ok++});
+ if(miss){el('res').textContent='Choose an answer for every request first.';return}
+ checked[cur]=true;phone();el('res').innerHTML='<b>'+ok+' of '+a.r.length+' good choices.</b>';leak()}
+function leak(){var bad=0,tot=0;APPS.forEach(function(a,i){if(!checked[i])return;a.r.forEach(function(r,k){tot++;var v=ch[i+'_'+k];if(v==='allow'&&r[1]==='deny'||v==='always')bad++})});
+ var p=tot?Math.round(bad/tot*100):0;el('leak').style.width=Math.max(p,2)+'%';el('leak').style.background=p>30?'#d64545':(p>0?'#e0b100':'#2e9e57');
+ var all=Object.keys(checked).length;el('leakt').textContent=(p?bad+' permission'+(bad>1?'s give':' gives')+' away data an app does not need.':'No extra data given away.')+' Apps checked: '+all+' of 5.'}
+phone();
+</script></body></html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rumour Spread Simulator</title>
+<style>
+:root{--ink:#1d2a44;--head:#b8336a}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#fcefF4;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center}
+header h1{margin:0;font-size:26px}#score{font-size:19px;font-weight:bold}
+main{max-width:1150px;margin:14px auto;padding:0 14px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:880px){main{grid-template-columns:1fr}}
+.box{background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.post{border:3px solid #e3c4d2;border-radius:14px;padding:14px;background:#fffafc}
+.post .from{font-size:16px;color:#56627a}.post .txt{font-size:23px;font-weight:bold;margin:8px 0}
+button.big{font-size:21px;font-weight:bold;border:none;border-radius:14px;padding:12px 20px;cursor:pointer;color:#fff;margin:10px 8px 0 0}
+button:disabled{opacity:.35;cursor:default}
+#msg{font-size:19px;margin-top:12px;min-height:60px;line-height:1.45}
+svg{width:100%;display:block}
+.meter{font-size:22px;font-weight:bold;text-align:center;margin-top:6px}
+.clue{background:#fffbe6;border:2px dashed #d9c27a;border-radius:12px;padding:10px;margin-top:10px;font-size:18px}
+</style></head>
+<body><header><h1>Rumour Spread Simulator</h1><div id="score">Story 1 of 5</div></header>
+<main>
+<div class="box">
+  <div class="post"><div class="from" id="from"></div><div class="txt" id="txt"></div></div>
+  <button class="big" id="bShare" style="background:#d64545" onclick="share()">Share it now</button>
+  <button class="big" id="bCheck" style="background:#2f6fd6" onclick="check()">Check first</button>
+  <div id="clue" class="clue" style="display:none"></div>
+  <div id="after" style="display:none"><button class="big" style="background:#2e9e57" onclick="share()">Share it</button><button class="big" style="background:#56627a" onclick="stop()">Do not share</button></div>
+  <div id="msg"></div>
+  <button class="big" id="bNext" style="background:var(--head);display:none" onclick="next()">Next story</button>
+</div>
+<div class="box">
+  <b style="font-size:20px">Our class network: 40 pupils</b>
+  <svg viewBox="0 0 500 380" id="net"></svg>
+  <div class="meter" id="meter">Saw the story: 0</div>
+  <div style="font-size:16px;text-align:center">Pink = saw the story. Grey = not yet. You are the gold circle.</div>
+</div>
+</main>
+<script>
+var ST=[
+ {from:'Shared by: Unknown_Updates22',txt:'SCHOOL IS CLOSED TOMORROW! Share with everyone!!',fake:true,clue:'The school website and the class teacher say school is open. The sender is unknown and uses hurry words. FAKE.'},
+ {from:'Shared by: Sports teacher, school learning page',txt:'Sports day has moved to Friday because of rain.',fake:false,clue:'The school learning page and the teacher both say this. It is TRUE and useful to share.'},
+ {from:'Shared by: FreePhoneGiveaway',txt:'Every child gets a FREE phone. Just send your address!',fake:true,clue:'No real company gives free phones for an address. It is a trick to collect information. FAKE.'},
+ {from:'Shared by: a friend of a friend',txt:'Eating ice cream at night makes your hair turn green.',fake:true,clue:'No doctor or science website says this. A friend of a friend is not a source. FAKE.'},
+ {from:'Shared by: City library page',txt:'The library has a free story hour on Saturday at 10.',fake:false,clue:'The library page posted it and the poster is on the library door. TRUE.'}];
+var i=0,score={stopped:0,shared:0,spread:0},N=40,pts=[],links=[],seen=[],busy=false;
+function el(x){return document.getElementById(x)}
+(function(){var s=7;function r(){s=(s*9301+49297)%233280;return s/233280}
+ for(var k=0;k<N;k++){pts.push([30+r()*440,25+r()*330])}pts[0]=[250,190];
+ for(var a=0;a<N;a++){var d=pts.map(function(p,b){return [Math.hypot(p[0]-pts[a][0],p[1]-pts[a][1]),b]}).sort(function(x,y){return x[0]-y[0]});for(var j=1;j<=3;j++){var b=d[j][1];if(!links.some(function(l){return l[0]===b&&l[1]===a}))links.push([a,b])}}})();
+function nb(a){var o=[];links.forEach(function(l){if(l[0]===a)o.push(l[1]);if(l[1]===a)o.push(l[0])});return o}
+function draw(){var h='';links.forEach(function(l){h+='<line x1="'+pts[l[0]][0]+'" y1="'+pts[l[0]][1]+'" x2="'+pts[l[1]][0]+'" y2="'+pts[l[1]][1]+'" stroke="#dde1ea" stroke-width="2"/>'});
+ pts.forEach(function(p,k){h+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(k?10:14)+'" fill="'+(k===0?'#f2b705':(seen[k]?'#e0559a':'#c3c9d4'))+'" stroke="#fff" stroke-width="2"/>'});
+ el('net').innerHTML=h;el('meter').textContent='Saw the story: '+seen.filter(Boolean).length+' of '+N}
+function load(){var s=ST[i];seen=[];seen[0]=true;el('from').textContent=s.from;el('txt').textContent=s.txt;el('clue').style.display='none';el('after').style.display='none';
+ el('bShare').disabled=false;el('bCheck').disabled=false;el('bNext').style.display='none';el('msg').textContent='Will you share it now, or check first?';el('score').textContent='Story '+(i+1)+' of '+ST.length;draw()}
+function lock(){el('bShare').disabled=true;el('bCheck').disabled=true;el('after').style.display='none'}
+function share(){if(busy)return;lock();busy=true;var s=ST[i],front=[0],step=0;
+ var iv=setInterval(function(){var nf=[];front.forEach(function(a){nb(a).forEach(function(b){if(!seen[b]&&Math.random()<0.8){seen[b]=true;nf.push(b)}})});front=nf;draw();step++;
+  if(!front.length||step>8){clearInterval(iv);busy=false;var c=seen.filter(Boolean).length;score.spread+=s.fake?c:0;
+   el('msg').innerHTML=s.fake?'<b style="color:#d64545">Oh no! '+c+' people saw a fake story.</b> Each person passed it on in seconds. Fake stories spread faster than corrections.':'<b style="color:#2e9e57">Good share!</b> This story was true and useful. '+c+' people now know.';
+   if(!s.fake)score.shared++;done()}},420)}
+function check(){lock();var s=ST[i];el('clue').style.display='block';el('clue').innerHTML='<b>You checked:</b> '+s.clue;el('after').style.display='block';el('msg').textContent='Now decide: share it or not?'}
+function stop(){el('after').style.display='none';var s=ST[i];if(s.fake){score.stopped++;el('msg').innerHTML='<b style="color:#2e9e57">You stopped a fake story!</b> Nobody else saw it because of you.'}else el('msg').innerHTML='This one was true. It was fine to share, but not sharing is safe too.';done()}
+function done(){el('bNext').style.display='inline-block';if(i===ST.length-1){el('bNext').textContent='See my result'}}
+function next(){if(i<ST.length-1){i++;load()}else{el('bNext').style.display='none';el('from').textContent='Your result';el('txt').textContent='Fakes stopped: '+score.stopped+' of 3. True stories shared: '+score.shared+' of 2.';
+ el('msg').innerHTML='People reached by fakes you shared: '+score.spread+'.<br><b>Remember: stop, check the source, then decide.</b>';el('clue').style.display='none'}}
+load();
+</script></body></html>

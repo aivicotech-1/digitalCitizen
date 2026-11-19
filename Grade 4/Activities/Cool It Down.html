@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cool It Down</title>
+<style>
+:root{--ink:#1d2a44;--go:#2e9e57;--stop:#d93a3a;--head:#e0662a}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#fff4ec;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+header h1{margin:0;font-size:26px}
+main{max-width:1000px;margin:14px auto;padding:0 14px;display:grid;grid-template-columns:140px 1fr;gap:18px}
+.therm{background:#fff;border-radius:70px;padding:16px;height:480px;position:relative}
+.tube{position:absolute;left:50%;transform:translateX(-50%);bottom:60px;width:38px;height:380px;background:#eee;border-radius:20px;overflow:hidden}
+.mercury{position:absolute;bottom:0;width:100%;background:var(--stop);transition:height .5s,background .5s}
+.bulb{position:absolute;left:50%;transform:translateX(-50%);bottom:20px;width:70px;height:70px;border-radius:50%;background:var(--stop)}
+.tlabel{position:absolute;top:8px;left:0;right:0;text-align:center;font-weight:bold;font-size:18px}
+.chat{background:#efe7dd;border-radius:16px;padding:12px;min-height:220px}
+.msg{max-width:85%;padding:10px 12px;border-radius:12px;margin:8px 0;font-size:19px;background:#fff}.me{margin-left:auto;background:#dcf8c6}
+.msg b{font-size:15px;display:block}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.opts button{font-size:18px;text-align:left;border:3px solid #d8dde8;background:#fff;border-radius:12px;padding:12px;cursor:pointer;color:var(--ink)}
+.res{font-size:21px;font-weight:bold;margin-top:12px}
+.ctl button{font-size:19px;font-weight:bold;border:none;border-radius:12px;padding:10px 16px;cursor:pointer;color:#fff;margin-top:10px}
+@media(max-width:700px){main{grid-template-columns:1fr}.therm{height:200px}.tube{height:110px;bottom:50px}.bulb{width:50px;height:50px}}
+</style></head>
+<body><header><h1>Cool It Down</h1><div style="font-size:20px" id="scn"></div></header>
+<main>
+<div class="therm"><div class="tlabel" id="tl">HOT</div><div class="tube"><div class="mercury" id="merc"></div></div><div class="bulb" id="bulb"></div></div>
+<div>
+  <p style="font-size:19px" id="intro"></p>
+  <div class="chat" id="chat"></div>
+  <div class="opts" id="opts"></div>
+  <div class="res" id="res"></div>
+  <div class="ctl"><button style="background:var(--head)" onclick="nextS()">Next argument</button> <button style="background:#8a95a8" onclick="start()">Try again</button></div>
+  <p style="font-size:15px;color:#56627a">Your reply changes the temperature. Get it down to COOL (blue). A pretend chat. Nothing is saved.</p>
+</div>
+</main>
+<script>
+var S=[
+ {intro:'A game ended. Your teammate Raza is angry with you.',start:80,turns:[
+  {them:'Raza: You made us lose AGAIN! You are the worst player!!',opts:[['You are the worst! You never pass!',20],['I tried my best. I feel upset when you say that.',-20],['Whatever, loser.',25],['Let\'s take a break and talk later.',-15]]},
+  {them:'Raza: Fine. But you really did miss the goal.',opts:[['Yes, I missed it. Can we practise together?',-25],['Everyone saw you miss too, haha',20],['Leave the team then!',25],['You are right, sorry I got upset too.',-20]]},
+  {them:'Raza: Ok. Maybe I was too angry. Sorry.',opts:[['Thanks. See you at practice!',-20],['You should be sorry!',15],['It is ok. Friends?',-25],['I am telling everyone what you said.',25]]}]},
+ {intro:'In the class group, Mehak thinks you laughed at her drawing.',start:75,turns:[
+  {them:'Mehak: Why did you laugh at my drawing? That was mean.',opts:[['It was funny, it looked weird.',20],['I am sorry, I did not mean to hurt you.',-25],['Stop being so sensitive.',25],['Can we talk about it after school?',-15]]},
+  {them:'Mehak: Everyone saw it. I felt embarrassed.',opts:[['I will tell everyone I liked your colours.',-20],['Not my problem.',25],['I understand. That must have felt bad.',-20],['You started it.',20]]},
+  {them:'Mehak: Thanks. I am feeling better now.',opts:[['Me too. Want to draw together tomorrow?',-25],['Good, now stop complaining.',20],['Glad we talked.',-20],['Whatever.',15]]}]}
+];
+var s=0,t=0,temp=80;
+function el(x){return document.getElementById(x)}
+function draw(){var m=el('merc');m.style.height=temp+'%';var c=temp>=60?'#d93a3a':(temp>=35?'#e0a400':'#2f6fd6');m.style.background=c;el('bulb').style.background=c;el('tl').textContent=temp>=60?'HOT':(temp>=35?'WARM':'COOL')}
+function add(txt,me){var d=document.createElement('div');d.className='msg'+(me?' me':'');var p=txt.split(': ');if(p.length>1&&!me){d.innerHTML='<b></b>';d.firstChild.textContent=p[0];d.appendChild(document.createTextNode(p.slice(1).join(': ')))}else d.textContent=txt;el('chat').appendChild(d)}
+function start(){var sc=S[s];t=0;temp=sc.start;el('chat').innerHTML='';el('res').textContent='';el('intro').textContent=sc.intro;el('scn').textContent='Argument '+(s+1)+' of '+S.length;draw();turn()}
+function turn(){var tu=S[s].turns[t];add(tu.them,false);var o=el('opts');o.innerHTML='';tu.opts.forEach(function(op){var b=document.createElement('button');b.textContent=op[0];b.onclick=function(){pick(op)};o.appendChild(b)})}
+function pick(op){add(op[0],true);temp=Math.max(5,Math.min(100,temp+op[1]));draw();el('opts').innerHTML='';
+ if(op[1]>0){el('res').textContent='That heated things up. How might the other person feel?'}else el('res').textContent='That cooled things down.';
+ t++;if(t<S[s].turns.length){setTimeout(turn,700)}else{setTimeout(function(){el('res').textContent=temp<35?'You cooled it down! Which reply helped most?':'Still hot. Try again and choose calmer replies.'},700)}}
+function nextS(){s=(s+1)%S.length;start()}
+start();
+</script></body></html>

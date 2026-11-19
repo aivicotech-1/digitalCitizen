@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two-Step Login</title>
+<style>
+:root{--ink:#1d2a44;--head:#0b6e99}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#e8f4fa;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px}header h1{margin:0;font-size:26px}
+main{max-width:1150px;margin:14px auto;padding:0 14px;display:grid;grid-template-columns:1.2fr 1fr .9fr;gap:16px}
+@media(max-width:960px){main{grid-template-columns:1fr}}
+.box{background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+h2{margin:0 0 8px;font-size:20px}
+.role button{font-size:17px;font-weight:bold;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;margin:0 6px 8px 0;background:#d4e8f2;color:var(--ink)}
+.role button.on{background:var(--head);color:#fff}
+.login{border:3px solid #cfe1ea;border-radius:14px;padding:14px;background:#f8fcfe}
+label{font-size:16px;display:block;margin-top:8px}
+input{width:100%;font-size:21px;padding:9px;border-radius:10px;border:3px solid #c9cfdb;font-family:Consolas,monospace}
+button.big{font-size:19px;font-weight:bold;border:none;border-radius:12px;padding:11px 16px;cursor:pointer;color:#fff;background:var(--head);margin-top:10px}
+#out{font-size:20px;margin-top:12px;min-height:60px;line-height:1.45}
+.phone{width:220px;max-width:100%;margin:0 auto;border:10px solid #1d2a44;border-radius:30px;min-height:330px;padding:14px 10px;background:#f4f6fa;position:relative}
+.phone .note{background:#fff;border-radius:12px;padding:10px;font-size:16px;margin-top:8px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.code{font:bold 30px Consolas,monospace;letter-spacing:4px;text-align:center;color:var(--head)}
+.sw{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:bold;margin:10px 0}
+.sw input{width:30px;height:30px}
+.log{font-size:16px;line-height:1.5}
+.hide{filter:blur(7px)}
+</style></head>
+<body><header><h1>Two-Step Login</h1></header>
+<main>
+<div class="box">
+ <div class="role"><button id="rH" class="on" onclick="setRole('h')">Play the hacker</button><button id="rO" onclick="setRole('o')">Play Ali (the owner)</button></div>
+ <div id="story" style="font-size:18px;margin-bottom:10px"></div>
+ <div class="login"><b style="font-size:20px">FunPlay game login</b>
+  <div id="s1"><label>Username</label><input id="u" value="Ali_Gamer"><label>Password</label><input id="p" type="text">
+   <button class="big" onclick="step1()">Log in</button></div>
+  <div id="s2" style="display:none"><div style="font-size:18px;margin-top:8px">Step 2: We sent a 6-digit code to Ali's phone. Type it here.</div><input id="c" maxlength="6" inputmode="numeric"><button class="big" onclick="step2()">Check code</button></div>
+ </div>
+ <div id="out"></div>
+ <button class="big" id="again" style="display:none;background:#56627a" onclick="reset()">Try again</button>
+</div>
+<div class="box">
+ <h2>Ali's account settings</h2>
+ <label class="sw"><input type="checkbox" id="tfa" onchange="setT()"> Two-step login ON</label>
+ <div style="font-size:17px;line-height:1.5">Two-step login asks for:<br>1. something you <b>know</b> (password)<br>2. something you <b>have</b> (your phone) or something you <b>are</b> (fingerprint or face)</div>
+ <h2 style="margin-top:14px">Login record</h2><div class="log" id="log">No logins yet.</div>
+</div>
+<div class="box">
+ <h2 style="text-align:center">Ali's phone</h2>
+ <div class="phone" id="ph"><div style="text-align:center;font-size:15px;color:#56627a">Messages</div><div id="pn"></div></div>
+ <div style="font-size:15px;text-align:center;margin-top:8px" id="phnote">Only Ali holds this phone.</div>
+</div>
+</main>
+<script>
+var PW='Mango7Cloud',who='h',code='',tries=0;
+function el(x){return document.getElementById(x)}
+function rnd(){return String(Math.floor(100000+Math.random()*900000))}
+function setRole(r){who=r;el('rH').className=r==='h'?'on':'';el('rO').className=r==='o'?'on':'';reset();
+ el('story').innerHTML=r==='h'?'You are a hacker. A fake website stole Ali\'s password: <b>'+PW+'</b>. Can you get in?':'You are Ali. You know your password <b>'+PW+'</b> and you hold your phone.';
+ el('pn').className=r==='h'?'hide':'';el('phnote').textContent=r==='h'?'The hacker cannot see Ali\'s phone (it is blurred).':'You are Ali, so you can see your phone.'}
+function reset(){el('again').style.display='none';el('s1').style.display='block';el('s2').style.display='none';el('p').value='';el('c').value='';el('out').textContent='';tries=0}
+function setT(){el('out').innerHTML=el('tfa').checked?'Two-step login is now <b>ON</b>.':'Two-step login is now <b>OFF</b>.';reset()}
+function note(t){var d=document.createElement('div');d.className='note';d.innerHTML=t;el('pn').prepend(d)}
+function log(t){var L=el('log');if(L.textContent==='No logins yet.')L.innerHTML='';L.innerHTML='&bull; '+t+'<br>'+L.innerHTML}
+function step1(){if(el('p').value!==PW){el('out').innerHTML='<span style="color:#d64545">Wrong password.</span>';return}
+ if(!el('tfa').checked){el('out').innerHTML=who==='h'?'<b style="color:#d64545">The hacker got in!</b> With two-step login OFF, a stolen password is all a hacker needs. Turn it ON and try again.':'<b style="color:#2e9e57">Ali is in.</b> But a hacker with the password could get in too.';
+  log((who==='h'?'Unknown device, another city':'Ali\'s laptop')+': logged in with password only');el('s1').style.display='none';el('again').style.display='inline-block';return}
+ code=rnd();note('<b>FunPlay</b><br>Your login code is<div class="code">'+code+'</div>Someone is trying to log in. If this is not you, do not share this code.');
+ el('s1').style.display='none';el('s2').style.display='block';el('out').textContent=who==='h'?'The password worked... but now there is a second lock.':'Look at your phone for the code.'}
+function step2(){var v=el('c').value.trim();tries++;
+ if(v===code){el('out').innerHTML=who==='h'?'Lucky guess? That should not happen. Real codes change every time.':'<b style="color:#2e9e57">Ali is in safely!</b> Only the person with the phone could do this.';log('Ali\'s laptop: password + phone code');el('s2').style.display='none';el('again').style.display='inline-block';return}
+ if(tries>=3){el('out').innerHTML='<b style="color:#2e9e57">Hacker BLOCKED!</b> The password was stolen, but without Ali\'s phone the hacker cannot get in. Ali gets a warning and changes the password.';
+  note('<b>FunPlay</b><br>Warning: 3 wrong codes from an unknown device. Change your password now.');log('Unknown device, another city: BLOCKED at step 2');el('s2').style.display='none';el('again').style.display='inline-block';return}
+ el('out').innerHTML='<span style="color:#d64545">Wrong code.</span> '+(3-tries)+' tries left.'}
+setRole('h');
+</script></body></html>

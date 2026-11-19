@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Group Chat Sandbox</title>
+<style>
+:root{--ink:#1d2a44;--go:#2e9e57;--warn:#e0a400;--stop:#d93a3a;--head:#128c7e}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#e9f6f3;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center}
+header h1{margin:0;font-size:24px}
+main{max-width:1000px;margin:14px auto;padding:0 14px;display:grid;grid-template-columns:3fr 2fr;gap:16px}
+@media(max-width:780px){main{grid-template-columns:1fr}}
+.chat{background:#efe7dd;border-radius:18px;padding:14px;height:470px;overflow-y:auto}
+.msg{max-width:80%;padding:10px 12px;border-radius:12px;margin:8px 0;font-size:19px;background:#fff}
+.msg .who{font-size:15px;font-weight:bold;margin-bottom:3px}
+.me{margin-left:auto;background:#dcf8c6}
+.sys{max-width:100%;text-align:center;background:#fff6c9;font-size:17px}
+.write{display:flex;gap:8px;margin-top:10px}
+input{flex:1;font-size:20px;padding:12px;border-radius:12px;border:3px solid #c9cfdb}
+button{font-size:19px;font-weight:bold;border:none;border-radius:12px;padding:12px 16px;cursor:pointer;color:#fff;background:var(--head)}
+.box{background:#fff;border-radius:18px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:14px}
+.meter{height:30px;border-radius:15px;background:#e3e7ef;overflow:hidden;margin-top:6px}.fill{height:100%;width:60%;transition:width .4s,background .4s}
+.alert{background:#fde3e3;border:3px solid var(--stop);border-radius:12px;padding:10px;font-size:18px;display:none;margin-top:10px}
+.coach{font-size:18px;line-height:1.4}
+</style></head>
+<body><header><h1>Group Chat Sandbox: Team Falcons</h1><button style="background:#0b5e55" onclick="restart()">Start again</button></header>
+<main>
+<div>
+  <div class="chat" id="chat"></div>
+  <div class="write"><input id="inp" placeholder="Type your reply as You" onkeydown="if(event.key==='Enter')send()"><button onclick="send()">Send</button></div>
+</div>
+<div>
+  <div class="box"><b style="font-size:20px">Chat mood</b><div class="meter"><div class="fill" id="fill"></div></div><div id="moodtxt" style="font-size:18px;margin-top:6px"></div>
+    <div class="alert" id="alert"></div></div>
+  <div class="box coach"><b>Your job:</b> You are a player in the team chat. Read each new message and reply in a way that keeps the chat kind and includes everyone.<br><br><b>Coach tip:</b> <span id="coach">Wait for the first message.</span></div>
+  <p style="font-size:15px;color:#56627a">A pretend chat. The team members are made up. Nothing is saved or sent.</p>
+</div>
+</main>
+<script>
+var STEPS=[
+ {who:'Bilal',text:'Practice on Saturday at 4. Who is coming?',tip:'Answer clearly so the team knows your plan.',need:null},
+ {who:'Hamza',text:'Sana should not come. She drops every catch haha',tip:'Hamza is leaving Sana out. An upstander says something kind or includes her.',need:['sana','welcome','everyone','all','not nice','not kind','not okay','stop','come','practice','team','join']},
+ {who:'Sana',text:'Can I still come? I want to get better.',tip:'Sana feels left out. Welcome her by name.',need:['sana','yes','welcome','of course','come','join']},
+ {who:'Hamza',text:'[sends a screenshot of an old message from Sana to laugh at it]',tip:'Sharing screenshots to laugh at someone spreads hurt. Ask for it to be deleted.',need:['delete','remove','not okay','not ok','not kind','stop','don\'t','dont','not fair','take it down']},
+ {who:'Ayesha',text:'Can we all bring water bottles? It is hot.',tip:'A normal message. Reply helpfully.',need:null},
+ {who:'Hamza',text:'ok sorry Sana. I should not have posted that.',tip:'Hamza apologised. Accept it kindly and move on.',need:['thank','thanks','okay','ok','sorry','good','fine','friends','great','well done','forgive']}
+];
+var UNKIND=['stupid','idiot','loser','ugly','shut up','hate','dumb','nobody','useless','fat','annoying','pagal','bewakoof','haha','lol','whatever','boring','go away'];
+var KIND=['please','thank','sorry','well done','great','nice','help','kind','good','let','can we','friend','together','welcome','everyone','join','yes','of course','see you','we can','team'];
+var si=0,mood=60,leftOut=false;
+function el(x){return document.getElementById(x)}
+function add(who,text,cls){var d=document.createElement('div');d.className='msg '+(cls||'');if(who){var w=document.createElement('div');w.className='who';w.textContent=who;d.appendChild(w)}d.appendChild(document.createTextNode(text));el('chat').appendChild(d);el('chat').scrollTop=99999}
+function setMood(){var f=el('fill');mood=Math.max(0,Math.min(100,mood));f.style.width=mood+'%';f.style.background=mood>=65?'var(--go)':(mood>=40?'var(--warn)':'var(--stop)');el('moodtxt').textContent=mood>=65?'Friendly and kind':(mood>=40?'A bit tense':'Unkind. Someone may be hurt.')}
+function step(){if(si>=STEPS.length){add('','End of chat. Look at the mood bar. What helped most?','sys');el('coach').textContent='Talk with your partner: which reply changed the mood most?';return}
+ var s=STEPS[si];add(s.who,s.text);el('coach').textContent=s.tip;
+ if(s.need&&s.who==='Hamza'&&si<5){mood-=15;leftOut=(si===1||si===3)}setMood();
+ var a=el('alert');if(leftOut){a.style.display='block';a.textContent=si===1?'Someone is being left out. What will you say?':'A screenshot is being used to laugh at someone. What will you do?'}else a.style.display='none'}
+function send(){var t=el('inp').value.trim();if(!t||si>=STEPS.length)return;add('You',t,'me');el('inp').value='';
+ var low=t.toLowerCase(),s=STEPS[si],d=0;
+ UNKIND.forEach(function(w){if(low.indexOf(w)>=0)d-=18});
+ var k=0;KIND.forEach(function(w){if(low.indexOf(w)>=0)k++});d+=Math.min(k,3)*7;
+ if((t.match(/\b[A-Z]{3,}\b/g)||[]).length>=2)d-=10;
+ var met=!s.need||s.need.some(function(w){return low.indexOf(w)>=0});
+ if(s.need&&met){d+=18;leftOut=false;add('','Nice! Your reply helped.','sys')}
+ else if(s.need&&!met){add('','Hmm. Did your reply help with the problem? Try another reply.','sys');mood+=d;setMood();return}
+ mood+=d;setMood();el('alert').style.display=leftOut?'block':'none';si++;setTimeout(step,700)}
+function restart(){el('chat').innerHTML='';si=0;mood=60;leftOut=false;el('alert').style.display='none';setMood();add('','You joined Team Falcons chat','sys');setTimeout(step,400)}
+restart();
+</script></body></html>

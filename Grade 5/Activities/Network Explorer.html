@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Network Explorer</title>
+<style>
+:root{--ink:#1d2a44;--head:#1565c0}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#e9f1fb;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px}header h1{margin:0;font-size:26px}
+main{max-width:1150px;margin:14px auto;padding:0 14px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:880px){main{grid-template-columns:1fr}}
+.box{background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.full{grid-column:1/-1}
+h2{margin:0 0 8px;font-size:20px}
+input#m{width:100%;font-size:22px;padding:10px;border-radius:12px;border:3px solid #c9cfdb}
+.mode button{font-size:18px;font-weight:bold;border:3px solid var(--head);border-radius:12px;padding:10px 14px;cursor:pointer;margin:8px 6px 0 0;background:#fff;color:var(--head)}
+.mode button.on{background:var(--head);color:#fff}
+button.go{font-size:21px;font-weight:bold;border:none;border-radius:14px;padding:12px 22px;cursor:pointer;color:#fff;background:#2e9e57;margin-top:10px}
+svg{width:100%;display:block}
+.pk{display:inline-block;font:bold 19px Consolas,monospace;background:#fff3c2;border:2px solid #e0b100;border-radius:8px;padding:5px 8px;margin:4px}
+.pk small{font:12px Arial;color:#56627a;display:block}
+.spy{min-height:70px}
+.say{font-size:19px;line-height:1.45;margin-top:8px}
+</style></head>
+<body><header><h1>Network Explorer</h1></header>
+<main>
+<div class="box">
+ <h2>1. Write a pretend message</h2>
+ <input id="m" maxlength="40" value="MY GAME NAME IS STAR KID">
+ <div class="mode" id="mode"><button id="mO" class="on" onclick="mode(false)">Open cafe Wi-Fi (no lock)</button><button id="mE" onclick="mode(true)">Encrypted (padlock)</button></div>
+ <button class="go" onclick="send()">Send it</button>
+ <div class="say" id="say">Messages do not travel in one piece. They are cut into small <b>packets</b>. Each packet has a number so the other end can put it back in order.</div>
+</div>
+<div class="box">
+ <h2>2. What the snooper on the cafe Wi-Fi sees</h2>
+ <div class="spy" id="spy">Nothing yet.</div>
+ <h2 style="margin-top:12px">3. What arrives at the website</h2>
+ <div id="arr">Nothing yet.</div><div class="say" id="arrsay"></div>
+</div>
+<div class="box full">
+ <svg viewBox="0 0 1000 300" id="map">
+  <rect x="30" y="110" width="130" height="80" rx="10" fill="#2f6fd6"/><text x="95" y="225" font-size="20" text-anchor="middle" font-family="Arial">Your laptop</text>
+  <circle cx="330" cy="150" r="45" fill="#7a3fb0"/><text x="330" y="225" font-size="20" text-anchor="middle" font-family="Arial">Cafe Wi-Fi</text>
+  <path d="M310 135 Q330 120 350 135 M300 125 Q330 100 360 125" stroke="#fff" stroke-width="5" fill="none"/>
+  <ellipse cx="610" cy="150" rx="110" ry="60" fill="#9aa6bd"/><text x="610" y="158" font-size="22" text-anchor="middle" font-family="Arial" fill="#fff">Internet</text>
+  <rect x="850" y="95" width="100" height="110" rx="10" fill="#2e9e57"/><text x="900" y="235" font-size="20" text-anchor="middle" font-family="Arial">Website</text>
+  <rect x="285" y="250" width="90" height="40" rx="8" fill="#d64545"/><text x="330" y="276" font-size="17" text-anchor="middle" font-family="Arial" fill="#fff">Snooper</text>
+  <line x1="330" y1="195" x2="330" y2="250" stroke="#d64545" stroke-width="3" stroke-dasharray="6 5"/>
+  <line x1="160" y1="150" x2="285" y2="150" stroke="#c3c9d4" stroke-width="4"/><line x1="375" y1="150" x2="500" y2="150" stroke="#c3c9d4" stroke-width="4"/><line x1="720" y1="150" x2="850" y2="150" stroke="#c3c9d4" stroke-width="4"/>
+  <g id="lock" style="display:none"><rect x="80" y="40" width="30" height="24" rx="4" fill="#f2b705"/><path d="M86 40 V32 a9 9 0 0 1 18 0 V40" stroke="#f2b705" stroke-width="5" fill="none"/></g>
+  <g id="pk"></g>
+ </svg>
+ <div style="font-size:17px;text-align:center">Public Wi-Fi in a cafe, airport or mall can be watched. Only use it with a grown-up. Never type passwords or private details on open Wi-Fi.</div>
+</div>
+</main>
+<script>
+var enc=false,busy=false;
+function el(x){return document.getElementById(x)}
+function mode(e){enc=e;el('mO').className=e?'':'on';el('mE').className=e?'on':'';el('lock').style.display=e?'':'none'}
+function scramble(t){var c='QZXJKVWYPHMF#%&@*';return t.split('').map(function(){return c[Math.floor(Math.random()*c.length)]}).join('')}
+function send(){if(busy)return;var m=el('m').value.toUpperCase();if(!m.trim())return;busy=true;
+ var P=[];for(var i=0;i<m.length;i+=5)P.push({n:P.length+1,t:m.substr(i,5)});P.forEach(function(p){p.s=enc?scramble(p.t):p.t});
+ el('spy').innerHTML='';el('arr').innerHTML='';el('arrsay').textContent='';el('say').innerHTML='Cut into <b>'+P.length+' packets</b>. Watch them travel.';
+ var order=P.slice().sort(function(){return Math.random()-.5}),g=el('pk'),k=0;
+ function one(){if(k>=order.length){finish(P,order);return}var p=order[k++],x=160,y=140+((k%3)-1)*14;
+  var r=document.createElementNS('http://www.w3.org/2000/svg','g');r.innerHTML='<rect width="56" height="26" rx="6" fill="#fff3c2" stroke="#e0b100" stroke-width="2"/><text x="28" y="18" font-size="15" text-anchor="middle" font-family="Arial">#'+p.n+'</text>';g.appendChild(r);
+  var spied=false,iv=setInterval(function(){x+=14;r.setAttribute('transform','translate('+x+','+y+')');
+   if(!spied&&x>300){spied=true;el('spy').innerHTML+='<span class="pk"><small>packet '+p.n+'</small>'+p.s.replace(/ /g,'&nbsp;')+'</span>'}
+   if(x>840){clearInterval(iv);g.removeChild(r);el('arr').innerHTML+='<span class="pk"><small>packet '+p.n+'</small>'+p.t.replace(/ /g,'&nbsp;')+'</span>'}},30);
+  setTimeout(one,450)}
+ one()}
+function finish(P,order){setTimeout(function(){busy=false;var mixed=order.some(function(p,i){return p.n!==i+1});
+ el('arrsay').innerHTML=(mixed?'The packets arrived in a mixed order. ':'')+'The website uses the numbers to rebuild: <b>'+P.map(function(p){return p.t}).join('')+'</b>';
+ el('say').innerHTML=enc?'<b style="color:#2e9e57">Encrypted!</b> The snooper only saw scrambled packets. Only the website has the key to unscramble them.':'<b style="color:#d64545">The snooper read your message!</b> On open Wi-Fi with no lock, anyone nearby with the right tools can read packets. Switch to Encrypted and send again.'},1400)}
+</script></body></html>

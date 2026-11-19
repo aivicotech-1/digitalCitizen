@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Message Makeover Studio</title>
+<style>
+:root{--ink:#1d2a44;--go:#2e9e57;--warn:#e0a400;--stop:#d93a3a;--head:#d1495b}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#fff1f3;color:var(--ink)}
+header{background:var(--head);color:#fff;padding:14px 20px}header h1{margin:0;font-size:26px}
+main{max-width:980px;margin:16px auto;padding:0 16px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){main{grid-template-columns:1fr}}
+.box{background:#fff;border-radius:18px;padding:18px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+h2{margin:0 0 10px;font-size:22px}
+.orig{font-size:22px;background:#f4f6fa;border-radius:12px;padding:12px;margin:8px 0;font-weight:bold}
+textarea{width:100%;font-size:21px;padding:12px;border-radius:12px;border:3px solid #c9cfdb;min-height:110px;font-family:inherit}
+.emo button,.ctl button{font-size:19px;border:none;border-radius:12px;padding:10px 12px;margin:4px;cursor:pointer;background:#eef1f7}
+.ctl button{color:#fff;font-weight:bold}
+.meter{height:34px;border-radius:17px;background:#e3e7ef;overflow:hidden;margin-top:8px}.fill{height:100%;width:50%;transition:width .3s,background .3s}
+.label{font-size:22px;font-weight:bold;margin-top:8px}
+ul{font-size:18px;padding-left:22px}
+.bubble{background:#dcf8c6;border-radius:14px;padding:12px 14px;font-size:20px;margin-top:10px;min-height:48px;white-space:pre-wrap}
+.done{color:var(--go);font-weight:bold;font-size:20px}
+</style></head>
+<body><header><h1>Message Makeover Studio</h1></header>
+<main>
+<div class="box">
+  <h2>Challenge <span id="num">1</span> of <span id="tot"></span></h2>
+  <p style="font-size:18px">This message could hurt or confuse someone. Rewrite it so it is <b>clear and kind</b>.</p>
+  <div class="orig" id="orig"></div>
+  <textarea id="msg" placeholder="Type your new message here" oninput="rate()"></textarea>
+  <div class="emo">Add a feeling:
+    <button onclick="addE(' :) ')">:) smile</button><button onclick="addE(' thumbs up ')">thumbs up</button><button onclick="addE(' :( ')">:( sad</button><button onclick="addE(' >:( ')">&gt;:( angry</button>
+  </div>
+  <div class="ctl">
+    <button style="background:#2f6fd6" onclick="useOrig()">Start from the old message</button>
+    <button style="background:#8a95a8" onclick="setMsg('')">Clear</button>
+    <button style="background:var(--ink)" onclick="nextC()">Next challenge</button>
+  </div>
+  <p id="saved" class="done"></p>
+</div>
+<div class="box">
+  <h2>Tone meter</h2>
+  <div class="meter"><div class="fill" id="fill"></div></div>
+  <div class="label" id="label">Type a message to see how it might feel.</div>
+  <ul id="tips"></ul>
+  <h2 style="margin-top:16px">How it looks in the chat</h2>
+  <div class="bubble" id="bubble"></div>
+  <p style="font-size:16px;color:#56627a">The meter is a helper, not a judge. Read your message aloud and ask: how would I feel if I got this? Nothing is saved or sent.</p>
+</div>
+</main>
+<script>
+var CH=['WHY DIDNT YOU COME TO PRACTICE!!!','your drawing is weird lol','ok.','nobody wants you in our team','u r so slow, just leave the game','stop messaging me'];
+var UNKIND=['stupid','idiot','loser','ugly','shut up','hate','dumb','nobody','weird','useless','just leave','so slow','fat','annoying','pagal','bewakoof','lol','whatever','boring','go away'];
+var KIND=['please','thank','sorry','well done','great','nice','help','kind','good','let\'s','lets','can we','friend','together','hope','miss','welcome','next time','would you','could you','i feel','are you ok','are you okay','join','love','cool','awesome'];
+var ci=0;
+function el(x){return document.getElementById(x)}
+function setMsg(t){el('msg').value=t;rate()}
+function useOrig(){setMsg(CH[ci])}
+function addE(e){el('msg').value=(el('msg').value+e).replace(/\s+/g,' ');rate()}
+function show(){el('num').textContent=ci+1;el('tot').textContent=CH.length;el('orig').textContent='"'+CH[ci]+'"';setMsg('');el('saved').textContent=''}
+function nextC(){ci=(ci+1)%CH.length;show()}
+function rate(){
+  var m=el('msg').value,low=m.toLowerCase(),sc=55,tips=[],good=[];
+  el('bubble').textContent=m;
+  if(!m.trim()){el('fill').style.width='0';el('label').textContent='Type a message to see how it might feel.';el('tips').innerHTML='';return}
+  UNKIND.forEach(function(w){if(low.indexOf(w)>=0){sc-=22;tips.push('"'+w+'" may hurt or sound rude.')}});
+  var kinds=0;KIND.forEach(function(w){if(low.indexOf(w)>=0)kinds++});if(kinds){sc+=Math.min(kinds,3)*12;good.push('Kind words help.')}
+  var caps=(m.match(/\b[A-Z]{3,}\b/g)||[]).length;if(caps>=2){sc-=18;tips.push('Lots of CAPITALS can look like shouting.')}
+  if(/!!/.test(m)){sc-=10;tips.push('Many !!! can sound angry.')}
+  if(m.indexOf('>:(')>=0){sc-=12;tips.push('The angry face makes it feel cross.')}
+  if(m.indexOf(':)')>=0||low.indexOf('thumbs up')>=0){sc+=8;good.push('A friendly face shows your tone.')}
+  var words=m.trim().split(/\s+/).length;if(words<=2){sc-=12;tips.push('Very short replies can seem cold or unclear. Add a few words.')}
+  if(/\b(u|r|ur)\b/i.test(m)){sc-=4;tips.push('Write full words so it is clear.')}
+  if(/\?/.test(m)&&kinds){sc+=5;good.push('Asking a kind question invites a reply.')}
+  sc=Math.max(0,Math.min(100,sc));
+  var f=el('fill');f.style.width=sc+'%';f.style.background=sc>=70?'var(--go)':(sc>=45?'var(--warn)':'var(--stop)');
+  el('label').textContent=sc>=70?'Clear and kind!':(sc>=45?'Could be read the wrong way.':'This could hurt.');
+  el('tips').innerHTML=tips.concat(good).map(function(t){return '<li>'+t+'</li>'}).join('');
+  el('saved').textContent=sc>=70?'Great makeover! Read it to your partner, then try the next challenge.':'';
+}
+show();
+</script></body></html>
