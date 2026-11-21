@@ -4,19 +4,17 @@
   const $ = selector => document.querySelector(selector);
   const grid = $('#activity-grid');
   const search = $('#activity-search');
-  const dialog = $('#activity-dialog');
-  const frame = $('#activity-frame');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const gradeCopy = {
-    2: ['A great place to begin', 'Big discoveries start with small, everyday choices.'],
-    3: ['A little wiser. A lot safer.', 'Get curious about privacy, sharing and your online identity.'],
-    4: ['Good choices start with you', 'Practise kind connections and build your digital defences.'],
-    5: ['Look closer. Think deeper.', 'Investigate the clues and put your cyber skills into action.']
+    2: ['Grade 2 · The Explorers', 'Big discoveries start with small, everyday choices.'],
+    3: ['Grade 3 · The Protectors', 'Get curious about privacy, sharing and your online identity.'],
+    4: ['Grade 4 · The Connectors', 'Practise kind connections and build your digital defences.'],
+    5: ['Grade 5 · The Detectives', 'Investigate the clues and put your cyber skills into action.']
   };
-  let selectedGrade = 2;
-  let launchingElement;
-  let activeActivity;
-  let loadTimeout;
+  const gradeParam = new URLSearchParams(window.location.search).get('grade');
+  const requestedGrade = Number(gradeParam);
+  const singleGradeMode = Boolean(gradeParam && gradeCopy[requestedGrade]);
+  let selectedGrade = gradeCopy[requestedGrade] ? requestedGrade : 2;
   const esc = value => String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
   const fileUrl = activity => activity.path.split('/').map(encodeURIComponent).join('/');
 
@@ -53,6 +51,7 @@
   });
 
   function render() {
+    if (!grid || !search) return;
     const query = search.value.trim().toLocaleLowerCase();
     const allInGrade = activities.filter(activity => activity.grade === selectedGrade);
     const matching = allInGrade.filter(activity => `${activity.title} ${activity.topic} ${activity.type} ${activity.description}`.toLocaleLowerCase().includes(query));
@@ -63,10 +62,11 @@
     $('#clear-search').hidden = !search.value;
     $('#empty-state').hidden = matching.length > 0;
     search.setAttribute('aria-label', `Search Grade ${selectedGrade} activities`);
+    document.title = `Grade ${selectedGrade} Activities — Skill2Success`;
     grid.querySelectorAll('.reveal-pending').forEach(revealElement);
     grid.innerHTML = matching.map(activity => `<article class="activity-card" style="--cover:${esc(activity.color)}">
       <div class="activity-cover"><span class="activity-type">${esc(activity.type)}</span><svg aria-hidden="true" viewBox="0 0 320 220"><use href="#art-${esc(activity.art)}"/></svg></div>
-      <div class="activity-content"><span class="activity-topic">${esc(activity.topic)}</span><h3>${esc(activity.title)}</h3><p>${esc(activity.description)}</p><div class="activity-action"><span>Grade ${activity.grade}</span><a class="start-activity" href="${fileUrl(activity)}" data-activity="${esc(activity.id)}" aria-label="Start ${esc(activity.title)}">Start activity <svg class="icon" aria-hidden="true"><use href="#icon-play"/></svg></a></div></div>
+      <div class="activity-content"><span class="activity-topic">${esc(activity.topic)}</span><h3>${esc(activity.title)}</h3><p>${esc(activity.description)}</p><div class="activity-action"><span>Grade ${activity.grade}</span><a class="start-activity" href="${fileUrl(activity)}" target="_blank" rel="noopener" data-activity="${esc(activity.id)}" aria-label="Start ${esc(activity.title)} (opens in new tab)">Start activity <svg class="icon" aria-hidden="true"><use href="#icon-play"/></svg></a></div></div>
     </article>`).join('');
     watchReveals(grid.querySelectorAll('.activity-card'));
   }
@@ -74,77 +74,31 @@
   function selectGrade(grade, scroll = false) {
     if (!gradeCopy[grade]) return;
     selectedGrade = grade;
-    search.value = '';
+    if (search) search.value = '';
     document.querySelectorAll('[data-grade]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.grade) === grade)));
+    const url = new URL(window.location.href);
+    url.searchParams.set('grade', String(grade));
+    window.history.replaceState({}, '', url);
     render();
-    if (scroll) $('#activities').scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
+    if (scroll && $('#activities')) $('#activities').scrollIntoView({ behavior: motion.matches ? 'instant' : 'smooth', block: 'start' });
   }
 
-  function showLoadError() {
-    clearTimeout(loadTimeout);
-    $('#viewer-loading').hidden = true;
-    $('#viewer-error').hidden = false;
+  if (grid && search) {
+    if (singleGradeMode) {
+      $('#all-grades-heading')?.setAttribute('hidden', '');
+      $('#grade-switcher')?.setAttribute('hidden', '');
+      $('#activities')?.classList.add('single-grade');
+    }
+    document.querySelectorAll('[data-grade]').forEach(button => {
+      button.setAttribute('aria-pressed', String(Number(button.dataset.grade) === selectedGrade));
+      button.addEventListener('click', () => selectGrade(Number(button.dataset.grade)));
+    });
+    search.addEventListener('input', render);
+    function resetSearch() { search.value = ''; render(); search.focus(); }
+    $('#clear-search').addEventListener('click', resetSearch);
+    $('#reset-search').addEventListener('click', resetSearch);
   }
 
-  function openActivity(activity, trigger) {
-    activeActivity = activity;
-    launchingElement = trigger;
-    $('#viewer-title').textContent = activity.title;
-    $('#viewer-grade').textContent = `Grade ${activity.grade} · ${activity.type}`;
-    $('#open-tab').href = fileUrl(activity);
-    frame.title = `${activity.title} — Grade ${activity.grade}`;
-    $('#viewer-loading').hidden = false;
-    $('#viewer-error').hidden = true;
-    document.body.classList.add('modal-open');
-    dialog.showModal();
-    $('#close-activity').focus({ preventScroll: true });
-    clearTimeout(loadTimeout);
-    loadTimeout = setTimeout(showLoadError, 12000);
-    frame.src = fileUrl(activity);
-  }
-
-  function closeActivity() { dialog.close(); }
-  dialog.addEventListener('close', () => {
-    activeActivity = null;
-    clearTimeout(loadTimeout);
-    document.body.classList.remove('modal-open');
-    frame.src = 'about:blank';
-    launchingElement?.focus({ preventScroll: true });
-  });
-  $('#close-activity').addEventListener('click', closeActivity);
-  dialog.addEventListener('click', event => { if (event.target === dialog) closeActivity(); });
-  frame.addEventListener('error', showLoadError);
-  frame.addEventListener('load', () => {
-    if (!activeActivity || frame.getAttribute('src') === 'about:blank') return;
-    clearTimeout(loadTimeout);
-    // Same-origin preview can verify the page and make Escape work inside the activity.
-    // Local file browsers may isolate frames; the close and new-tab controls still work.
-    try {
-      const doc = frame.contentDocument;
-      if (doc && (!doc.querySelector('h1') || doc.title === 'Not found')) { showLoadError(); return; }
-      doc?.addEventListener('keydown', event => {
-        if (event.key === 'Escape') { event.preventDefault(); closeActivity(); }
-      });
-    } catch { /* file:// cross-document access may be restricted */ }
-    $('#viewer-loading').hidden = true;
-  });
-  grid.addEventListener('click', event => {
-    const link = event.target.closest('[data-activity]');
-    if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-    const activity = activities.find(item => item.id === link.dataset.activity);
-    if (!activity) return;
-    event.preventDefault();
-    openActivity(activity, link);
-  });
-  document.querySelectorAll('[data-grade]').forEach(button => button.addEventListener('click', () => selectGrade(Number(button.dataset.grade))));
-  document.querySelectorAll('[data-grade-link]').forEach(link => link.addEventListener('click', event => {
-    event.preventDefault();
-    selectGrade(Number(link.dataset.gradeLink), true);
-  }));
-  search.addEventListener('input', render);
-  function resetSearch() { search.value = ''; render(); search.focus(); }
-  $('#clear-search').addEventListener('click', resetSearch);
-  $('#reset-search').addEventListener('click', resetSearch);
   document.querySelectorAll('[data-count]').forEach(element => {
     const count = activities.filter(activity => activity.grade === Number(element.dataset.count)).length;
     element.textContent = `${count} ${count === 1 ? 'activity' : 'activities'}`;
@@ -171,14 +125,16 @@
   function updateScroll() {
     scheduled = false;
     header.classList.toggle('scrolled', window.scrollY > 12);
-    if (!motion.matches && window.innerWidth > 560) {
+    if (hero && gallery && !motion.matches && window.innerWidth > 560) {
       const progress = Math.min(1, Math.max(0, window.scrollY / hero.offsetHeight));
       gallery.style.setProperty('--spread', progress.toFixed(3));
       gallery.style.setProperty('--lift', `${(-progress * 24).toFixed(1)}px`);
     }
   }
   window.addEventListener('scroll', () => { if (!scheduled) { scheduled = true; requestAnimationFrame(updateScroll); } }, { passive: true });
-  watchReveals(document.querySelectorAll('.reveal, .grade-card, .library-heading, .library-meta, .library-note, .footer-top > *, .footer-bottom'));
+  if (!document.body.classList.contains('activities-page')) {
+    watchReveals(document.querySelectorAll('.reveal, .grade-card, .library-heading, .library-meta, .library-note, .footer-top > *, .footer-bottom'));
+  }
   $('#year').textContent = new Date().getFullYear();
   render();
   updateScroll();
