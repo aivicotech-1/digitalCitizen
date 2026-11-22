@@ -1,0 +1,21 @@
+/* Shared screen palette. Print styles keep their original light backgrounds. */
+@media screen {
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --theme-bg: #101916;
+    --theme-surface: #19251f;
+    --theme-raised: #223129;
+    --theme-border: #3d5145;
+    --theme-text: #edf1e9;
+    --theme-muted: #b4c2b7;
+    --theme-accent: #a7d6b7;
+    --theme-accent-ink: #12271c;
+    --theme-gold: #e4bf80;
+    --theme-good: #a6dfb8;
+    --theme-good-bg: #203d2e;
+    --theme-bad: #ffb1ba;
+    --theme-bad-bg: #44272e;
+    --theme-warn: #f0ce8c;
+    --theme-warn-bg: #3d3421;
+  }
+}

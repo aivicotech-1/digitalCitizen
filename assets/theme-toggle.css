@@ -1,0 +1,40 @@
+:root { color-scheme: light; }
+/* Anchor desktop navigation to the page centre, independent of either side. */
+.header-inner { position:relative; justify-content:flex-start; gap:20px; }
+.header-inner .brand { margin-right:auto; }
+.header-inner .header-cta { margin-left:0; flex-shrink:0; }
+.header-inner .desktop-nav { flex-shrink:0; margin:0; }
+@media (min-width:821px) {
+  .header-inner .desktop-nav { position:absolute; left:50%; transform:translateX(-50%); }
+}
+/* Leave room for the centred links on smaller desktop/tablet widths. */
+@media (min-width:821px) and (max-width:1000px) {
+  .header-inner .header-cta { display:none; }
+}
+html body button.theme-toggle {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  flex-shrink:0; min-width:44px; min-height:44px; margin:0; padding:10px 13px;
+  border:1px solid #bac8ba; border-radius:9px; background:#e8eee4; color:#294f40;
+  font:600 14px/1.3 'Segoe UI',Arial,sans-serif; white-space:nowrap; cursor:pointer;
+  transition:background-color .16s ease,border-color .16s ease;
+}
+html body button.theme-toggle:hover { background:#dbe7d5; border-color:#729079; }
+html body button.theme-toggle:focus-visible { outline:3px solid #977038; outline-offset:4px; }
+.theme-toggle svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.theme-toggle .theme-sun { display:none; }
+.activity-navigation .activity-description-trigger { margin-left:auto; }
+@media screen {
+  :root[data-theme="dark"] { color-scheme:dark; }
+  :root[data-theme="dark"] body button.theme-toggle { background:#223129; color:#edf1e9; border-color:#607968; }
+  :root[data-theme="dark"] body button.theme-toggle:hover { background:#314c3b; border-color:#a7d6b7; }
+  :root[data-theme="dark"] body button.theme-toggle:focus-visible { outline-color:#e4bf80; }
+}
+:root[data-theme="dark"] .theme-toggle .theme-sun { display:block; }
+:root[data-theme="dark"] .theme-toggle .theme-moon { display:none; }
+@media (max-width:560px) {
+  .theme-toggle-label { display:none; }
+  html body button.theme-toggle { padding:10px; }
+  .header-inner { gap:12px; }
+}
+@media (prefers-reduced-motion:reduce) { html body button.theme-toggle { transition:none; } }
+@media print { html body button.theme-toggle { display:none; } }

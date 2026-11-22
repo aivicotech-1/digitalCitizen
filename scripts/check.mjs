@@ -14,7 +14,14 @@ for (const match of index.matchAll(/(?:href|aria-controls)="#?([^"/ .]+)"/g)) {
   if (match[0].startsWith('href="') && !match[0].startsWith('href="#')) continue;
   assert(ids.includes(match[1]), `Missing anchor: ${match[1]}`);
 }
-for (const script of ['app.js', 'activities.js', 'assets/activity-descriptions.js']) new vm.Script(await readFile(path.join(root, script), 'utf8'), { filename: script });
+for (const script of ['app.js', 'activities.js', 'assets/activity-descriptions.js', 'assets/theme.js']) new vm.Script(await readFile(path.join(root, script), 'utf8'), { filename: script });
+for (const page of ['index.html', 'activities.html', ...activities.map(activity => activity.path)]) {
+  const html = await readFile(path.join(root, page), 'utf8');
+  const theme = html.match(/<script src="([^"]*assets\/theme\.js)"><\/script>/);
+  assert(theme, `Missing early theme script: ${page}`);
+  assert(html.indexOf(theme[0]) < html.indexOf('<style') || html.indexOf('<style') < 0, `Theme loads after styles: ${page}`);
+  await access(path.resolve(root, path.dirname(page), theme[1]));
+}
 let inlineScripts = 0;
 for (const activity of activities) {
   const file = path.join(root, activity.path);

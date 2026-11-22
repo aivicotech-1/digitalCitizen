@@ -1,0 +1,36 @@
+/* Final soft dark theme: charcoal-green surfaces and light paper grade cards.
+   Shared by the homepage, library and activities; light mode is unaffected. */
+@media screen {
+  html:root[data-theme="dark"] {
+    --theme-bg:#293831;
+    --theme-surface:#34473c;
+    --theme-raised:#3e5245;
+    --theme-border:#718575;
+    --theme-text:#f2f3ec;
+    --theme-muted:#cbd5c9;
+    --theme-accent:#bee0bf;
+    --theme-accent-ink:#20382a;
+  }
+  html:root[data-theme="dark"] .site-header { background:#293831f5; }
+  html:root[data-theme="dark"] .learning-section { background:#314239; }
+  html:root[data-theme="dark"] .site-footer { background:#23332b; }
+  html:root[data-theme="dark"] .approach-art { background:#455b49; }
+  html:root[data-theme="dark"] .activity-cover { background:color-mix(in srgb,var(--cover,#dce5d9) 35%,#34473c); }
+
+  /* Light paper colours break up the darker canvas. */
+  html:root[data-theme="dark"] :is(.fan-card a,.fan-card button,.grade-card) { color:#25392e; border-color:#526753; box-shadow:0 8px 22px #14201926; }
+  html:root[data-theme="dark"] :is(.fan-one a,.fan-one button,.grade-2) { background:#d5c7a9; }
+  html:root[data-theme="dark"] :is(.fan-two a,.fan-two button,.grade-3) { background:#bfcfb5; }
+  html:root[data-theme="dark"] :is(.fan-three a,.fan-three button,.grade-4) { background:#cdc2d5; }
+  html:root[data-theme="dark"] :is(.fan-four a,.fan-four button,.grade-5) { background:#bfd1d9; }
+  html:root[data-theme="dark"] :is(.fan-five a,.grade-6) { background:#d6c2b1; }
+  html:root[data-theme="dark"] :is(.grade-count,.postcard-bottom) { color:#435347; border-color:#25392e33; }
+
+  html:root[data-theme="dark"] body button.theme-toggle { background:#405648; border-color:#819786; }
+  html:root[data-theme="dark"] body.activity-ui > header { background:#293f32; border-bottom-color:#819786; }
+  html:root[data-theme="dark"] body.activity-ui :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),textarea,select) { background:#26382d; }
+  html:root[data-theme="dark"] body.activity-ui :is(.log,.feed),
+  html:root[data-theme="dark"] body.activity-ui[data-grade="6"] :is(.log,.feed) { background:#23332a; }
+  html:root[data-theme="dark"] body.activity-ui[data-grade="6"] .scr { background:#304337; }
+  html:root[data-theme="dark"] body.activity-ui[data-grade="6"] .bub { background:#435b49; }
+}

@@ -8,6 +8,7 @@ A digital citizenship website with **36 activities for Grades 2–6**, built wit
 - Open grades and activities in the same tab; use **Back** to return.
 - Select **Description** inside an activity for its purpose, instructions, learning outcomes and scoring.
 - Responsive layouts, keyboard controls and smooth scroll animations with reduced-motion support.
+- Switch between light and soft dark mode in the header; your browser remembers the choice across pages.
 
 | Grade | Activities |
 | --- | ---: |
@@ -51,6 +52,7 @@ On Windows, use `npm.cmd` instead of `npm` if PowerShell blocks `npm.ps1`.
 | `activities.js` | Generated catalogue; regenerate instead of editing manually. |
 | `Grade 2/` through `Grade 6/` | Each grade's `Activities/` folder contains its HTML activities. |
 | `assets/activity-ui.css` | Shared activity styling. |
+| `assets/theme.js`, `assets/theme-*.css` | Theme toggle, saved preference and shared colours. |
 | `assets/activity-descriptions.js` | Activity-specific description dialogs. |
 | `scripts/` | Preview server, catalogue generator and checks/tests. |
 
@@ -58,7 +60,7 @@ On Windows, use `npm.cmd` instead of `npm` if PowerShell blocks `npm.ps1`.
 
 1. Place the HTML file directly in `Grade N/Activities/` for a supported grade (2–6).
 2. Add its entry to `catalog-details.json`. The key must match the filename without `.html`. Follow an existing entry's `description`, `topic`, `type`, `art`, `color` and `order` fields.
-3. Follow an existing activity's shared stylesheet, header, Back link and Description button. Set the body's `data-grade` and unique `data-activity` value, and add the matching guide in `assets/activity-descriptions.js`.
+3. Follow an existing activity's shared stylesheet, early `theme.js` script, header, Back link and Description button. Set the body's `data-grade` and unique `data-activity` value, and add the matching guide in `assets/activity-descriptions.js`.
 4. Run `npm run refresh`, `npm run check` and `npm test`.
 5. Open the activity and check gameplay, scoring, restart, keyboard controls, descriptions and mobile layout.
 
