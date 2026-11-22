@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inbox Inspector</title>
+<style>
+:root{--acc:#38bdf8;--acc2:#818cf8;--acct:color-mix(in srgb,var(--acc) 62%,#0b1630);--bg:#f4f7fd;--panel:#ffffff;--line:rgba(30,55,110,.14);--ink:#16213e;--dim:#5a6888;--good:#0e9f6e;--bad:#e11d48;--warn:#c27c0e}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 60%),radial-gradient(900px 500px at 110% 10%,color-mix(in srgb,var(--acc2) 12%,transparent),transparent 60%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.35;pointer-events:none;mask-image:linear-gradient(#000,transparent 85%)}
+.hud{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(30,55,110,.06)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:.5px}
+.logo .dot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 40%,transparent);font-size:18px}
+.logo small{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.mission{flex:1;min-width:220px;font-size:14px;color:var(--dim)}
+.chip{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap;box-shadow:0 2px 8px rgba(30,55,110,.06)}
+.chip b{color:var(--acct)}
+.prog{height:6px;background:rgba(30,55,110,.08);position:sticky;top:0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s}
+main{max-width:1200px;margin:22px auto;padding:0 18px;position:relative}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 40px rgba(30,55,110,.10)}
+.panel h2{margin:0 0 10px;font-size:19px;letter-spacing:.3px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--acct);margin-bottom:6px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:1px solid transparent;border-radius:12px;padding:11px 16px;cursor:pointer;color:#06101f;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 30%,transparent);transition:transform .12s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.good{background:linear-gradient(135deg,#34d399,#2dd4bf)}.btn.bad{background:linear-gradient(135deg,#fb7185,#fb923c)}.btn.warn{background:linear-gradient(135deg,#fcd34d,#fb923c)}
+.mono{font-family:Consolas,"Cascadia Mono",monospace}
+.muted{color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);opacity:0;z-index:60;max-width:min(680px,92vw);padding:14px 18px;border-radius:14px;font-weight:600;font-size:15px;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 14px 40px rgba(30,55,110,.18);transition:.35s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.g{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 14px 40px rgba(14,159,110,.2)}
+.toast.b{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad),0 14px 40px rgba(225,29,72,.2)}
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(22,33,62,.35);backdrop-filter:blur(6px)}
+.modal.on{display:grid}
+.mbox{width:min(560px,92vw);text-align:center;padding:30px;border-radius:24px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(30,55,110,.25);animation:pop .45s ease}
+.badge{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;font-size:54px;background:conic-gradient(from 0deg,var(--acc),var(--acc2),var(--acc));box-shadow:0 10px 30px color-mix(in srgb,var(--acc) 45%,transparent);animation:spin 6s linear infinite}
+.badge span{animation:spin 6s linear infinite reverse;display:block}
+.stars{font-size:34px;letter-spacing:6px;margin:6px 0}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes glow{50%{box-shadow:0 0 22px color-mix(in srgb,var(--acc) 60%,transparent)}}
+.shake{animation:shake .4s}
+.foot{max-width:1200px;margin:10px auto 30px;padding:0 18px;font-size:12px;color:var(--dim);text-align:center}
+@media(max-width:760px){.hud{padding:10px 14px}.logo{font-size:18px}}
+
+.mail{display:grid;grid-template-columns:360px 1fr;gap:16px;min-height:560px}
+@media(max-width:860px){.mail{grid-template-columns:1fr}}
+.list{padding:8px;overflow:auto;max-height:640px}
+.item{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:12px;border-radius:14px;cursor:pointer;border:1px solid transparent;transition:.2s;margin-bottom:6px}
+.item:hover{background:rgba(30,55,110,0.08000000000000002)}.item.sel{background:color-mix(in srgb,var(--acc) 14%,transparent);border-color:var(--acc)}
+.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#06101f}
+.item .s{font-size:13px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item.done{opacity:.55}.stamp{font-size:11px;font-weight:800;padding:3px 8px;border-radius:8px}
+.read{padding:22px;position:relative}
+.from{display:flex;gap:14px;align-items:center;margin-bottom:16px}
+.reveal{display:inline-block;margin-left:6px;padding:3px 9px;border-radius:8px;border:1px dashed var(--acc);color:var(--acct);font-size:12px;cursor:pointer}
+.real{font-family:Consolas,monospace;font-size:14px;padding:4px 10px;border-radius:8px;background:rgba(255,200,87,.12);color:var(--warn);display:none;margin-top:6px}
+.body{font-size:17px;line-height:1.6;background:rgba(30,55,110,0.048);border-radius:14px;padding:18px;border:1px solid var(--line)}
+.link{display:inline-block;margin-top:14px;padding:10px 16px;border-radius:10px;background:#2f6fd6;color:#fff;font-weight:700;cursor:help;position:relative}
+.tip{position:absolute;left:0;top:110%;white-space:nowrap;font-family:Consolas,monospace;font-size:13px;background:#000;color:var(--warn);padding:6px 10px;border-radius:8px;opacity:0;pointer-events:none;transition:.2s}
+.link:hover .tip{opacity:1}
+.att{display:inline-flex;gap:8px;align-items:center;margin-top:14px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(30,55,110,0.064);cursor:help}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.verdict{margin-top:16px;padding:14px;border-radius:14px;font-size:15px;line-height:1.5;display:none}
+.clues{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.clue{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+.clue.on{border-color:var(--warn);color:var(--warn)}
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="6" data-activity="inbox-inspector">
+<header class="hud"><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=6"><span aria-hidden="true">&larr;</span> Back to Grade 6 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 6 &middot; Digital citizenship</span></div><h1>Inbox Inspector</h1><div class="activity-status"><div class="chip">Step <b id="step">0 / 0</b></div><div class="chip">Score <b id="score">0</b></div></div><div class="mission">Mission: inspect 8 emails. Find the phishing before it finds you.</div></header>
+<div class="prog"><i id="progbar"></i></div>
+<main><div class="mail"><div class="panel list" id="list"></div><div class="panel read" id="read"><div class="tag">Inbox Inspector</div><h2>Choose an email on the left.</h2><p class="muted">Inspect the real sender and hover over links before you decide. Trust it, report it or delete it.</p></div></div></main>
+<div class="foot">Cyber Ops training activity. Everything here is made up for practice. No real accounts are used.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><div class="badge"><span id="mIcon"></span></div><h2 id="mTitle" style="margin:6px 0"></h2><div class="stars" id="mStars"></div><p id="mText" class="muted" style="font-size:16px;line-height:1.5"></p>
+<button class="btn" onclick="location.reload()">Play again</button> <button class="btn ghost" onclick="document.getElementById('modal').className='modal'">Close</button></div></div>
+<script>
+var SCORE=0;
+function $(x){return document.getElementById(x)}
+var AC=null;function sfx(t){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);var f={good:[660,990],bad:[220,140],click:[520,520],alarm:[880,440],win:[523,1046]}[t]||[500,500];o.type=t==='bad'||t==='alarm'?'sawtooth':'sine';o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.18);g.gain.setValueAtTime(.08,n);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+var TT=null;function toast(m,k){var t=$('toast');t.innerHTML=m;t.className='toast on '+(k||'');clearTimeout(TT);TT=setTimeout(function(){t.className='toast'},3600)}
+function addScore(n){SCORE=Math.max(0,SCORE+n);$('score').textContent=SCORE}
+function prog(a,b){$('progbar').style.width=Math.round(a/b*100)+'%';$('step').textContent=a+' / '+b}
+function finish(icon,title,text,stars){sfx('win');$('mIcon').textContent=icon;$('mTitle').textContent=title;$('mText').innerHTML=text;$('mStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);$('modal').className='modal on'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var E=[{"n": "Sunrise School", "a": "office@sunrise-school.edu.pk", "s": "Sports Day timetable", "t": "9:12", "b": "Dear pupils, the Sports Day timetable is ready. Please check your race times with your class teacher.", "lt": "View timetable", "lu": "https://sunrise-school.edu.pk/sports", "att": "", "ph": false, "why": "Real school address, no hurry, link goes to the real school site."}, {"n": "FunPlay Support", "a": "support@funpIay-help.com", "s": "URGENT: account banned in 24 hours", "t": "9:40", "b": "We found strange activity. Verify your account in 24 hours or it will be deleted forever.", "lt": "Verify now", "lu": "http://funplay-verify.xyz/login", "att": "", "ph": true, "why": "Lookalike sender (funpIay with a capital I), hurry and threat, link goes to a different site."}, {"n": "Coach Imran", "a": "coach.imran.sunrise@gmail-mail.co", "s": "Ayesha, your cricket team photos", "t": "10:05", "b": "Hi Ayesha! Great match on Saturday. Your team photos are ready. Sign in to see them before they are removed.", "lt": "See your photos", "lu": "https://photo-share-login.net/signin", "att": "", "ph": true, "why": "Spear phishing: it knows your name and team, but the address is not the school and the link asks you to sign in on another site."}, {"n": "ShopMart", "a": "orders@shopmart.pk", "s": "Your order has shipped", "t": "11:20", "b": "Good news! The football boots you ordered last week are on their way.", "lt": "Track order", "lu": "https://shopmart.pk/track/58213", "att": "", "ph": false, "why": "Real shop address and link. It matches an order you really made."}, {"n": "BrightBank Security", "a": "alerts@brightbank.pk.secure-check.net", "s": "Unusual sign-in detected", "t": "12:02", "b": "Someone signed in from another country. Open your statement to check.", "lt": "", "lu": "", "att": "statement.pdf.exe", "ph": true, "why": "The real domain is secure-check.net, not brightbank.pk. The attachment ends in .exe: it is a program, not a PDF."}, {"n": "Principal Sunrise", "a": "principal.sunrise@outlook-mail.net", "s": "Quick favour, keep it secret", "t": "13:15", "b": "I am in a meeting. Please buy 5 gift cards and send me the codes. Do not tell anyone.", "lt": "", "lu": "", "att": "", "ph": true, "why": "The display name says Principal, but the address is not the school. Secret, urgent and asking for gift cards: a classic boss scam."}, {"n": "School Library", "a": "library@sunrise-school.edu.pk", "s": "Books due on Friday", "t": "14:30", "b": "Reminder: please return your library books by Friday. Thank you!", "lt": "", "lu": "", "att": "", "ph": false, "why": "Real school address, no link, no request for information."}, {"n": "Prize Team", "a": "winner@free-prizes-4u.biz", "s": "YOU WON a new games console!!!", "t": "15:48", "b": "Congratulations! Claim your prize now. Just pay the small delivery fee.", "lt": "Claim prize", "lu": "http://claim-now-prize.biz/pay", "att": "", "ph": true, "why": "You did not enter a competition. Prizes that ask for a fee are scams."}];
+var done={},cur=-1,cnt=0,right=0;
+var COL=['#6ee7ff','#ffc857','#ff7ab6','#9dff8a','#b69cff','#ffa36b','#7af0c9','#ff6b6b'];
+function list(){var focusId=document.activeElement.id;$('list').innerHTML=E.map(function(e,i){var d=done[i];return '<button type="button" id="email-'+i+'" class="item'+(i===cur?' sel':'')+(d?' done':'')+'" aria-pressed="'+(i===cur)+'" onclick="openE('+i+')"><span class="av" aria-hidden="true" style="background:'+COL[i]+'">'+e.n[0]+'</span><span><b>'+esc(e.n)+'</b><span class="s">'+esc(e.s)+'</span></span><span>'+(d?'<span class="stamp" style="background:'+(d.ok?'rgba(46,229,157,.18);color:#14a36b':'rgba(255,92,122,.18);color:#b80022')+'">'+d.lab+'</span>':'<span class="muted" style="font-size:12px">'+e.t+'</span>')+'</span></button>'}).join('');if(focusId&&$(focusId))$(focusId).focus()}
+function openE(i){cur=i;sfx('click');list();var e=E[i],d=done[i];
+ var h='<div class="tag">Message '+(i+1)+' of '+E.length+'</div><div class="from"><div class="av" style="background:'+COL[i]+';width:54px;height:54px;font-size:22px">'+e.n[0]+'</div><div><div style="font-size:20px;font-weight:800">'+esc(e.n)+' <button type="button" id="inspect-sender" class="reveal" aria-expanded="false" aria-controls="real" onclick="rev()">Inspect sender</button></div><div class="real" id="real">Real address: '+esc(e.a)+'</div></div></div>';
+ h+='<h2 style="font-size:22px">'+esc(e.s)+'</h2><div class="body">'+esc(e.b);
+ if(e.lt)h+='<br><button type="button" class="link" onmouseenter="clue(\'link\')" onfocus="clue(\'link\')" onclick="this.classList.toggle(\'revealed\');clue(\'link\')">'+esc(e.lt)+'<span class="tip">Goes to: '+esc(e.lu)+'</span></button>';
+ if(e.att)h+='<br><button type="button" class="att" onmouseenter="inspectAttachment()" onclick="inspectAttachment()">📎 <span class="mono">'+esc(e.att.split('.').slice(0,2).join('.'))+'</span></button><div id="attachment-name" class="real" aria-live="polite"></div>';
+ h+='</div><div class="clues"><span class="clue" id="c_send">Sender checked</span><span class="clue" id="c_link">Link checked</span><span class="clue" id="c_att">Attachment checked</span></div>';
+ h+='<div class="acts"><button class="btn good" onclick="act(\'trust\')">✅ Trust</button><button class="btn bad" onclick="act(\'report\')">🚩 Report phishing</button><button class="btn ghost" onclick="act(\'delete\')">🗑 Delete</button></div><div class="verdict" id="verdict"></div>';
+ $('read').innerHTML=h;if(d)showV(d)}
+function rev(){$('real').style.display='block';$('inspect-sender').setAttribute('aria-expanded','true');clue('send');sfx('click')}
+function inspectAttachment(){clue('att');$('attachment-name').textContent='Full file name: '+E[cur].att;$('attachment-name').style.display='block'}
+function clue(k){var c=$('c_'+k);if(c)c.className='clue on'}
+function act(a){if(done[cur])return;var e=E[cur],ok,pts,lab;
+ if(e.ph){if(a==='report'){ok=true;pts=10;lab='REPORTED'}else if(a==='delete'){ok=true;pts=5;lab='DELETED'}else{ok=false;pts=-5;lab='FELL FOR IT'}}
+ else{if(a==='trust'){ok=true;pts=10;lab='TRUSTED'}else{ok=false;pts=-3;lab='FALSE ALARM'}}
+ done[cur]={ok:ok,lab:lab,a:a};cnt++;if(ok)right++;addScore(pts);sfx(ok?'good':'bad');prog(cnt,E.length);list();showV(done[cur]);
+ if(!ok)$('read').classList.add('shake');setTimeout(function(){$('read').classList.remove('shake')},400);
+ if(cnt===E.length)setTimeout(function(){finish('📧','Inbox secured!','You judged '+right+' of '+E.length+' emails safely. Score: '+SCORE+'.<br>Remember: check the real sender, hover over links, look at the full file name and slow down when a message rushes you.',right>=8?3:right>=6?2:1)},900)}
+function showV(d){var e=E[cur],v=$('verdict');v.style.display='block';v.style.background=d.ok?'rgba(46,229,157,.10)':'rgba(255,92,122,.10)';v.style.border='1px solid '+(d.ok?'#2ee59d':'#ff5c7a');
+ v.innerHTML='<b>'+(e.ph?'🎣 This was PHISHING.':'✅ This email was SAFE.')+'</b> '+esc(e.why)+(d.a==='delete'&&e.ph?' <i>Deleting is safe, but reporting warns others too.</i>':'')+'<div class="real" style="display:block">Real address: '+esc(e.a)+'</div>'}
+prog(0,E.length);list();
+</script></body></html>

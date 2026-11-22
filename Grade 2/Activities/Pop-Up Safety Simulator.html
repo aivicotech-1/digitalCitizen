@@ -34,9 +34,9 @@
   .end { text-align:center; font-size:26px; }
   .bigstar { font-size:60px; color:#f2b632; }
 </style>
-</head>
-<body>
-<header>
+<link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="2" data-activity="pop-up-safety-simulator">
+<header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=2"><span aria-hidden="true">&larr;</span> Back to Grade 2 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 2 &middot; Digital citizenship</span></div>
   <h1>Pop-Up Safety Simulator</h1>
   <div class="stars" id="score">Stars: 0</div>
 </header>
@@ -66,12 +66,13 @@
       <button class="ok" onclick="answer('ok')">It is fine, keep going</button>
     </div>
     <div class="feedback" id="feedback"></div>
-    <div style="text-align:center"><button class="next" id="nextbtn" style="display:none" onclick="nextRound()">Next</button></div>
+    <div style="text-align:center"><button class="next" id="nextbtn" style="display:none" onclick="nextRound()" data-ui-action="next">Next</button>
+<button type="button" id="skip" class="activity-skip" data-ui-action="secondary" onclick="skipTask()" title="Move on without completing this task. No points are added.">Skip task</button></div>
   </div>
   <div id="done" style="display:none" class="end">
     <div class="bigstar" id="bigstars"></div>
     <p id="donemsg"></p>
-    <button class="next" onclick="showMenu()">Play again</button>
+    <button class="next" onclick="showMenu()" data-ui-action="secondary">Play again</button>
   </div>
 </main>
 <script>
@@ -102,12 +103,12 @@ function el(id){ return document.getElementById(id); }
 function showMenu(){ el('menu').style.display='block'; el('game').style.display='none'; el('done').style.display='none'; }
 function start(l){ level=l; i=0; stars=0; el('score').textContent='Stars: 0'; el('menu').style.display='none'; el('done').style.display='none'; el('game').style.display='block'; show(); }
 function show(){
-  var r = LEVELS[level][i]; answered=false;
+  var r = LEVELS[level][i]; answered=false; el('skip').style.display='inline-block';
   el('appname').textContent = r.app; el('kind').textContent = r.kind; el('msg').textContent = r.msg; el('fake').textContent = r.fake;
   el('feedback').style.display='none'; el('nextbtn').style.display='none'; el('choices').style.display='flex';
 }
 function answer(a){
-  if (answered) return; answered=true;
+  if (answered) return; answered=true; el('skip').style.display='none';
   var r = LEVELS[level][i]; var f = el('feedback');
   var good = (a===r.best) || (r.best==='ok' && a==='ask');
   if (a===r.best){ stars++; el('score').textContent='Stars: '+stars; }
@@ -116,6 +117,7 @@ function answer(a){
   f.textContent = head + r.why; f.style.display='block';
   el('choices').style.display='none'; el('nextbtn').style.display='inline-block';
 }
+function skipTask(){if(answered)return;answered=true;el('skip').style.display='none';nextRound()}
 function nextRound(){
   i++;
   if (i >= LEVELS[level].length){

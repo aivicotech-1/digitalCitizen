@@ -23,19 +23,20 @@
   .big { font-size:30px; }
   @media (max-width:560px){ .opts { grid-template-columns:1fr; } }
 </style>
-</head>
-<body>
-<header><h1>Smart Tech Habits Quiz</h1><div class="score" id="score">Score: 0</div></header>
+<link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="2" data-activity="smart-tech-habits-quiz">
+<header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=2"><span aria-hidden="true">&larr;</span> Back to Grade 2 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 2 &middot; Digital citizenship</span></div><h1>Smart Tech Habits Quiz</h1><div class="score" id="score">Score: 0</div></header>
 <main>
   <div id="play">
     <div class="q"><div class="num" id="num"></div><div id="text"></div></div>
     <div class="opts"><button class="a0" id="b0" onclick="pickA(0)"></button><button class="a1" id="b1" onclick="pickA(1)"></button></div>
     <div class="fb" id="fb"></div>
-    <button class="next" id="next" onclick="nextQ()">Next question</button>
+    <button class="next" id="next" onclick="nextQ()" data-ui-action="next">Next question</button>
+<button type="button" id="skip" class="activity-skip" data-ui-action="secondary" onclick="skipTask()" title="Move on without completing this task. No points are added.">Skip question</button>
   </div>
   <div id="end" style="display:none">
     <p class="big" id="endmsg"></p>
-    <button class="next" style="display:inline-block" onclick="restart()">Play again</button>
+    <button class="next" style="display:inline-block" onclick="restart()" data-ui-action="secondary">Play again</button>
   </div>
   <p style="font-size:16px;color:#56627a;margin-top:28px">A practice game for pairs. Nothing is saved or sent.</p>
 </main>
@@ -55,17 +56,18 @@ var Q = [
 var i=0, score=0, done=false;
 function el(id){ return document.getElementById(id); }
 function show(){
-  done=false; var q=Q[i];
+  done=false; el('skip').style.display='inline-block'; var q=Q[i];
   el('num').textContent='Question '+(i+1)+' of '+Q.length; el('text').textContent=q[0];
   el('b0').textContent=q[1][0]; el('b1').textContent=q[1][1];
   el('fb').style.display='none'; el('next').style.display='none';
 }
 function pickA(a){
-  if(done) return; done=true; var q=Q[i]; var ok=(a===q[2]);
+  if(done) return; done=true; el('skip').style.display='none'; var q=Q[i]; var ok=(a===q[2]);
   if(ok){ score++; el('score').textContent='Score: '+score; }
   var f=el('fb'); f.className='fb '+(ok?'good':'oops'); f.textContent=(ok?'Yes! ':'Not quite. ')+q[3]; f.style.display='block';
   el('next').style.display='inline-block';
 }
+function skipTask(){if(done)return;done=true;el('skip').style.display='none';nextQ()}
 function nextQ(){ i++; if(i>=Q.length){ el('play').style.display='none'; el('end').style.display='block'; el('endmsg').textContent='You scored '+score+' out of '+Q.length+'. Well done, smart tech user!'; } else show(); }
 function restart(){ i=0; score=0; el('score').textContent='Score: 0'; el('end').style.display='none'; el('play').style.display='block'; show(); }
 show();

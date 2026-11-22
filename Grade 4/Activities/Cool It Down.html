@@ -20,8 +20,8 @@ main{max-width:1000px;margin:14px auto;padding:0 14px;display:grid;grid-template
 .res{font-size:21px;font-weight:bold;margin-top:12px}
 .ctl button{font-size:19px;font-weight:bold;border:none;border-radius:12px;padding:10px 16px;cursor:pointer;color:#fff;margin-top:10px}
 @media(max-width:700px){main{grid-template-columns:1fr}.therm{height:200px}.tube{height:110px;bottom:50px}.bulb{width:50px;height:50px}}
-</style></head>
-<body><header><h1>Cool It Down</h1><div style="font-size:20px" id="scn"></div></header>
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="4" data-activity="cool-it-down"><header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=4"><span aria-hidden="true">&larr;</span> Back to Grade 4 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 4 &middot; Digital citizenship</span></div><h1>Cool It Down</h1><div style="font-size:20px" id="scn"></div></header>
 <main>
 <div class="therm"><div class="tlabel" id="tl">HOT</div><div class="tube"><div class="mercury" id="merc"></div></div><div class="bulb" id="bulb"></div></div>
 <div>
@@ -29,7 +29,7 @@ main{max-width:1000px;margin:14px auto;padding:0 14px;display:grid;grid-template
   <div class="chat" id="chat"></div>
   <div class="opts" id="opts"></div>
   <div class="res" id="res"></div>
-  <div class="ctl"><button style="background:var(--head)" onclick="nextS()">Next argument</button> <button style="background:#8a95a8" onclick="start()">Try again</button></div>
+  <div class="ctl"><button style="background:var(--head)" onclick="nextS()" data-ui-action="next">Next argument</button> <button style="background:#8a95a8" onclick="start()">Try again</button></div>
   <p style="font-size:15px;color:#56627a">Your reply changes the temperature. Get it down to COOL (blue). A pretend chat. Nothing is saved.</p>
 </div>
 </main>

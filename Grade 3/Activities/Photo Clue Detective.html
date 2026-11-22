@@ -13,14 +13,15 @@ svg{width:100%;max-width:900px;background:#fff;border-radius:18px;box-shadow:0 4
 .fb{font-size:21px;margin-top:12px;padding:12px;border-radius:12px;min-height:54px;background:#fff}
 button{font-size:20px;font-weight:bold;border:none;border-radius:14px;padding:14px 20px;cursor:pointer;color:#fff;background:var(--ink);margin:10px 6px}
 .note{font-size:16px;color:#56627a}
-</style></head>
-<body><header><h1>Photo Clue Detective</h1><div class="score" id="score">Clues: 0 / 5</div></header>
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="3" data-activity="photo-clue-detective"><header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=3"><span aria-hidden="true">&larr;</span> Back to Grade 3 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 3 &middot; Digital citizenship</span></div><h1>Photo Clue Detective</h1><div class="score" id="score">Clues: 0 / 5</div></header>
 <main>
 <p class="lead" id="lead">Scene 1: Sara wants to post this photo. Click every <b>private clue</b> that shows who she is or where she lives.</p>
 <div id="scene"></div>
 <div class="fb" id="fb">Click on things in the picture.</div>
-<button id="nextScene" onclick="go(1)" style="display:none">Next scene</button>
-<button onclick="go(0)" style="background:#8a95a8">Restart</button>
+<button id="nextScene" onclick="go(1)" style="display:none" data-ui-action="next">Next scene</button>
+<button type="button" id="skip" class="activity-skip" data-ui-action="secondary" onclick="skipTask()" title="Move on without completing this task. No points are added.">Skip scene</button>
+<button onclick="go(0)" style="background:#8a95a8" data-ui-action="secondary">Restart</button>
 <p class="note">All pictures are drawings. Nothing is saved or sent.</p>
 </main>
 <script>
@@ -58,13 +59,14 @@ var SCENES=[
 ];
 var s=0,found={};
 function el(x){return document.getElementById(x)}
-function render(){var sc=SCENES[s];found={};el('lead').innerHTML=sc.lead;el('scene').innerHTML=sc.svg;el('score').textContent='Clues: 0 / 5';el('fb').textContent='Click on things in the picture.';el('fb').style.background='#fff';el('nextScene').style.display='none';
+function render(){el('scene').style.display='block';el('skip').style.display='inline-block';var sc=SCENES[s];found={};el('lead').innerHTML=sc.lead;el('scene').innerHTML=sc.svg;el('score').textContent='Clues: 0 / 5';el('fb').textContent='Click on things in the picture.';el('fb').style.background='#fff';el('nextScene').style.display='none';
  document.querySelectorAll('.hot').forEach(function(g){g.addEventListener('click',function(){hit(g)})})}
 function hit(g){var id=g.getAttribute('data-id'),sc=SCENES[s];
  if(sc.clues[id]){if(!found[id]){found[id]=1;var b=g.getBBox();var r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x',b.x-6);r.setAttribute('y',b.y-6);r.setAttribute('width',b.width+12);r.setAttribute('height',b.height+12);r.setAttribute('fill','none');r.setAttribute('stroke','#d93a3a');r.setAttribute('stroke-width','6');r.setAttribute('rx','10');g.appendChild(r)}
   var n=Object.keys(found).length;el('score').textContent='Clues: '+n+' / 5';el('fb').textContent='Clue found! '+sc.clues[id];el('fb').style.background='#dff5e6';
-  if(n===5){el('fb').textContent='All 5 clues found! Before posting, crop or cover these, or choose a different photo.';el('nextScene').style.display=s<SCENES.length-1?'inline-block':'none';if(s===SCENES.length-1)el('fb').textContent+=' You are a Photo Clue Detective!'}}
+  if(n===5){el('skip').style.display='none';el('fb').textContent='All 5 clues found! Before posting, crop or cover these, or choose a different photo.';el('nextScene').style.display=s<SCENES.length-1?'inline-block':'none';if(s===SCENES.length-1)el('fb').textContent+=' You are a Photo Clue Detective!'}}
  else if(sc.safe[id]){el('fb').textContent=sc.safe[id];el('fb').style.background='#eef2f8'}}
+function skipTask(){if(s<SCENES.length-1){go(1)}else{el('scene').style.display='none';el('skip').style.display='none';el('nextScene').style.display='none';el('lead').textContent='Activity finished.';el('fb').textContent='You skipped the final scene. Restart any time to practise finding the private clues.'}}
 function go(n){s=n?s+1:0;render()}
 render();
 </script></body></html>

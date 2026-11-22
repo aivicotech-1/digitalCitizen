@@ -18,8 +18,8 @@ input[type=checkbox]{transform:scale(1.6)}
 button{font-size:20px;font-weight:bold;border:none;border-radius:14px;padding:12px 18px;cursor:pointer;color:#fff;margin:8px 6px 0 0}
 .log{font-size:18px;margin-top:10px;min-height:60px}
 table{border-collapse:collapse;width:100%;font-size:17px;margin-top:8px}td,th{border:1px solid #ddd;padding:6px;text-align:left}
-</style></head>
-<body><header><h1>Virus Outbreak: protect the class computers</h1></header>
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="4" data-activity="virus-outbreak"><header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=4"><span aria-hidden="true">&larr;</span> Back to Grade 4 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 4 &middot; Digital citizenship</span></div><h1>Virus Outbreak: protect the class computers</h1></header>
 <main>
 <div class="box">
   <p style="font-size:18px;margin-top:0">A computer germ (a virus) arrives in one computer in a game file. Choose the protections, then start the outbreak. Watch how far it spreads.</p>
@@ -28,7 +28,7 @@ table{border-collapse:collapse;width:100%;font-size:17px;margin-top:8px}td,th{bo
   <label><input type="checkbox" id="care"> Pupils do not open unknown files or USB sticks</label>
   <label><input type="checkbox" id="bak"> Backups are made every week</label>
   <button style="background:#d93a3a" onclick="start()">Start the outbreak</button>
-  <button style="background:#8a95a8" onclick="resetG()">Reset computers</button>
+  <button style="background:#8a95a8" onclick="resetG()" data-ui-action="secondary">Reset computers</button>
   <table><thead><tr><th>Try</th><th>Protections</th><th>Infected</th><th>Files lost</th></tr></thead><tbody id="hist"></tbody></table>
   <p style="font-size:15px;color:#56627a">A pretend simulation. Real viruses cannot come from this page. Nothing is saved.</p>
 </div>
@@ -38,19 +38,19 @@ table{border-collapse:collapse;width:100%;font-size:17px;margin-top:8px}td,th{bo
 </div>
 </main>
 <script>
-var N=24,state=[],tries=0,running=false;
+var N=24,state=[],tries=0,running=false,outbreakTimer=null;
 function el(x){return document.getElementById(x)}
-function resetG(){state=[];for(var i=0;i<N;i++)state.push(0);draw();el('log').textContent='Choose protections and press Start.'}
+function resetG(){clearInterval(outbreakTimer);outbreakTimer=null;running=false;state=[];for(var i=0;i<N;i++)state.push(0);draw();el('log').textContent='Choose protections and press Start.'}
 function draw(){var g=el('grid');g.innerHTML='';state.forEach(function(s,i){var d=document.createElement('div');d.className='pc'+(s===1?' inf':(s===2?' fixed':''));d.innerHTML='<div class="sc"></div>PC '+(i+1);g.appendChild(d)})}
-function start(){if(running)return;running=true;resetG();var upd=el('upd').checked,av=el('av').checked,care=el('care').checked,bak=el('bak').checked;
+function start(){if(running)return;resetG();running=true;var upd=el('upd').checked,av=el('av').checked,care=el('care').checked,bak=el('bak').checked;
  var p=0.55;if(upd)p-=0.2;if(av)p-=0.2;if(care)p-=0.1;p=Math.max(0.03,p);
  state[0]=1;draw();var round=0;el('log').textContent='The germ arrived in PC 1...';
- var iv=setInterval(function(){round++;var nxt=state.slice();
+ outbreakTimer=setInterval(function(){round++;var nxt=state.slice();
   for(var i=0;i<N;i++){if(state[i]===1){[i-1,i+1,i-6,i+6].forEach(function(j){if(j>=0&&j<N&&state[j]===0&&Math.random()<p)nxt[j]=1})}}
   if(av&&round>=2){for(var k=0;k<N;k++)if(nxt[k]===1&&Math.random()<0.5)nxt[k]=2}
   state=nxt;draw();var inf=state.filter(function(s){return s>=1}).length;
   el('log').textContent='Round '+round+': '+inf+' computers were reached by the germ.';
-  if(round>=6){clearInterval(iv);running=false;var lost=bak?0:inf;tries++;
+  if(round>=6){clearInterval(outbreakTimer);outbreakTimer=null;running=false;var lost=bak?0:inf;tries++;
    var names=[upd?'updates':'',av?'antivirus':'',care?'careful clicking':'',bak?'backups':''].filter(Boolean).join(', ')||'none';
    var tr=document.createElement('tr');tr.innerHTML='<td>'+tries+'</td><td></td><td>'+inf+' of '+N+'</td><td>'+(bak?'none (backups)':inf+' computers')+'</td>';tr.children[1].textContent=names;el('hist').appendChild(tr);
    el('log').textContent='Finished. '+inf+' of '+N+' computers were reached. '+(bak?'Backups saved everyone\'s files.':'Without backups, files on those computers were lost.')+' Try different protections and compare.'}},700)}

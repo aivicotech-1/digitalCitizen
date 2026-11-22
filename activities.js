@@ -359,5 +359,77 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "color": "#dce6d5",
     "order": 10,
     "path": "Grade 5/Activities/Cyber Defence HQ.html"
+  },
+  {
+    "id": "6-inbox-inspector",
+    "grade": 6,
+    "title": "Inbox Inspector",
+    "description": "Inspect senders, links and attachments to separate trusted messages from phishing.",
+    "topic": "Email & phishing",
+    "type": "Detective game",
+    "art": "explore",
+    "color": "#dce5e9",
+    "order": 1,
+    "path": "Grade 6/Activities/Inbox Inspector.html"
+  },
+  {
+    "id": "6-phone-trap",
+    "grade": 6,
+    "title": "Phone Trap",
+    "description": "Spot traps in text messages, phone calls and QR codes, and choose a trusted way to check.",
+    "topic": "Mobile safety",
+    "type": "Challenge",
+    "art": "chat",
+    "color": "#e6deeb",
+    "order": 2,
+    "path": "Grade 6/Activities/Phone Trap.html"
+  },
+  {
+    "id": "6-file-inspector",
+    "grade": 6,
+    "title": "File Inspector",
+    "description": "Reveal file extensions and details to decide what is safe to open, delete or ask about.",
+    "topic": "Downloads & malware",
+    "type": "Detective game",
+    "art": "explore",
+    "color": "#e9dfc9",
+    "order": 3,
+    "path": "Grade 6/Activities/File Inspector.html"
+  },
+  {
+    "id": "6-firewall-gatekeeper",
+    "grade": 6,
+    "title": "Firewall Gatekeeper",
+    "description": "Set firewall rules and balance welcoming real visitors with stopping unwanted traffic.",
+    "topic": "Network protection",
+    "type": "Strategy game",
+    "art": "shield",
+    "color": "#dce6d5",
+    "order": 4,
+    "path": "Grade 6/Activities/Firewall Gatekeeper.html"
+  },
+  {
+    "id": "6-ransomware-outbreak",
+    "grade": 6,
+    "title": "Ransomware Outbreak",
+    "description": "Choose school defences, watch a simulated attack and practise recovery decisions.",
+    "topic": "Resilience & recovery",
+    "type": "Simulator",
+    "art": "shield",
+    "color": "#e8ddd4",
+    "order": 5,
+    "path": "Grade 6/Activities/Ransomware Outbreak.html"
+  },
+  {
+    "id": "6-incident-room",
+    "grade": 6,
+    "title": "Incident Room",
+    "description": "Lead a team through detecting, containing and recovering from a school phishing incident.",
+    "topic": "Incident response",
+    "type": "Team challenge",
+    "art": "chat",
+    "color": "#e2e8db",
+    "order": 6,
+    "path": "Grade 6/Activities/Incident Room.html"
   }
 ];

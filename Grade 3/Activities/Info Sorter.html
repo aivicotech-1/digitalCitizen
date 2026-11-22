@@ -17,23 +17,25 @@ main{max-width:900px;margin:22px auto;padding:0 16px;text-align:center}
 .go{background:var(--ink);margin-top:14px;display:none}
 .big{font-size:30px;font-weight:bold}.stars{font-size:54px;color:#f2b632}
 .prog{font-size:17px;color:#56627a;margin-top:6px}
-</style></head>
-<body><header><h1>Info Sorter</h1><div class="score" id="score">Stars: 0</div></header>
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="3" data-activity="info-sorter"><header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=3"><span aria-hidden="true">&larr;</span> Back to Grade 3 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 3 &middot; Digital citizenship</span></div><h1>Info Sorter</h1><div class="score" id="score">Stars: 0</div></header>
 <main>
-<div id="start"><p class="intro">Some information is safe to share online. Some needs a grown-up first. Some we never share online. Sort each card!</p><div class="opts"><button style="background:#2f6fd6" onclick="begin()">Start</button></div></div>
+<div id="start"><p class="intro">Some information is safe to share online. Some needs a grown-up first. Some we never share online. Sort each card!</p><div class="opts"><button style="background:#2f6fd6" onclick="begin()" data-ui-action="primary">Start</button></div></div>
 <div id="play" style="display:none"><div class="card"><div class="who" id="who"></div><div class="text" id="text"></div><div class="prog" id="prog"></div></div>
-<div class="opts" id="opts"></div><div class="fb" id="fb"></div><button class="go" id="next" onclick="nxt()">Next</button></div>
-<div id="end" style="display:none"><div class="stars" id="stars"></div><p class="big" id="endmsg"></p><button class="go" style="display:inline-block" onclick="again()">Play again</button></div>
+<div class="opts" id="opts"></div><div class="fb" id="fb"></div><button class="go" id="next" onclick="nxt()" data-ui-action="next">Next</button>
+<button type="button" id="skip" class="activity-skip" data-ui-action="secondary" onclick="skipTask()" title="Move on without completing this task. No points are added.">Skip question</button></div>
+<div id="end" style="display:none"><div class="stars" id="stars"></div><p class="big" id="endmsg"></p><button class="go" style="display:inline-block" onclick="again()" data-ui-action="secondary">Play again</button></div>
 <p class="note">A practice game for school. Nothing you do here is saved or sent.</p>
 </main><script>
 var D={"options": [{"label": "Green: safe to share", "color": "#2e9e57"}, {"label": "Yellow: ask a grown-up first", "color": "#e0a400"}, {"label": "Red: never share online", "color": "#d93a3a"}], "endtip": "Green is safe, yellow means ask first, red stays private.", "cards": [{"who": "Information card", "text": "My favourite colour", "a": 0, "why": "This does not show who you are or where you live."}, {"who": "Information card", "text": "My home address", "a": 2, "why": "Your address shows where you live. Keep it private."}, {"who": "Information card", "text": "My first name", "a": 1, "why": "Ask a grown-up first. It depends where and who you share it with."}, {"who": "Information card", "text": "My password", "a": 2, "why": "Passwords are secret. Only a parent or guardian may know it."}, {"who": "Information card", "text": "My favourite cricket team", "a": 0, "why": "Fine to share. It does not show who you are."}, {"who": "Information card", "text": "My B-Form number", "a": 2, "why": "This number is about you only. Never share it online."}, {"who": "Information card", "text": "A photo of me in my school uniform", "a": 2, "why": "Your face and school badge show who you are and where you study."}, {"who": "Information card", "text": "My age", "a": 1, "why": "Ask a grown-up before sharing your age."}, {"who": "Information card", "text": "My phone number", "a": 2, "why": "A phone number lets strangers contact you. Keep it private."}, {"who": "Information card", "text": "A drawing of a mango I made", "a": 0, "why": "A drawing with no name or face is safe to share."}, {"who": "Information card", "text": "The name of my school", "a": 2, "why": "Your school name shows where to find you every day."}, {"who": "Information card", "text": "The city I live in", "a": 1, "why": "Ask a grown-up first. Together with other clues it can show where you are."}]},i=0,score=0,done=false;
 function el(x){return document.getElementById(x)}
 function begin(){el('start').style.display='none';el('play').style.display='block';i=0;score=0;el('score').textContent='Stars: 0';show()}
-function show(){done=false;var c=D.cards[i];el('who').textContent=c.who||'';el('text').textContent=c.text;el('prog').textContent='Card '+(i+1)+' of '+D.cards.length;
+function show(){done=false;el('skip').style.display='inline-block';var c=D.cards[i];el('who').textContent=c.who||'';el('text').textContent=c.text;el('prog').textContent='Card '+(i+1)+' of '+D.cards.length;
  var o=el('opts');o.innerHTML='';D.options.forEach(function(op,k){var b=document.createElement('button');b.textContent=op.label;b.style.background=op.color;b.onclick=function(){pick(k)};o.appendChild(b)});
  el('fb').style.display='none';el('next').style.display='none'}
-function pick(k){if(done)return;done=true;var c=D.cards[i],ok=(k===c.a);if(ok){score++;el('score').textContent='Stars: '+score}
+function pick(k){if(done)return;done=true;el('skip').style.display='none';var c=D.cards[i],ok=(k===c.a);if(ok){score++;el('score').textContent='Stars: '+score}
  var f=el('fb');f.className='fb '+(ok?'good':'oops');f.textContent=(ok?'Yes! ':'Think again. The best answer is '+D.options[c.a].label+'. ')+c.why;f.style.display='block';el('next').style.display='inline-block'}
+function skipTask(){if(done)return;done=true;el('skip').style.display='none';nxt()}
 function nxt(){i++;if(i>=D.cards.length){el('play').style.display='none';el('end').style.display='block';var s='';for(var k=0;k<score;k++)s+='\u2605';el('stars').textContent=s||'\u2606';
  el('endmsg').textContent='You got '+score+' out of '+D.cards.length+'. '+D.endtip}else show()}
 function again(){el('end').style.display='none';begin()}

@@ -2,10 +2,11 @@
   "name": "digital-citizen",
   "version": "1.0.0",
   "private": true,
-  "description": "A local-first digital citizenship activity library for Grades 2–5.",
+  "description": "A local-first digital citizenship activity library for Grades 2–6.",
   "scripts": {
     "start": "node scripts/serve.mjs",
     "refresh": "node scripts/refresh-catalog.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "test": "node scripts/test-activities.mjs && node scripts/test-grade6.mjs"
   }
 }

@@ -17,8 +17,8 @@ input{font-size:18px;padding:9px;border-radius:10px;border:3px solid #c9cfdb;wid
 .tag{position:absolute;left:0;right:0;top:8px;text-align:center}
 .check{font-size:18px;line-height:1.5}.check li{margin:4px 0}
 #list{font-size:17px;min-height:24px}
-</style></head>
-<body><header><h1>Photo Edit Lab</h1><div id="count">Edits: 0</div></header>
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="5" data-activity="photo-edit-lab"><header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=5"><span aria-hidden="true">&larr;</span> Back to Grade 5 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 5 &middot; Digital citizenship</span></div><h1>Photo Edit Lab</h1><div id="count">Edits: 0</div></header>
 <main>
 <div class="box">
 <svg viewBox="0 0 800 480" id="pic">
@@ -37,7 +37,7 @@ input{font-size:18px;padding:9px;border-radius:10px;border:3px solid #c9cfdb;wid
 </svg>
 <div style="margin-top:8px">
   <button class="big" style="background:#2f6fd6" onmousedown="orig(true)" onmouseup="orig(false)" onmouseleave="orig(false)" ontouchstart="orig(true)" ontouchend="orig(false)">Hold to see the original</button>
-  <button class="big" style="background:#56627a" onclick="reset()">Start again</button>
+  <button class="big" style="background:#56627a" onclick="reset()" data-ui-action="secondary">Start again</button>
   <button class="big" style="background:#7a3fb0" onclick="hide=!hide;showList()">Hide or show my edit list</button>
 </div>
 <div id="list"></div>

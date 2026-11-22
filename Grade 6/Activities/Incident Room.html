@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Incident Room</title>
+<style>
+:root{--acc:#f43f5e;--acc2:#f59e0b;--acct:color-mix(in srgb,var(--acc) 62%,#0b1630);--bg:#f4f7fd;--panel:#ffffff;--line:rgba(30,55,110,.14);--ink:#16213e;--dim:#5a6888;--good:#0e9f6e;--bad:#e11d48;--warn:#c27c0e}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 60%),radial-gradient(900px 500px at 110% 10%,color-mix(in srgb,var(--acc2) 12%,transparent),transparent 60%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.35;pointer-events:none;mask-image:linear-gradient(#000,transparent 85%)}
+.hud{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(30,55,110,.06)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:.5px}
+.logo .dot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 40%,transparent);font-size:18px}
+.logo small{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.mission{flex:1;min-width:220px;font-size:14px;color:var(--dim)}
+.chip{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap;box-shadow:0 2px 8px rgba(30,55,110,.06)}
+.chip b{color:var(--acct)}
+.prog{height:6px;background:rgba(30,55,110,.08);position:sticky;top:0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s}
+main{max-width:1200px;margin:22px auto;padding:0 18px;position:relative}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 40px rgba(30,55,110,.10)}
+.panel h2{margin:0 0 10px;font-size:19px;letter-spacing:.3px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--acct);margin-bottom:6px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:1px solid transparent;border-radius:12px;padding:11px 16px;cursor:pointer;color:#06101f;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 30%,transparent);transition:transform .12s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.good{background:linear-gradient(135deg,#34d399,#2dd4bf)}.btn.bad{background:linear-gradient(135deg,#fb7185,#fb923c)}.btn.warn{background:linear-gradient(135deg,#fcd34d,#fb923c)}
+.mono{font-family:Consolas,"Cascadia Mono",monospace}
+.muted{color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);opacity:0;z-index:60;max-width:min(680px,92vw);padding:14px 18px;border-radius:14px;font-weight:600;font-size:15px;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 14px 40px rgba(30,55,110,.18);transition:.35s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.g{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 14px 40px rgba(14,159,110,.2)}
+.toast.b{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad),0 14px 40px rgba(225,29,72,.2)}
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(22,33,62,.35);backdrop-filter:blur(6px)}
+.modal.on{display:grid}
+.mbox{width:min(560px,92vw);text-align:center;padding:30px;border-radius:24px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(30,55,110,.25);animation:pop .45s ease}
+.badge{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;font-size:54px;background:conic-gradient(from 0deg,var(--acc),var(--acc2),var(--acc));box-shadow:0 10px 30px color-mix(in srgb,var(--acc) 45%,transparent);animation:spin 6s linear infinite}
+.badge span{animation:spin 6s linear infinite reverse;display:block}
+.stars{font-size:34px;letter-spacing:6px;margin:6px 0}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes glow{50%{box-shadow:0 0 22px color-mix(in srgb,var(--acc) 60%,transparent)}}
+.shake{animation:shake .4s}
+.foot{max-width:1200px;margin:10px auto 30px;padding:0 18px;font-size:12px;color:var(--dim);text-align:center}
+@media(max-width:760px){.hud{padding:10px 14px}.logo{font-size:18px}}
+
+.lay{display:grid;grid-template-columns:300px 1fr 330px;gap:16px}
+@media(max-width:1100px){.lay{grid-template-columns:1fr}}
+.phases{display:grid;gap:8px}
+.phs{padding:12px 14px;border-radius:14px;border:1px solid var(--line);font-weight:800;letter-spacing:1.5px;font-size:13px;color:var(--dim);display:flex;justify-content:space-between}
+.phs.on{border-color:var(--acc);color:var(--ink);box-shadow:0 0 20px color-mix(in srgb,var(--acc) 30%,transparent)}.phs.ok{border-color:var(--good);color:var(--good)}
+.roles{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.role{padding:6px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px}
+.alert{border-radius:16px;padding:18px;background:linear-gradient(135deg,rgba(255,92,122,.14),rgba(255,200,87,.06));border:1px solid rgba(255,92,122,.5);font-size:18px;line-height:1.5;animation:pop .4s}
+.alert .tm{font-family:Consolas,monospace;font-weight:800;color:var(--warn);margin-right:8px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+@media(max-width:700px){.cards{grid-template-columns:1fr}}
+.card{text-align:left;font:inherit;font-size:15px;font-weight:600;color:var(--ink);padding:16px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(170deg,#ced6f0,#dee4f5);cursor:pointer;transition:.2s;min-height:90px}
+.card:hover{transform:translateY(-3px);border-color:var(--acc)}.card.good{border-color:var(--good);background:rgba(46,229,157,.12)}.card.bad{border-color:var(--bad);background:rgba(255,92,122,.12)}
+.card small{display:block;margin-top:8px;font-weight:500;color:var(--dim)}
+.log{font-family:Consolas,monospace;font-size:13px;background:#f3f6fc;border-radius:14px;padding:12px;height:420px;overflow:auto;color:#0028b8;white-space:pre-wrap}
+.log .g{color:#14a36b}.log .r{color:#b80024}
+#report{display:none;margin-top:18px}
+@media print{.hud,.prog,.lay,.foot{display:none!important}#report{display:block!important;color:#000}body{background:#fff}}
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="6" data-activity="incident-room">
+<header class="hud"><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=6"><span aria-hidden="true">&larr;</span> Back to Grade 6 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 6 &middot; Digital citizenship</span></div><h1>Incident Room</h1><div class="activity-status"><div class="chip">Step <b id="step">0 / 0</b></div><div class="chip">Score <b id="score">0</b></div></div><div class="mission">Mission: Sunrise School is under a phishing attack. Your team must respond step by step.</div></header>
+<div class="prog"><i id="progbar"></i></div>
+<main><div class="lay"><div class="panel"><div class="tag">Response phases</div><div class="phases" id="phases"></div>
+<div class="roles"><span class="role">🧑‍✈️ Lead</span><span class="role">🔎 Analyst</span><span class="role">📢 Comms</span><span class="role">📝 Recorder</span></div>
+<p class="muted" style="font-size:13px">Each team member has a role. The Lead makes the final choice after the team talks.</p></div>
+<div class="panel"><div class="tag">Incident Room • Sunrise School</div><div id="alert"></div><h2 id="ask" style="margin-top:16px"></h2><div class="cards" id="cards"></div><p><button class="btn" id="nx" style="display:none" onclick="next()">Next phase ➡</button></p></div>
+<div class="panel"><div class="tag">Incident log</div><div class="log" id="log"></div></div></div>
+<div class="panel" id="report"></div></main>
+<div class="foot">Cyber Ops training activity. Everything here is made up for practice. No real accounts are used.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><div class="badge"><span id="mIcon"></span></div><h2 id="mTitle" style="margin:6px 0"></h2><div class="stars" id="mStars"></div><p id="mText" class="muted" style="font-size:16px;line-height:1.5"></p>
+<button class="btn" onclick="location.reload()">Play again</button> <button class="btn ghost" onclick="document.getElementById('modal').className='modal'">Close</button></div></div>
+<script>
+var SCORE=0;
+function $(x){return document.getElementById(x)}
+var AC=null;function sfx(t){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);var f={good:[660,990],bad:[220,140],click:[520,520],alarm:[880,440],win:[523,1046]}[t]||[500,500];o.type=t==='bad'||t==='alarm'?'sawtooth':'sine';o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.18);g.gain.setValueAtTime(.08,n);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+var TT=null;function toast(m,k){var t=$('toast');t.innerHTML=m;t.className='toast on '+(k||'');clearTimeout(TT);TT=setTimeout(function(){t.className='toast'},3600)}
+function addScore(n){SCORE=Math.max(0,SCORE+n);$('score').textContent=SCORE}
+function prog(a,b){$('progbar').style.width=Math.round(a/b*100)+'%';$('step').textContent=a+' / '+b}
+function finish(icon,title,text,stars){sfx('win');$('mIcon').textContent=icon;$('mTitle').textContent=title;$('mText').innerHTML=text;$('mStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);$('modal').className='modal on'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var P=[{"ph": "DETECT", "t": "09:02", "ev": "Ms Sara calls the IT room: \"I got an email called Staff salary update. I clicked it and typed my password into the page.\"", "need": 1, "c": [["Ask Ms Sara what happened and look at the email", 1, "Good. Find out the facts first."], ["Ignore it, it is probably nothing", 0, "Every report matters. Early action limits damage."], ["Tell her off for clicking", 0, "Blaming makes people hide mistakes. Thank people for reporting."]]}, {"ph": "CONTAIN", "t": "09:10", "ev": "The logs show Ms Sara's account is now sending the same email to every teacher.", "need": 2, "c": [["Reset Ms Sara's password and sign her out everywhere", 1, "Correct. This kicks the attacker out."], ["Block the fake sender and remove the email from all inboxes", 1, "Correct. This stops more people clicking."], ["Wait and see what happens", 0, "Waiting lets the attack spread."], ["Switch off every computer in the city", 0, "Too much. Contain only what is affected."]]}, {"ph": "COMMUNICATE", "t": "09:20", "ev": "Teachers are asking what is going on. Some have the email open right now.", "need": 1, "c": [["Send a calm warning: do not click the salary email, report it", 1, "Correct. Clear, calm messages protect everyone."], ["Post Ms Sara's name on the notice board", 0, "Never shame the person who reported. Focus on the threat."], ["Keep it secret so nobody panics", 0, "Secrets let more people get tricked."]]}, {"ph": "RECOVER", "t": "10:00", "ev": "Two more teachers clicked the link before the warning. The attack has stopped spreading.", "need": 2, "c": [["Reset the two teachers' passwords too", 1, "Correct. Every affected account must be secured."], ["Turn on two-step login for all staff", 1, "Correct. A stolen password alone will not work next time."], ["Pay the hackers so they go away", 0, "Never pay criminals. It does not make you safe."], ["Delete everyone's email accounts", 0, "That harms the school more than the attack did."]]}, {"ph": "LEARN", "t": "Next day", "ev": "The attack is over. The head teacher asks: how do we stop this happening again?", "need": 1, "c": [["Write an incident report and run phishing training for staff", 1, "Correct. Learning from incidents makes the school stronger."], ["Ban all email forever", 0, "Email is needed. Better habits are the answer."], ["Forget about it", 0, "If you do not learn, it will happen again."]]}];
+var i=0,picked=[],ok=0,good=0,total=0,hist=[];
+function phases(){$('phases').innerHTML=P.map(function(p,k){return '<div class="phs'+(k===i?' on':'')+(k<i?' ok':'')+'"><span>'+(k+1)+'. '+p.ph+'</span><span>'+(k<i?'✔':'')+'</span></div>'}).join('')}
+function log(t,c){var l=$('log');l.innerHTML+=(c?'<span class="'+c+'">':'')+esc(t)+(c?'</span>':'')+'\n';l.scrollTop=l.scrollHeight}
+function show(){var p=P[i];picked=[];ok=0;phases();sfx('alarm');$('alert').innerHTML='<div class="alert"><span class="tm">'+p.t+'</span>'+esc(p.ev)+'</div>';
+ $('ask').textContent='Phase '+(i+1)+': '+p.ph+'. Choose '+(p.need===1?'the best action':'the '+p.need+' best actions');
+ $('cards').innerHTML=p.c.map(function(c,k){return '<button class="card" id="c'+k+'" onclick="pick('+k+')">'+esc(c[0])+'<small id="s'+k+'"></small></button>'}).join('');$('nx').style.display='none';log('['+p.t+'] '+p.ev);prog(i,P.length)}
+function pick(k){var p=P[i];if(!p||!p.c[k]||picked.indexOf(k)>=0||ok>=p.need)return;picked.push(k);var c=p.c[k];total++;
+ $('c'+k).className='card '+(c[1]?'good':'bad');$('s'+k).textContent=c[2];sfx(c[1]?'good':'bad');addScore(c[1]?10:-5);log('  Team chose: '+c[0],c[1]?'g':'r');
+ hist.push({t:p.t,ph:p.ph,a:c[0],ok:c[1]});if(c[1]){ok++;good++}
+ if(ok>=p.need){$('nx').style.display='inline-block';if(i===P.length-1)$('nx').textContent='Close the incident 🏁'}}
+function next(){if(i>=P.length||ok<P[i].need)return;i++;if(i<P.length)show();else{$('nx').style.display='none';P[P.length-1].c.forEach(function(c,k){$('c'+k).disabled=true});prog(P.length,P.length);phases();report();var mist=total-good;finish('🚨','Incident closed!','Your team responded with '+good+' good actions and '+mist+' mistake'+(mist===1?'':'s')+'. Score: '+SCORE+'.<br>Detect, contain, communicate, recover and learn. Scroll down to see and print your incident report.',mist===0?3:mist<=2?2:1)}}
+function report(){var r=$('report');r.style.display='block';r.innerHTML='<div class="tag">Incident report</div><h2>Phishing attack on Sunrise School staff</h2><p><b>Team:</b> ______________________ <b>Date:</b> __________</p><table style="width:100%;border-collapse:collapse;font-size:14px">'+hist.map(function(h){return '<tr><td style="padding:6px;border-bottom:1px solid #d5d5e0">'+h.t+'</td><td style="padding:6px;border-bottom:1px solid #d5d5e0">'+h.ph+'</td><td style="padding:6px;border-bottom:1px solid #d5d5e0">'+esc(h.a)+'</td><td style="padding:6px;border-bottom:1px solid #d5d5e0">'+(h.ok?'✔':'✖')+'</td></tr>'}).join('')+'</table><p><b>What we learned:</b> ____________________________________________</p><button class="btn" onclick="window.print()">🖨 Print report</button>'}
+show();
+</script></body></html>

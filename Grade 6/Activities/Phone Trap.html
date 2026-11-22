@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phone Trap</title>
+<style>
+:root{--acc:#f472b6;--acc2:#a78bfa;--acct:color-mix(in srgb,var(--acc) 62%,#0b1630);--bg:#f4f7fd;--panel:#ffffff;--line:rgba(30,55,110,.14);--ink:#16213e;--dim:#5a6888;--good:#0e9f6e;--bad:#e11d48;--warn:#c27c0e}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 60%),radial-gradient(900px 500px at 110% 10%,color-mix(in srgb,var(--acc2) 12%,transparent),transparent 60%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.35;pointer-events:none;mask-image:linear-gradient(#000,transparent 85%)}
+.hud{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(30,55,110,.06)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:.5px}
+.logo .dot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 40%,transparent);font-size:18px}
+.logo small{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.mission{flex:1;min-width:220px;font-size:14px;color:var(--dim)}
+.chip{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap;box-shadow:0 2px 8px rgba(30,55,110,.06)}
+.chip b{color:var(--acct)}
+.prog{height:6px;background:rgba(30,55,110,.08);position:sticky;top:0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s}
+main{max-width:1200px;margin:22px auto;padding:0 18px;position:relative}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 40px rgba(30,55,110,.10)}
+.panel h2{margin:0 0 10px;font-size:19px;letter-spacing:.3px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--acct);margin-bottom:6px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:1px solid transparent;border-radius:12px;padding:11px 16px;cursor:pointer;color:#06101f;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 30%,transparent);transition:transform .12s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.good{background:linear-gradient(135deg,#34d399,#2dd4bf)}.btn.bad{background:linear-gradient(135deg,#fb7185,#fb923c)}.btn.warn{background:linear-gradient(135deg,#fcd34d,#fb923c)}
+.mono{font-family:Consolas,"Cascadia Mono",monospace}
+.muted{color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);opacity:0;z-index:60;max-width:min(680px,92vw);padding:14px 18px;border-radius:14px;font-weight:600;font-size:15px;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 14px 40px rgba(30,55,110,.18);transition:.35s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.g{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 14px 40px rgba(14,159,110,.2)}
+.toast.b{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad),0 14px 40px rgba(225,29,72,.2)}
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(22,33,62,.35);backdrop-filter:blur(6px)}
+.modal.on{display:grid}
+.mbox{width:min(560px,92vw);text-align:center;padding:30px;border-radius:24px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(30,55,110,.25);animation:pop .45s ease}
+.badge{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;font-size:54px;background:conic-gradient(from 0deg,var(--acc),var(--acc2),var(--acc));box-shadow:0 10px 30px color-mix(in srgb,var(--acc) 45%,transparent);animation:spin 6s linear infinite}
+.badge span{animation:spin 6s linear infinite reverse;display:block}
+.stars{font-size:34px;letter-spacing:6px;margin:6px 0}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes glow{50%{box-shadow:0 0 22px color-mix(in srgb,var(--acc) 60%,transparent)}}
+.shake{animation:shake .4s}
+.foot{max-width:1200px;margin:10px auto 30px;padding:0 18px;font-size:12px;color:var(--dim);text-align:center}
+@media(max-width:760px){.hud{padding:10px 14px}.logo{font-size:18px}}
+
+.wrap{display:grid;grid-template-columns:400px 1fr;gap:22px;align-items:start}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.phone{margin:0 auto;width:360px;height:700px;border-radius:52px;padding:14px;background:linear-gradient(160deg,#d6dced,#e7eaf7);box-shadow:0 0 0 2px #c2cae6,0 30px 70px rgba(0,0,0,.6),0 0 60px color-mix(in srgb,var(--acc) 25%,transparent);position:relative}
+.scr{height:100%;border-radius:40px;overflow:hidden;background:linear-gradient(180deg,#dde2f5,#d1d9f2);position:relative}
+.notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:120px;height:26px;border-radius:20px;background:#000;z-index:3}
+.bar{display:flex;justify-content:space-between;padding:12px 26px 0;font-size:13px;font-weight:700}
+.app{padding:46px 16px 16px;height:100%;display:flex;flex-direction:column}
+.bub{background:#c5cfe9;border-radius:18px 18px 18px 4px;padding:14px;font-size:16px;line-height:1.45;margin-top:12px;animation:pop .4s}
+.callc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.ring{width:110px;height:110px;border-radius:50%;display:grid;place-items:center;font-size:52px;background:linear-gradient(135deg,var(--acc),var(--acc2));animation:glow 1.2s infinite}
+.poster{margin:18px auto 0;width:250px;background:#fff7e6;color:#3a2a10;border-radius:14px;padding:16px;text-align:center;font-weight:700}
+.qr{width:120px;height:120px;margin:10px auto;position:relative;background:repeating-conic-gradient(#000 0 25%,#fff 0 50%) 0 0/24px 24px;border:6px solid #fff}
+.sticker{position:absolute;right:-16px;bottom:-14px;width:84px;height:84px;background:repeating-conic-gradient(#f2f2f2 0 25%,#eee 0 50%) 0 0/14px 14px;border:4px solid #ffd54a;transform:rotate(8deg);box-shadow:0 4px 10px rgba(0,0,0,.4)}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:16px;font-weight:600;color:var(--ink);padding:14px 16px;margin:10px 0;border-radius:14px;border:1px solid var(--line);background:rgba(30,55,110,0.064);cursor:pointer;transition:.2s}
+.opt:hover{border-color:var(--acc);transform:translateX(4px)}
+.opt.good{border-color:var(--good);background:rgba(46,229,157,.12)}.opt.bad{border-color:var(--bad);background:rgba(255,92,122,.12)}.opt.meh{border-color:var(--warn);background:rgba(255,200,87,.10)}
+.out{margin-top:10px;padding:14px;border-radius:14px;font-size:15px;line-height:1.5;display:none}
+.terms{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.term{padding:8px 12px;border-radius:12px;border:1px solid var(--line);font-size:13px}
+.term b{color:var(--acct)}
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="6" data-activity="phone-trap">
+<header class="hud"><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=6"><span aria-hidden="true">&larr;</span> Back to Grade 6 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 6 &middot; Digital citizenship</span></div><h1>Phone Trap</h1><div class="activity-status"><div class="chip">Step <b id="step">0 / 0</b></div><div class="chip">Score <b id="score">0</b></div></div><div class="mission">Mission: texts, calls and QR codes are arriving. Spot the traps.</div></header>
+<div class="prog"><i id="progbar"></i></div>
+<main><div class="wrap"><div class="phone"><div class="scr"><div class="notch"></div><div class="bar"><span>9:41</span><span>📶 🔋</span></div><div class="app" id="app"></div></div></div>
+<div class="panel"><div class="tag" id="kind"></div><h2 id="q">What do you do?</h2><div id="opts"></div><div class="out" id="out"></div>
+<p><button class="btn" id="nx" onclick="next()" style="display:none">Next ➡</button></p>
+<div class="terms"><div class="term"><b>Smishing</b> = SMS phishing</div><div class="term"><b>Vishing</b> = voice phishing</div><div class="term"><b>Quishing</b> = QR code phishing</div></div></div></div></main>
+<div class="foot">Cyber Ops training activity. Everything here is made up for practice. No real accounts are used.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><div class="badge"><span id="mIcon"></span></div><h2 id="mTitle" style="margin:6px 0"></h2><div class="stars" id="mStars"></div><p id="mText" class="muted" style="font-size:16px;line-height:1.5"></p>
+<button class="btn" onclick="location.reload()">Play again</button> <button class="btn ghost" onclick="document.getElementById('modal').className='modal'">Close</button></div></div>
+<script>
+var SCORE=0;
+function $(x){return document.getElementById(x)}
+var AC=null;function sfx(t){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);var f={good:[660,990],bad:[220,140],click:[520,520],alarm:[880,440],win:[523,1046]}[t]||[500,500];o.type=t==='bad'||t==='alarm'?'sawtooth':'sine';o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.18);g.gain.setValueAtTime(.08,n);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+var TT=null;function toast(m,k){var t=$('toast');t.innerHTML=m;t.className='toast on '+(k||'');clearTimeout(TT);TT=setTimeout(function(){t.className='toast'},3600)}
+function addScore(n){SCORE=Math.max(0,SCORE+n);$('score').textContent=SCORE}
+function prog(a,b){$('progbar').style.width=Math.round(a/b*100)+'%';$('step').textContent=a+' / '+b}
+function finish(icon,title,text,stars){sfx('win');$('mIcon').textContent=icon;$('mTitle').textContent=title;$('mText').innerHTML=text;$('mStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);$('modal').className='modal on'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var R=[{"k": "sms", "who": "PK-Parcel", "num": "+92 300 0000 481", "msg": "Your parcel is held. Pay Rs 150 fee today or it returns: http://pk-parcel-fee.top", "o": [["Tap the link and pay", "bad", "Smishing! The link steals card details. Real couriers do not text payment links like this."], ["Ignore it and check with Ammi or the real courier app", "good", "Correct. Check through a trusted route, not the text."], ["Reply STOP", "meh", "Replying tells scammers the number is active. Just ignore and report."]], "tip": "SMS phishing is called smishing. Look for hurry, small fees and strange links."}, {"k": "sms", "who": "Ammi", "num": "Saved contact", "msg": "Pick me up from Nani at 5 please, beta.", "o": [["Ignore it, it must be a scam", "meh", "This one is from a saved contact and asks nothing risky. It is normal."], ["Reply OK and tell Baba", "good", "Correct. A normal message from a saved contact."], ["Send your password back", "bad", "Never send passwords to anyone."]], "tip": "Not every message is a scam. Saved contacts with normal requests are fine."}, {"k": "call", "who": "Unknown caller", "num": "+92 21 0000 7788", "msg": "\"Hello, this is BrightBank. Your card is blocked. Read me the 6 digit code we just sent to your phone.\"", "o": [["Read out the code", "bad", "Vishing! The code lets them into the account. Banks never ask for codes."], ["Hang up and tell a grown-up to call the bank number on the card", "good", "Correct. Hang up, then call a number you trust."], ["Ask them to call back later", "meh", "Better to hang up and use the real number yourself."]], "tip": "Voice phishing is called vishing. Codes are never shared."}, {"k": "qr", "who": "Cafe poster", "num": "Table 6", "msg": "A poster says \"Scan to see the menu\". Someone has stuck a second QR code sticker on top of the printed one.", "o": [["Scan the sticker", "bad", "Quishing! Stickers over real QR codes can lead to fake payment pages."], ["Ask staff for the menu and point out the sticker", "good", "Correct. A sticker over a printed code is a warning sign."], ["Scan, then type card details if it looks nice", "bad", "Fake pages can look very real."]], "tip": "QR code phishing is called quishing. Look for stickers on top of codes."}, {"k": "sms", "who": "Unknown number", "num": "+92 333 0000 912", "msg": "Hi Mum, this is my new number, my phone broke. Can you send money for a new one? Do not call, the mic is broken.", "o": [["Send the money", "bad", "The \"Hi Mum\" scam. Scammers pretend to be family on a new number."], ["Call the old saved number to check", "good", "Correct. Check using the number you already trust."], ["Reply asking who it is", "meh", "They will lie. Calling the saved number is safer."]], "tip": "Scammers pretend to be family. Always check on the old number."}, {"k": "call", "who": "School office", "num": "Saved: Sunrise School", "msg": "\"Hello, Sports Day is moved to Friday because of rain. Details are on the school notice board.\"", "o": [["Hang up, it is a scam", "meh", "It is from the saved school number and asks for nothing."], ["Say thank you and tell your family", "good", "Correct. A normal message that asks for nothing private."], ["Give your home address to confirm", "bad", "The school already has it. Never give details on calls."]], "tip": "Real messages usually ask for nothing secret."}];
+var i=0,locked=false,safe=0;
+function show(){locked=false;var r=R[i];$('nx').style.display='none';$('out').style.display='none';sfx(r.k==='call'?'alarm':'click');
+ var a='';if(r.k==='sms'){a='<div style="text-align:center"><div style="font-size:40px">💬</div><b>'+esc(r.who)+'</b><div class="muted" style="font-size:12px">'+esc(r.num)+'</div></div><div class="bub">'+esc(r.msg)+'</div>'}
+ else if(r.k==='call'){a='<div class="callc"><div class="ring">📞</div><b style="font-size:20px">'+esc(r.who)+'</b><div class="muted">'+esc(r.num)+'</div><div class="bub" style="border-radius:18px">'+esc(r.msg)+'</div></div>'}
+ else{a='<div style="text-align:center"><div style="font-size:40px">📷</div><b>'+esc(r.who)+'</b> <span class="muted">'+esc(r.num)+'</span></div><div class="poster">Scan to see the menu<div class="qr"><div class="sticker"></div></div><span style="font-size:12px">Look closely at the code</span></div><div class="bub">'+esc(r.msg)+'</div>'}
+ $('app').innerHTML=a;$('kind').textContent={sms:'Text message',call:'Phone call',qr:'QR code'}[r.k]+'  •  '+(i+1)+' of '+R.length;
+ $('opts').innerHTML=r.o.map(function(o,k){return '<button class="opt" id="o'+k+'" onclick="pick('+k+')">'+esc(o[0])+'</button>'}).join('');prog(i,R.length)}
+function pick(k){if(locked)return;locked=true;var r=R[i],o=r.o[k];$('o'+k).className='opt '+o[1];
+ r.o.forEach(function(x,j){if(x[1]==='good'&&j!==k)$('o'+j).className='opt good'});
+ var pts={good:10,meh:3,bad:-5}[o[1]];addScore(pts);if(o[1]==='good')safe++;sfx(o[1]==='good'?'good':o[1]==='bad'?'bad':'click');
+ var out=$('out');out.style.display='block';out.style.background=o[1]==='good'?'rgba(46,229,157,.10)':o[1]==='bad'?'rgba(255,92,122,.10)':'rgba(255,200,87,.10)';
+ out.innerHTML='<b>'+(o[1]==='good'?'✅ Safe move!':o[1]==='bad'?'⚠️ Trap!':'🤔 Not the best move.')+'</b> '+esc(o[2])+'<br><span class="muted">'+esc(r.tip)+'</span>';
+ $('nx').style.display='inline-block';if(i===R.length-1)$('nx').textContent='Finish 🏁'}
+function next(){i++;if(i<R.length)show();else{prog(R.length,R.length);finish('📱','Phone secured!','You made '+safe+' of '+R.length+' safe moves. Score: '+SCORE+'.<br>Texts, calls and QR codes can all be phishing. Check through a route you already trust.',safe>=6?3:safe>=4?2:1)}}
+show();
+</script></body></html>

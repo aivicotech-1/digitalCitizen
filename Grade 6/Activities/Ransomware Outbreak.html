@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ransomware Outbreak</title>
+<style>
+:root{--acc:#22d3ee;--acc2:#6366f1;--acct:color-mix(in srgb,var(--acc) 62%,#0b1630);--bg:#f4f7fd;--panel:#ffffff;--line:rgba(30,55,110,.14);--ink:#16213e;--dim:#5a6888;--good:#0e9f6e;--bad:#e11d48;--warn:#c27c0e}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 60%),radial-gradient(900px 500px at 110% 10%,color-mix(in srgb,var(--acc2) 12%,transparent),transparent 60%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.35;pointer-events:none;mask-image:linear-gradient(#000,transparent 85%)}
+.hud{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(30,55,110,.06)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:.5px}
+.logo .dot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 40%,transparent);font-size:18px}
+.logo small{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.mission{flex:1;min-width:220px;font-size:14px;color:var(--dim)}
+.chip{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap;box-shadow:0 2px 8px rgba(30,55,110,.06)}
+.chip b{color:var(--acct)}
+.prog{height:6px;background:rgba(30,55,110,.08);position:sticky;top:0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s}
+main{max-width:1200px;margin:22px auto;padding:0 18px;position:relative}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 40px rgba(30,55,110,.10)}
+.panel h2{margin:0 0 10px;font-size:19px;letter-spacing:.3px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--acct);margin-bottom:6px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:1px solid transparent;border-radius:12px;padding:11px 16px;cursor:pointer;color:#06101f;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 30%,transparent);transition:transform .12s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.good{background:linear-gradient(135deg,#34d399,#2dd4bf)}.btn.bad{background:linear-gradient(135deg,#fb7185,#fb923c)}.btn.warn{background:linear-gradient(135deg,#fcd34d,#fb923c)}
+.mono{font-family:Consolas,"Cascadia Mono",monospace}
+.muted{color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);opacity:0;z-index:60;max-width:min(680px,92vw);padding:14px 18px;border-radius:14px;font-weight:600;font-size:15px;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 14px 40px rgba(30,55,110,.18);transition:.35s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.g{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 14px 40px rgba(14,159,110,.2)}
+.toast.b{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad),0 14px 40px rgba(225,29,72,.2)}
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(22,33,62,.35);backdrop-filter:blur(6px)}
+.modal.on{display:grid}
+.mbox{width:min(560px,92vw);text-align:center;padding:30px;border-radius:24px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(30,55,110,.25);animation:pop .45s ease}
+.badge{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;font-size:54px;background:conic-gradient(from 0deg,var(--acc),var(--acc2),var(--acc));box-shadow:0 10px 30px color-mix(in srgb,var(--acc) 45%,transparent);animation:spin 6s linear infinite}
+.badge span{animation:spin 6s linear infinite reverse;display:block}
+.stars{font-size:34px;letter-spacing:6px;margin:6px 0}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes glow{50%{box-shadow:0 0 22px color-mix(in srgb,var(--acc) 60%,transparent)}}
+.shake{animation:shake .4s}
+.foot{max-width:1200px;margin:10px auto 30px;padding:0 18px;font-size:12px;color:var(--dim);text-align:center}
+@media(max-width:760px){.hud{padding:10px 14px}.logo{font-size:18px}}
+
+.lay{display:grid;grid-template-columns:340px 1fr;gap:18px}
+@media(max-width:960px){.lay{grid-template-columns:1fr}}
+.def{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;padding:12px;border-radius:14px;border:1px solid var(--line);margin:8px 0;cursor:pointer;transition:.2s;background:rgba(30,55,110,0.048)}
+.def:hover{border-color:var(--acc)}.def.on{border-color:var(--good);background:rgba(46,229,157,.10)}
+.def .e{font-size:30px}.def small{display:block;color:var(--dim)}
+.net{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.zone{border:2px dashed transparent;border-radius:18px;padding:12px;transition:.3s}
+.zone.wall{border-color:var(--acc);box-shadow:inset 0 0 20px color-mix(in srgb,var(--acc) 20%,transparent)}
+.zone h4{margin:0 0 8px;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--dim)}
+.pcs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pc{height:74px;border-radius:14px;display:grid;place-items:center;font-size:32px;background:#d1d9f2;border:1px solid var(--line);transition:.3s;position:relative}
+.pc.inf{background:#f2d3dd;border-color:var(--bad);box-shadow:0 0 22px rgba(255,92,122,.6);animation:shake .5s}
+.pc.inf:after{content:"\1F512";position:absolute;right:6px;bottom:4px;font-size:16px}
+.pc.rec{background:#daf4ec;border-color:var(--good)}
+.srv{margin-top:14px;display:flex;gap:14px}
+.srv .pc{flex:1}
+.note{position:fixed;inset:0;z-index:70;display:none;place-items:center;background:rgba(255,255,255,0.9)}
+.note.on{display:grid}
+.nbox{width:min(560px,92vw);padding:26px;border-radius:20px;background:#faeef2;border:2px solid #ff2d55;text-align:center;box-shadow:0 0 60px rgba(255,45,85,.6);font-family:Consolas,monospace}
+.nbox h2{color:#ff2d55;font-size:28px;margin:0 0 8px}
+.steps{display:grid;gap:8px;margin-top:12px}
+.step{font:inherit;font-size:15px;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(30,55,110,0.064);color:var(--ink);cursor:pointer}
+.step.ok{border-color:var(--good);background:rgba(46,229,157,.12)}.step.no{border-color:var(--bad);background:rgba(255,92,122,.12)}
+.feed{font-family:Consolas,monospace;font-size:13px;background:#f3f6fc;border-radius:12px;padding:12px;height:130px;overflow:auto;margin-top:14px;color:#0028b8}
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="6" data-activity="ransomware-outbreak">
+<header class="hud"><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=6"><span aria-hidden="true">&larr;</span> Back to Grade 6 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 6 &middot; Digital citizenship</span></div><h1>Ransomware Outbreak</h1><div class="activity-status"><div class="chip">Step <b id="step">0 / 0</b></div><div class="chip">Score <b id="score">0</b></div></div><div class="mission">Mission: protect Sunrise School from ransomware. Prepare, survive the attack, recover.</div></header>
+<div class="prog"><i id="progbar"></i></div>
+<main><div class="lay"><div class="panel" id="left"></div><div class="panel"><div class="tag">Sunrise School network</div><h2 id="status">Prepare your defences</h2>
+<div class="net" id="net"></div><div class="srv"><div class="pc" id="server">🖥️</div><div class="pc" id="backup" title="Offline backup">💾</div></div><div class="feed" id="feed">Choose 3 defences, then start the attack.</div></div></div>
+<div class="note" id="note"><div class="nbox"><div style="font-size:60px">🔒</div><h2>YOUR FILES ARE LOCKED</h2><p>All school files have been encrypted. Pay 2 crypto coins in 48 hours to get the key.</p><p style="color:#b80022">(This is a pretend ransom note for training.)</p><button class="btn" onclick="recovery()">What should the school do?</button></div></div></main>
+<div class="foot">Cyber Ops training activity. Everything here is made up for practice. No real accounts are used.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><div class="badge"><span id="mIcon"></span></div><h2 id="mTitle" style="margin:6px 0"></h2><div class="stars" id="mStars"></div><p id="mText" class="muted" style="font-size:16px;line-height:1.5"></p>
+<button class="btn" onclick="location.reload()">Play again</button> <button class="btn ghost" onclick="document.getElementById('modal').className='modal'">Close</button></div></div>
+<script>
+var SCORE=0;
+function $(x){return document.getElementById(x)}
+var AC=null;function sfx(t){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);var f={good:[660,990],bad:[220,140],click:[520,520],alarm:[880,440],win:[523,1046]}[t]||[500,500];o.type=t==='bad'||t==='alarm'?'sawtooth':'sine';o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.18);g.gain.setValueAtTime(.08,n);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+var TT=null;function toast(m,k){var t=$('toast');t.innerHTML=m;t.className='toast on '+(k||'');clearTimeout(TT);TT=setTimeout(function(){t.className='toast'},3600)}
+function addScore(n){SCORE=Math.max(0,SCORE+n);$('score').textContent=SCORE}
+function prog(a,b){$('progbar').style.width=Math.round(a/b*100)+'%';$('step').textContent=a+' / '+b}
+function finish(icon,title,text,stars){sfx('win');$('mIcon').textContent=icon;$('mTitle').textContent=title;$('mText').innerHTML=text;$('mStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);$('modal').className='modal on'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+var D=[['backup','💾','Offline backups (3-2-1 rule)','3 copies, 2 kinds of storage, 1 kept offline'],['updates','🔄','Automatic updates','Closes old weak spots'],['filter','📨','Email filter','Blocks many dangerous emails'],['walls','🧱','Network zones','Walls between parts of the network'],['train','🎓','Staff training','People spot phishing']];
+var on={},Z=[['Library',0],['Computer lab',1],['Office',2]],inf={},stage='prep';
+function el(x){return $(x)}
+function left(){if(stage==='prep'){var focusId=document.activeElement.id;$('left').innerHTML='<div class="tag">Step 1 • Prepare</div><h2>Pick 3 defences</h2>'+D.map(function(d){return '<button type="button" id="def-'+d[0]+'" class="def'+(on[d[0]]?' on':'')+'" aria-pressed="'+!!on[d[0]]+'" onclick="tog(\''+d[0]+'\')"><span class="e" aria-hidden="true">'+d[1]+'</span><span><b>'+d[2]+'</b><small>'+d[3]+'</small></span></button>'}).join('')+'<p class="muted" id="left3" aria-live="polite">Chosen: '+Object.keys(on).length+' of 3</p><button class="btn bad" onclick="attack()" '+(Object.keys(on).length===3?'':'disabled')+'>⚠️ Start the attack</button>';if(focusId&&$(focusId))$(focusId).focus()}}
+function tog(k){if(stage!=='prep')return;if(on[k])delete on[k];else if(Object.keys(on).length<3)on[k]=1;else{toast('Only 3 defences. The school budget is limited!','b');return}sfx('click');left();net()}
+function net(){$('net').innerHTML=Z.map(function(z){return '<div class="zone'+(on.walls?' wall':'')+'"><h4>'+z[0]+'</h4><div class="pcs">'+[0,1,2,3].map(function(j){var id=z[1]*4+j;return '<div class="pc'+(inf[id]===1?' inf':'')+(inf[id]==='r'?' rec':'')+'" id="pc'+id+'" aria-label="'+z[0]+' PC '+(j+1)+': '+(inf[id]==='r'?'restored':inf[id]?'locked':'safe')+'">💻</div>'}).join('')+'</div></div>'}).join('')}
+function log(t){var f=$('feed');f.innerHTML+=esc(t)+'\n';f.scrollTop=f.scrollHeight}
+function attack(){if(stage!=='prep'||Object.keys(on).length!==3)return;stage='attack';prog(2,3);$('left').innerHTML='<div class="tag">Step 2 • Attack</div><h2>Watch the attack</h2><p class="muted">Two ways in: a phishing email to the Office and an old weak spot in a Lab computer.</p>';$('feed').innerHTML='';sfx('alarm');$('status').textContent='Attack in progress...';
+ var starts=[];
+ setTimeout(function(){log('09:00  Phishing email "Invoice overdue" arrives at the Office.');if(on.filter){log('       Email filter blocked it.')}else if(on.train){log('       A trained teacher spotted it and reported it.')}else{log('       A teacher opened the attachment!');starts.push(8)}},600);
+ setTimeout(function(){log('09:05  Attackers scan for an old weak spot in the Lab.');if(on.updates){log('       Updates had closed the weak spot.')}else{log('       Weak spot found on Lab PC 2!');starts.push(5)}},1800);
+ setTimeout(function(){if(!starts.length){log('09:10  Attack failed. The school is safe!');end(0);return}spread(starts)},3000)}
+function zoneOf(id){return Math.floor(id/4)}
+function spread(st){st.forEach(function(s){inf[s]=1});net();sfx('bad');var t=0;
+ var iv=setInterval(function(){t++;var add=[];for(var id=0;id<12;id++){if(inf[id])continue;for(var k in inf){k=+k;if(!on.walls||zoneOf(k)===zoneOf(id)){add.push(id);break}}}
+  add.slice(0,3).forEach(function(id){inf[id]=1;log('09:'+(10+t)+'  Ransomware spread to '+Z[zoneOf(id)][0]+' PC '+(id%4+1)+'.')});net();sfx('bad');
+  if(!add.length||t>6){clearInterval(iv);if(!on.walls){$('server').classList.add('inf');log('09:20  The file server is locked too!')}else log('09:20  Network zones stopped the spread.');
+   setTimeout(function(){$('note').className='note on';sfx('alarm')},900)}},700)}
+var S=[['Disconnect the infected computers from the network',1],['Pay the ransom quickly',0],['Tell the IT team and the head teacher straight away',1],['Restore files from the offline backup',1],['Keep using the infected computers',0],['Update everything and check how it got in',1]],picked=[];
+function recovery(){if(stage!=='attack')return;$('note').className='note';stage='rec';prog(3,3);$('status').textContent='Recovery';$('left').innerHTML='<div class="tag">Step 3 • Recover</div><h2>Choose the '+(on.backup?4:3)+' right actions</h2>'+(!on.backup?'<p class="muted">No offline backup was selected. You can contain the incident, but cannot restore the lost files in this simulation.</p>':'')+'<div class="steps">'+S.map(function(s,i){return '<button class="step" id="st'+i+'" onclick="rp('+i+')" '+(i===3&&!on.backup?'disabled':'')+'>'+s[0]+(i===3&&!on.backup?' (unavailable: no backup)':'')+'</button>'}).join('')+'</div>'}
+function rp(i){if(stage!=='rec'||!S[i]||picked.indexOf(i)>=0||(i===3&&!on.backup))return;picked.push(i);var ok=S[i][1];$('st'+i).className='step '+(ok?'ok':'no');$('st'+i).disabled=true;sfx(ok?'good':'bad');addScore(ok?10:-5);
+ if(!ok)toast(i===1?'Paying does not guarantee files back and funds criminals. Report and restore instead.':'Infected computers must be cut off and cleaned.','b');
+ if(picked.filter(function(j){return S[j][1]}).length===(on.backup?4:3)){var lost=Object.keys(inf).length;if(on.backup){Object.keys(inf).forEach(function(k){inf[k]='r'});$('server').classList.remove('inf');net();log('Restored all files from the offline backup.');}else log('No offline backup. '+lost+' computers lost their files.');end(lost)}}
+function end(lost){if(stage==='complete')return;stage='complete';S.forEach(function(s,i){if($('st'+i))$('st'+i).disabled=true});$('status').textContent='Simulation complete';var saved=on.backup?12:12-lost;addScore(saved*5);prog(3,3);
+ setTimeout(function(){finish('🛡️','Ransomware report',(lost?lost+' computers were locked. ':'No computers were locked! ')+(lost&&on.backup?'The offline backup brought every file back. ':lost?'Without an offline backup, their files were lost. ':'')+'Score: '+SCORE+'.<br>Best defences: offline backups (3-2-1), updates, email filtering or training and network zones. Never pay: report, disconnect, restore.',(saved===12&&lost<5)?3:saved>=8?2:1)},900)}
+prog(1,3);left();net();
+</script></body></html>

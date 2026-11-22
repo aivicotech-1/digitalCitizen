@@ -18,8 +18,8 @@ textarea{width:100%;font-size:21px;padding:12px;border-radius:12px;border:3px so
 ul{font-size:18px;padding-left:22px}
 .bubble{background:#dcf8c6;border-radius:14px;padding:12px 14px;font-size:20px;margin-top:10px;min-height:48px;white-space:pre-wrap}
 .done{color:var(--go);font-weight:bold;font-size:20px}
-</style></head>
-<body><header><h1>Message Makeover Studio</h1></header>
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="4" data-activity="message-makeover-studio"><header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=4"><span aria-hidden="true">&larr;</span> Back to Grade 4 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 4 &middot; Digital citizenship</span></div><h1>Message Makeover Studio</h1></header>
 <main>
 <div class="box">
   <h2>Challenge <span id="num">1</span> of <span id="tot"></span></h2>
@@ -31,8 +31,8 @@ ul{font-size:18px;padding-left:22px}
   </div>
   <div class="ctl">
     <button style="background:#2f6fd6" onclick="useOrig()">Start from the old message</button>
-    <button style="background:#8a95a8" onclick="setMsg('')">Clear</button>
-    <button style="background:var(--ink)" onclick="nextC()">Next challenge</button>
+    <button style="background:#8a95a8" onclick="setMsg('')" data-ui-action="secondary">Clear</button>
+    <button style="background:var(--ink)" onclick="nextC()" data-ui-action="next">Next challenge</button>
   </div>
   <p id="saved" class="done"></p>
 </div>

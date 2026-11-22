@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>File Inspector</title>
+<style>
+:root{--acc:#facc15;--acc2:#fb923c;--acct:color-mix(in srgb,var(--acc) 62%,#0b1630);--bg:#f4f7fd;--panel:#ffffff;--line:rgba(30,55,110,.14);--ink:#16213e;--dim:#5a6888;--good:#0e9f6e;--bad:#e11d48;--warn:#c27c0e}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 60%),radial-gradient(900px 500px at 110% 10%,color-mix(in srgb,var(--acc2) 12%,transparent),transparent 60%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.35;pointer-events:none;mask-image:linear-gradient(#000,transparent 85%)}
+.hud{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(30,55,110,.06)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:.5px}
+.logo .dot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 40%,transparent);font-size:18px}
+.logo small{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.mission{flex:1;min-width:220px;font-size:14px;color:var(--dim)}
+.chip{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap;box-shadow:0 2px 8px rgba(30,55,110,.06)}
+.chip b{color:var(--acct)}
+.prog{height:6px;background:rgba(30,55,110,.08);position:sticky;top:0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s}
+main{max-width:1200px;margin:22px auto;padding:0 18px;position:relative}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 40px rgba(30,55,110,.10)}
+.panel h2{margin:0 0 10px;font-size:19px;letter-spacing:.3px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--acct);margin-bottom:6px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:1px solid transparent;border-radius:12px;padding:11px 16px;cursor:pointer;color:#06101f;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 30%,transparent);transition:transform .12s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.good{background:linear-gradient(135deg,#34d399,#2dd4bf)}.btn.bad{background:linear-gradient(135deg,#fb7185,#fb923c)}.btn.warn{background:linear-gradient(135deg,#fcd34d,#fb923c)}
+.mono{font-family:Consolas,"Cascadia Mono",monospace}
+.muted{color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);opacity:0;z-index:60;max-width:min(680px,92vw);padding:14px 18px;border-radius:14px;font-weight:600;font-size:15px;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 14px 40px rgba(30,55,110,.18);transition:.35s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.g{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 14px 40px rgba(14,159,110,.2)}
+.toast.b{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad),0 14px 40px rgba(225,29,72,.2)}
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(22,33,62,.35);backdrop-filter:blur(6px)}
+.modal.on{display:grid}
+.mbox{width:min(560px,92vw);text-align:center;padding:30px;border-radius:24px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(30,55,110,.25);animation:pop .45s ease}
+.badge{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;font-size:54px;background:conic-gradient(from 0deg,var(--acc),var(--acc2),var(--acc));box-shadow:0 10px 30px color-mix(in srgb,var(--acc) 45%,transparent);animation:spin 6s linear infinite}
+.badge span{animation:spin 6s linear infinite reverse;display:block}
+.stars{font-size:34px;letter-spacing:6px;margin:6px 0}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes glow{50%{box-shadow:0 0 22px color-mix(in srgb,var(--acc) 60%,transparent)}}
+.shake{animation:shake .4s}
+.foot{max-width:1200px;margin:10px auto 30px;padding:0 18px;font-size:12px;color:var(--dim);text-align:center}
+@media(max-width:760px){.hud{padding:10px 14px}.logo{font-size:18px}}
+
+.exp{display:grid;grid-template-columns:1fr 380px;gap:18px}
+@media(max-width:900px){.exp{grid-template-columns:1fr}}
+.win{padding:0;overflow:hidden}
+.tbar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(30,55,110,0.064);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.addr{flex:1;min-width:180px;font-family:Consolas,monospace;font-size:13px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.35);color:var(--dim)}
+.sw{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer;user-select:none}
+.sw i{width:46px;height:26px;border-radius:20px;background:#c9d0e5;position:relative;transition:.25s}
+.sw i:after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.25s}
+.sw.on i{background:var(--acc)}.sw.on i:after{left:23px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;padding:18px}
+.file{text-align:center;padding:16px 10px;border-radius:16px;border:1px solid transparent;cursor:pointer;transition:.2s;position:relative}
+.file:hover{background:rgba(30,55,110,0.08000000000000002);transform:translateY(-3px)}.file.sel{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 12%,transparent)}
+.file .ic{font-size:58px;line-height:1.1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.4))}
+.file .nm{margin-top:8px;font-size:14px;font-weight:600;word-break:break-word}
+.file .nm b{color:var(--bad)}
+.file .res{position:absolute;top:8px;right:8px;font-size:20px}
+.props h3{margin:6px 0 2px;font-size:20px;word-break:break-word}
+.row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.row span:first-child{color:var(--dim)}
+.lock{filter:blur(5px);user-select:none}
+.ch{display:grid;gap:10px;margin-top:16px}
+.why{margin-top:14px;padding:14px;border-radius:14px;font-size:15px;line-height:1.5;display:none}
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="6" data-activity="file-inspector">
+<header class="hud"><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=6"><span aria-hidden="true">&larr;</span> Back to Grade 6 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 6 &middot; Digital citizenship</span></div><h1>File Inspector</h1><div class="activity-status"><div class="chip">Step <b id="step">0 / 0</b></div><div class="chip">Score <b id="score">0</b></div></div><div class="mission">Mission: 8 downloads. Some are disguised programs. Inspect before you open.</div></header>
+<div class="prog"><i id="progbar"></i></div>
+<main><div class="exp"><div class="panel win"><div class="tbar"><span style="font-size:20px">📁</span><div class="addr">C:\Users\Pupil\Downloads</div>
+<button type="button" class="sw" id="sw" aria-pressed="false" onclick="toggle()"><i aria-hidden="true"></i>Show file extensions</button><button type="button" class="sw" id="sw2" aria-pressed="false" onclick="toggle2()"><i aria-hidden="true"></i>Show details</button></div><div class="grid" id="grid"></div></div>
+<div class="panel props" id="props"><div class="tag">File Inspector</div><h2>Choose a file.</h2><p class="muted">Turn on <b>Show file extensions</b> and <b>Show details</b>. Then decide: open it, delete it or ask an adult first.</p>
+<p class="muted" style="font-size:14px">A file extension is the end of a file name, like <span class="mono">.pdf</span> or <span class="mono">.exe</span>. It tells the computer what kind of file it is.</p></div></div></main>
+<div class="foot">Cyber Ops training activity. Everything here is made up for practice. No real accounts are used.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><div class="badge"><span id="mIcon"></span></div><h2 id="mTitle" style="margin:6px 0"></h2><div class="stars" id="mStars"></div><p id="mText" class="muted" style="font-size:16px;line-height:1.5"></p>
+<button class="btn" onclick="location.reload()">Play again</button> <button class="btn ghost" onclick="document.getElementById('modal').className='modal'">Close</button></div></div>
+<script>
+var SCORE=0;
+function $(x){return document.getElementById(x)}
+var AC=null;function sfx(t){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);var f={good:[660,990],bad:[220,140],click:[520,520],alarm:[880,440],win:[523,1046]}[t]||[500,500];o.type=t==='bad'||t==='alarm'?'sawtooth':'sine';o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.18);g.gain.setValueAtTime(.08,n);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+var TT=null;function toast(m,k){var t=$('toast');t.innerHTML=m;t.className='toast on '+(k||'');clearTimeout(TT);TT=setTimeout(function(){t.className='toast'},3600)}
+function addScore(n){SCORE=Math.max(0,SCORE+n);$('score').textContent=SCORE}
+function prog(a,b){$('progbar').style.width=Math.round(a/b*100)+'%';$('step').textContent=a+' / '+b}
+function finish(icon,title,text,stars){sfx('win');$('mIcon').textContent=icon;$('mTitle').textContent=title;$('mText').innerHTML=text;$('mStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);$('modal').className='modal on'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var F=[{"real": "Homework.pdf", "icon": "\ud83d\udcc4", "type": "PDF document", "size": "220 KB", "src": "Sent by your teacher on the school portal", "v": "safe", "why": "A real PDF from a trusted source."}, {"real": "Holiday photo.jpg.exe", "icon": "\ud83d\uddbc\ufe0f", "type": "Application (program)", "size": "3.1 MB", "src": "Message from an unknown number", "v": "danger", "why": "Double extension! It is a program (.exe) pretending to be a photo. The icon is fake too."}, {"real": "Song.mp3", "icon": "\ud83c\udfb5", "type": "MP3 audio", "size": "4.2 MB", "src": "Downloaded by your cousin from a music app", "v": "safe", "why": "A normal audio file from a known person and app."}, {"real": "Free coins generator.zip", "icon": "\ud83d\udddc\ufe0f", "type": "Compressed folder (contains coins.exe)", "size": "9.8 MB", "src": "A video comment link", "v": "danger", "why": "Cheat and free coin tools hide malware. The zip contains a program."}, {"real": "Invoice.docm", "icon": "\ud83d\udcdd", "type": "Word document with macros", "size": "86 KB", "src": "Email from a shop you never used", "v": "ask", "why": ".docm files can run macros (hidden code). Never click Enable Content. Ask an adult."}, {"real": "Cute cat.jpg.scr", "icon": "\ud83d\udc31", "type": "Screen saver (program)", "size": "1.4 MB", "src": "Shared in a game chat", "v": "danger", "why": ".scr files are programs. The .jpg in the middle is a disguise."}, {"real": "Maths worksheet.docx", "icon": "\ud83d\udcdd", "type": "Word document", "size": "48 KB", "src": "School learning platform", "v": "safe", "why": "A normal document from the school platform."}, {"real": "Game update.exe", "icon": "\u2699\ufe0f", "type": "Application (program)", "size": "22 MB", "src": "Pop-up on a free movie website", "v": "danger", "why": "Real updates come from the game or app store, not pop-ups."}];
+var ext=false,det=false,cur=-1,done={},cnt=0,right=0;
+function shown(f){var n=f.real;if(ext)return esc(n).replace(/(\.[a-z0-9]+)$/i,'<b>$1</b>');var p=n.lastIndexOf('.');return esc(n.slice(0,p))}
+function grid(){var focusId=document.activeElement.id;$('grid').innerHTML=F.map(function(f,i){var d=done[i];return '<button type="button" id="file-'+i+'" class="file'+(i===cur?' sel':'')+'" aria-pressed="'+(i===cur)+'" onclick="pick('+i+')"><span class="ic" aria-hidden="true">'+f.icon+'</span><span class="nm mono">'+shown(f)+'</span>'+(d?'<span class="res" aria-label="'+(d.ok?'Handled safely':'Unsafe choice')+'">'+(d.ok?'\u2705':'\u274C')+'</span>':'')+'</button>'}).join('');if(focusId&&$(focusId))$(focusId).focus()}
+function toggle(){ext=!ext;$('sw').className='sw'+(ext?' on':'');$('sw').setAttribute('aria-pressed',ext);sfx('click');grid();if(cur>=0)pick(cur,true);if(ext)toast('Extensions on. Look at the very last part of each name.')}
+function toggle2(){det=!det;$('sw2').className='sw'+(det?' on':'');$('sw2').setAttribute('aria-pressed',det);sfx('click');if(cur>=0)pick(cur,true)}
+function pick(i,quiet){cur=i;if(!quiet)sfx('click');grid();var f=F[i],d=done[i];
+ var h='<div class="tag">Properties</div><div style="font-size:60px">'+f.icon+'</div><h3 class="mono">'+shown(f)+'</h3>';
+ h+='<div class="row"><span>Type</span><span class="'+(det?'':'lock')+'">'+esc(f.type)+'</span></div><div class="row"><span>Size</span><span class="'+(det?'':'lock')+'">'+f.size+'</span></div><div class="row"><span>Where it came from</span><span style="text-align:right">'+esc(f.src)+'</span></div>';
+ h+='<div class="ch"><button class="btn good" onclick="judge(\'safe\')">\uD83D\uDCC2 Safe to open</button><button class="btn bad" onclick="judge(\'danger\')">\uD83D\uDDD1 Danger: delete it</button><button class="btn warn" onclick="judge(\'ask\')">\uD83D\uDE4B Do not open: ask an adult</button></div><div class="why" id="why"></div>';
+ $('props').innerHTML=h;if(d)showWhy(d)}
+function judge(a){if(done[cur])return;var f=F[cur],ok=a===f.v||(f.v==='danger'&&a==='ask'),pts=a===f.v?10:ok?6:-5;
+ done[cur]={ok:ok,a:a};cnt++;if(ok)right++;addScore(pts);sfx(ok?'good':'bad');prog(cnt,F.length);grid();showWhy(done[cur]);
+ if(cnt===F.length)setTimeout(function(){finish('\uD83D\uDCC1','Downloads cleaned!','You handled '+right+' of '+F.length+' files safely. Score: '+SCORE+'.<br>Show file extensions, look at the last one, check where the file came from and never enable macros.',right>=8?3:right>=6?2:1)},900)}
+function showWhy(d){var f=F[cur],w=$('why');w.style.display='block';w.style.background=d.ok?'rgba(46,229,157,.10)':'rgba(255,92,122,.10)';w.style.border='1px solid '+(d.ok?'#2ee59d':'#ff5c7a');
+ w.innerHTML='<b>Real name: <span class="mono">'+esc(f.real)+'</span></b><br>'+esc(f.why)}
+prog(0,F.length);grid();
+</script></body></html>

@@ -14,7 +14,7 @@ for (const match of index.matchAll(/(?:href|aria-controls)="#?([^"/ .]+)"/g)) {
   if (match[0].startsWith('href="') && !match[0].startsWith('href="#')) continue;
   assert(ids.includes(match[1]), `Missing anchor: ${match[1]}`);
 }
-for (const script of ['app.js', 'activities.js']) new vm.Script(await readFile(path.join(root, script), 'utf8'), { filename: script });
+for (const script of ['app.js', 'activities.js', 'assets/activity-descriptions.js']) new vm.Script(await readFile(path.join(root, script), 'utf8'), { filename: script });
 let inlineScripts = 0;
 for (const activity of activities) {
   const file = path.join(root, activity.path);
@@ -23,11 +23,12 @@ for (const activity of activities) {
   assert(activity.path.startsWith(`Grade ${activity.grade}/Activities/`), `Grade mismatch: ${activity.path}`);
   const html = await readFile(file, 'utf8');
   for (const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)) {
+    if (/^<script\b[^>]*\bsrc=/i.test(match[0])) continue;
     new vm.Script(match[1], { filename: activity.path });
     inlineScripts++;
   }
 }
-for (const grade of [2, 3, 4, 5]) {
+for (const grade of [2, 3, 4, 5, 6]) {
   const files = (await readdir(path.join(root, `Grade ${grade}/Activities`))).filter(file => /\.html?$/i.test(file));
   assert.equal(activities.filter(activity => activity.grade === grade).length, files.length, `Stale catalogue for Grade ${grade}`);
 }

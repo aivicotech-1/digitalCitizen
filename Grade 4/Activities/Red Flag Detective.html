@@ -16,14 +16,15 @@ main{max-width:900px;margin:14px auto;padding:0 14px}
 .fb{font-size:19px;margin-top:12px;padding:12px;border-radius:12px;background:#fff;min-height:50px}
 button{font-size:19px;font-weight:bold;border:none;border-radius:12px;padding:11px 16px;cursor:pointer;color:#fff;margin:10px 6px 0 0}
 .list{font-size:17px;background:#fff;border-radius:12px;padding:10px 14px;margin-top:10px}
-</style></head>
-<body><header><h1>Red Flag Detective</h1><div class="score" id="score"></div></header>
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="4" data-activity="red-flag-detective"><header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=4"><span aria-hidden="true">&larr;</span> Back to Grade 4 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 4 &middot; Digital citizenship</span></div><h1>Red Flag Detective</h1><div class="score" id="score"></div></header>
 <main>
 <p style="font-size:18px" id="intro"></p>
 <div class="msg" id="msg"></div>
 <div class="fb" id="fb">Click on anything that looks suspicious.</div>
-<button style="background:var(--ink);display:none" id="nx" onclick="next()">Next message</button>
-<button style="background:#8a95a8" onclick="load()">Restart this message</button>
+<button style="background:var(--ink);display:none" id="nx" onclick="next()" data-ui-action="next">Next message</button>
+<button type="button" id="skip" class="activity-skip" data-ui-action="secondary" onclick="skipTask()" title="Move on without completing this task. No points are added.">Skip message</button>
+<button style="background:#8a95a8" onclick="load()" data-ui-action="secondary">Restart this message</button>
 <div class="list"><b>Red flag checklist:</b> stranger or odd sender, spelling mistakes, hurry or threats, prizes that are too good, asks for passwords or personal details, strange links. <b>What to do:</b> do not click, do not reply, tell a trusted adult.</div>
 <p style="font-size:15px;color:#56627a">Pretend messages. Links here do not go anywhere. Nothing is saved.</p>
 </main>
@@ -43,10 +44,11 @@ var M=[
   safe:{}}];
 var m=0,found={},total=0;
 function el(x){return document.getElementById(x)}
-function load(){found={};var x=M[m];el('intro').textContent=x.intro;el('msg').innerHTML='<div class="meta">'+x.meta+'</div>'+x.body;
+function load(){el('skip').style.display='inline-block';found={};var x=M[m];el('intro').textContent=x.intro;el('msg').innerHTML='<div class="meta">'+x.meta+'</div>'+x.body;
  total=document.querySelectorAll('#msg [data-f]').length;el('score').textContent='Red flags: 0 / '+total;el('fb').textContent='Click on anything that looks suspicious.';el('nx').style.display='none';
  document.querySelectorAll('#msg .h').forEach(function(h,i){h.onclick=function(){if(h.getAttribute('data-f')){if(!found[i]){found[i]=1;h.className+=' found'}var n=Object.keys(found).length;el('score').textContent='Red flags: '+n+' / '+total;el('fb').textContent='Red flag! '+h.getAttribute('data-w');
-  if(n===total){el('fb').textContent='All '+total+' red flags found! Do not click, do not reply and tell a trusted adult.';el('nx').style.display='inline-block'}}else el('fb').textContent='Not a red flag. '+h.getAttribute('data-w')}})}
+  if(n===total){el('skip').style.display='none';el('fb').textContent='All '+total+' red flags found! Do not click, do not reply and tell a trusted adult.';el('nx').style.display='inline-block'}}else el('fb').textContent='Not a red flag. '+h.getAttribute('data-w')}})}
+function skipTask(){next()}
 function next(){m=(m+1)%M.length;load()}
 load();
 </script></body></html>

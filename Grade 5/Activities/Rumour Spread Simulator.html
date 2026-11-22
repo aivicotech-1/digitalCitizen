@@ -17,17 +17,18 @@ button:disabled{opacity:.35;cursor:default}
 svg{width:100%;display:block}
 .meter{font-size:22px;font-weight:bold;text-align:center;margin-top:6px}
 .clue{background:#fffbe6;border:2px dashed #d9c27a;border-radius:12px;padding:10px;margin-top:10px;font-size:18px}
-</style></head>
-<body><header><h1>Rumour Spread Simulator</h1><div id="score">Story 1 of 5</div></header>
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="5" data-activity="rumour-spread-simulator"><header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=5"><span aria-hidden="true">&larr;</span> Back to Grade 5 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 5 &middot; Digital citizenship</span></div><h1>Rumour Spread Simulator</h1><div id="score">Story 1 of 5</div></header>
 <main>
 <div class="box">
   <div class="post"><div class="from" id="from"></div><div class="txt" id="txt"></div></div>
   <button class="big" id="bShare" style="background:#d64545" onclick="share()">Share it now</button>
-  <button class="big" id="bCheck" style="background:#2f6fd6" onclick="check()">Check first</button>
+  <button class="big" id="bCheck" style="background:#2f6fd6" onclick="check()" data-ui-action="primary">Check first</button>
   <div id="clue" class="clue" style="display:none"></div>
   <div id="after" style="display:none"><button class="big" style="background:#2e9e57" onclick="share()">Share it</button><button class="big" style="background:#56627a" onclick="stop()">Do not share</button></div>
   <div id="msg"></div>
-  <button class="big" id="bNext" style="background:var(--head);display:none" onclick="next()">Next story</button>
+  <button class="big" id="bNext" style="background:var(--head);display:none" onclick="next()" data-ui-action="next">Next story</button>
+<button type="button" id="skip" class="activity-skip" data-ui-action="secondary" onclick="skipTask()" title="Move on without completing this task. No points are added.">Skip story</button>
 </div>
 <div class="box">
   <b style="font-size:20px">Our class network: 40 pupils</b>
@@ -52,17 +53,18 @@ function nb(a){var o=[];links.forEach(function(l){if(l[0]===a)o.push(l[1]);if(l[
 function draw(){var h='';links.forEach(function(l){h+='<line x1="'+pts[l[0]][0]+'" y1="'+pts[l[0]][1]+'" x2="'+pts[l[1]][0]+'" y2="'+pts[l[1]][1]+'" stroke="#dde1ea" stroke-width="2"/>'});
  pts.forEach(function(p,k){h+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(k?10:14)+'" fill="'+(k===0?'#f2b705':(seen[k]?'#e0559a':'#c3c9d4'))+'" stroke="#fff" stroke-width="2"/>'});
  el('net').innerHTML=h;el('meter').textContent='Saw the story: '+seen.filter(Boolean).length+' of '+N}
-function load(){var s=ST[i];seen=[];seen[0]=true;el('from').textContent=s.from;el('txt').textContent=s.txt;el('clue').style.display='none';el('after').style.display='none';
+function load(){el('skip').style.display='inline-block';var s=ST[i];seen=[];seen[0]=true;el('from').textContent=s.from;el('txt').textContent=s.txt;el('clue').style.display='none';el('after').style.display='none';
  el('bShare').disabled=false;el('bCheck').disabled=false;el('bNext').style.display='none';el('msg').textContent='Will you share it now, or check first?';el('score').textContent='Story '+(i+1)+' of '+ST.length;draw()}
 function lock(){el('bShare').disabled=true;el('bCheck').disabled=true;el('after').style.display='none'}
-function share(){if(busy)return;lock();busy=true;var s=ST[i],front=[0],step=0;
+function share(){if(busy)return;el('skip').style.display='none';lock();busy=true;var s=ST[i],front=[0],step=0;
  var iv=setInterval(function(){var nf=[];front.forEach(function(a){nb(a).forEach(function(b){if(!seen[b]&&Math.random()<0.8){seen[b]=true;nf.push(b)}})});front=nf;draw();step++;
   if(!front.length||step>8){clearInterval(iv);busy=false;var c=seen.filter(Boolean).length;score.spread+=s.fake?c:0;
    el('msg').innerHTML=s.fake?'<b style="color:#d64545">Oh no! '+c+' people saw a fake story.</b> Each person passed it on in seconds. Fake stories spread faster than corrections.':'<b style="color:#2e9e57">Good share!</b> This story was true and useful. '+c+' people now know.';
    if(!s.fake)score.shared++;done()}},420)}
 function check(){lock();var s=ST[i];el('clue').style.display='block';el('clue').innerHTML='<b>You checked:</b> '+s.clue;el('after').style.display='block';el('msg').textContent='Now decide: share it or not?'}
 function stop(){el('after').style.display='none';var s=ST[i];if(s.fake){score.stopped++;el('msg').innerHTML='<b style="color:#2e9e57">You stopped a fake story!</b> Nobody else saw it because of you.'}else el('msg').innerHTML='This one was true. It was fine to share, but not sharing is safe too.';done()}
-function done(){el('bNext').style.display='inline-block';if(i===ST.length-1){el('bNext').textContent='See my result'}}
+function done(){el('skip').style.display='none';el('bNext').style.display='inline-block';if(i===ST.length-1){el('bNext').textContent='See my result'}}
+function skipTask(){if(busy)return;el('skip').style.display='none';lock();next()}
 function next(){if(i<ST.length-1){i++;load()}else{el('bNext').style.display='none';el('from').textContent='Your result';el('txt').textContent='Fakes stopped: '+score.stopped+' of 3. True stories shared: '+score.shared+' of 2.';
  el('msg').innerHTML='People reached by fakes you shared: '+score.spread+'.<br><b>Remember: stop, check the source, then decide.</b>';el('clue').style.display='none'}}
 load();

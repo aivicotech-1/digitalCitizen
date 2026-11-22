@@ -28,5 +28,11 @@
   "Photo Edit Lab": {"description":"Change a scene, compare it with the original and discover why pictures deserve a closer look.","topic":"Media literacy","type":"Creative lab","art":"explore","color":"#e9dfc9","order":7},
   "Rumour Spread Simulator": {"description":"Watch how a story travels. Practise checking information before you decide to pass it on.","topic":"Media literacy","type":"Simulator","art":"chat","color":"#e6deeb","order":8},
   "Cyber Crime Scene": {"description":"Piece together the clues behind a pretend account hack, build a timeline and solve the case.","topic":"Cyber investigation","type":"Detective game","art":"explore","color":"#dce5e9","order":9},
-  "Cyber Defence HQ": {"description":"Plan your school's digital defences, test them against an attack wave and strengthen the gaps.","topic":"Cyber security","type":"Strategy game","art":"shield","color":"#dce6d5","order":10}
+  "Cyber Defence HQ": {"description":"Plan your school's digital defences, test them against an attack wave and strengthen the gaps.","topic":"Cyber security","type":"Strategy game","art":"shield","color":"#dce6d5","order":10},
+  "Inbox Inspector": {"description":"Inspect senders, links and attachments to separate trusted messages from phishing.","topic":"Email & phishing","type":"Detective game","art":"explore","color":"#dce5e9","order":1},
+  "Phone Trap": {"description":"Spot traps in text messages, phone calls and QR codes, and choose a trusted way to check.","topic":"Mobile safety","type":"Challenge","art":"chat","color":"#e6deeb","order":2},
+  "File Inspector": {"description":"Reveal file extensions and details to decide what is safe to open, delete or ask about.","topic":"Downloads & malware","type":"Detective game","art":"explore","color":"#e9dfc9","order":3},
+  "Firewall Gatekeeper": {"description":"Set firewall rules and balance welcoming real visitors with stopping unwanted traffic.","topic":"Network protection","type":"Strategy game","art":"shield","color":"#dce6d5","order":4},
+  "Ransomware Outbreak": {"description":"Choose school defences, watch a simulated attack and practise recovery decisions.","topic":"Resilience & recovery","type":"Simulator","art":"shield","color":"#e8ddd4","order":5},
+  "Incident Room": {"description":"Lead a team through detecting, containing and recovering from a school phishing incident.","topic":"Incident response","type":"Team challenge","art":"chat","color":"#e2e8db","order":6}
 }

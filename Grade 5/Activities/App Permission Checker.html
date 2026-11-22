@@ -19,8 +19,8 @@ main{max-width:1150px;margin:14px auto;padding:0 14px;display:grid;grid-template
 .why{font-size:16px;margin-top:6px}
 button.big{font-size:20px;font-weight:bold;border:none;border-radius:14px;padding:12px 18px;cursor:pointer;color:#fff;margin:10px 8px 0 0}
 .meter{height:26px;border-radius:13px;background:#e3e7ef;overflow:hidden;margin-top:6px}.meter div{height:100%;transition:width .5s}
-</style></head>
-<body><header><h1>App Permission Checker</h1></header>
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="5" data-activity="app-permission-checker"><header><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=5"><span aria-hidden="true">&larr;</span> Back to Grade 5 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 5 &middot; Digital citizenship</span></div><h1>App Permission Checker</h1></header>
 <main>
 <div class="box"><b style="font-size:19px;display:block;margin-bottom:10px;text-align:center">Pretend phone</b><div class="phone" id="phone"></div>
  <div style="font-size:16px;margin-top:10px">Tap an app. Decide what it may use. Ask: does this app really need this to do its job?</div>
@@ -46,7 +46,7 @@ function check(){var a=APPS[cur],ok=0,miss=false;a.r.forEach(function(r,k){var v
   el('q'+k).className='req '+(good?'good':'bad');el('w'+k).textContent=(good?'Good choice. ':'Think again. ')+r[2];if(good)ok++});
  if(miss){el('res').textContent='Choose an answer for every request first.';return}
  checked[cur]=true;phone();el('res').innerHTML='<b>'+ok+' of '+a.r.length+' good choices.</b>';leak()}
-function leak(){var bad=0,tot=0;APPS.forEach(function(a,i){if(!checked[i])return;a.r.forEach(function(r,k){tot++;var v=ch[i+'_'+k];if(v==='allow'&&r[1]==='deny'||v==='always')bad++})});
+function leak(){var bad=0,tot=0;APPS.forEach(function(a,i){if(!checked[i])return;a.r.forEach(function(r,k){tot++;var v=ch[i+'_'+k];if((r[1]==='deny'&&(v==='allow'||v==='using'||v==='always'))||v==='always')bad++})});
  var p=tot?Math.round(bad/tot*100):0;el('leak').style.width=Math.max(p,2)+'%';el('leak').style.background=p>30?'#d64545':(p>0?'#e0b100':'#2e9e57');
  var all=Object.keys(checked).length;el('leakt').textContent=(p?bad+' permission'+(bad>1?'s give':' gives')+' away data an app does not need.':'No extra data given away.')+' Apps checked: '+all+' of 5.'}
 phone();
