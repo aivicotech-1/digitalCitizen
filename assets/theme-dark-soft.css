@@ -1,4 +1,4 @@
-/* Final soft dark theme: charcoal-green surfaces and light paper grade cards.
+/* Final soft dark theme: charcoal-green surfaces and muted coloured grade cards.
    Shared by the homepage, library and activities; light mode is unaffected. */
 @media screen {
   html:root[data-theme="dark"] {
@@ -15,16 +15,17 @@
   html:root[data-theme="dark"] .learning-section { background:#314239; }
   html:root[data-theme="dark"] .site-footer { background:#23332b; }
   html:root[data-theme="dark"] .approach-art { background:#455b49; }
-  html:root[data-theme="dark"] .activity-cover { background:color-mix(in srgb,var(--cover,#dce5d9) 35%,#34473c); }
+  html:root[data-theme="dark"] .activity-cover { background:color-mix(in srgb,var(--cover,#dce5d9) 27%,#34473c); }
+  html:root[data-theme="dark"] .activity-card { background:#304238; }
 
-  /* Light paper colours break up the darker canvas. */
+  /* Muted paper colours give cards depth against the darker canvas. */
   html:root[data-theme="dark"] :is(.fan-card a,.fan-card button,.grade-card) { color:#25392e; border-color:#526753; box-shadow:0 8px 22px #14201926; }
-  html:root[data-theme="dark"] :is(.fan-one a,.fan-one button,.grade-2) { background:#d5c7a9; }
-  html:root[data-theme="dark"] :is(.fan-two a,.fan-two button,.grade-3) { background:#bfcfb5; }
-  html:root[data-theme="dark"] :is(.fan-three a,.fan-three button,.grade-4) { background:#cdc2d5; }
-  html:root[data-theme="dark"] :is(.fan-four a,.fan-four button,.grade-5) { background:#bfd1d9; }
-  html:root[data-theme="dark"] :is(.fan-five a,.grade-6) { background:#d6c2b1; }
-  html:root[data-theme="dark"] :is(.grade-count,.postcard-bottom) { color:#435347; border-color:#25392e33; }
+  html:root[data-theme="dark"] :is(.fan-one a,.fan-one button,.grade-2) { background:#bdb08f; }
+  html:root[data-theme="dark"] :is(.fan-two a,.fan-two button,.grade-3) { background:#a7b99b; }
+  html:root[data-theme="dark"] :is(.fan-three a,.fan-three button,.grade-4) { background:#b5a7bf; }
+  html:root[data-theme="dark"] :is(.fan-four a,.fan-four button,.grade-5) { background:#a5bec9; }
+  html:root[data-theme="dark"] :is(.fan-five a,.grade-6) { background:#bea994; }
+  html:root[data-theme="dark"] :is(.grade-count,.postcard-bottom) { color:#334336; border-color:#25392e33; }
 
   html:root[data-theme="dark"] body button.theme-toggle { background:#405648; border-color:#819786; }
   html:root[data-theme="dark"] body.activity-ui > header { background:#293f32; border-bottom-color:#819786; }

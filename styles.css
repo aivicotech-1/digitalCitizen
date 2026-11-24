@@ -3,6 +3,17 @@
 @import url("assets/theme-dark-soft.css");
 @layer reset, base, layout, components, motion, responsive, legibility, dark;
 @layer components {
+  @media screen {
+    :root:not([data-theme="dark"]) :is(.fan-one a,.fan-one button,.grade-2) { background:#ddc79e; }
+    :root:not([data-theme="dark"]) :is(.fan-two a,.fan-two button,.grade-3) { background:#cbd8bb; }
+    :root:not([data-theme="dark"]) :is(.fan-three a,.fan-three button,.grade-4) { background:#d7c8df; }
+    :root:not([data-theme="dark"]) :is(.fan-four a,.fan-four button,.grade-5) { background:#c4d7e0; }
+    :root:not([data-theme="dark"]) :is(.fan-five a,.grade-6) { background:#d9c2af; }
+    :root:not([data-theme="dark"]) .activity-cover { background:color-mix(in srgb,var(--cover,#e6e9dc) 75%,#65765d); }
+    :root:not([data-theme="dark"]) .activity-card { background:#f0f0e7; }
+  }
+}
+@layer components {
   .library-back{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:9px 16px;margin-bottom:24px;border:1px solid #bfcabb;border-radius:8px;background:#fffefa;color:#294f40;font-size:.9375rem;font-weight:600;transition:background-color .16s,border-color .16s}
   .library-back:hover{background:#e7ebe1;border-color:#74846e}
   .library-back:focus-visible{outline:3px solid #977038;outline-offset:4px}
