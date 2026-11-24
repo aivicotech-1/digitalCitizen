@@ -18,7 +18,7 @@
   html:root[data-theme="dark"] .activity-cover { background:color-mix(in srgb,var(--cover,#dce5d9) 27%,#34473c); }
   html:root[data-theme="dark"] .activity-card { background:#304238; }
 
-  html:root[data-theme="dark"] .grade-7 { background:#9dbbb0; }
+  html:root[data-theme="dark"] :is(.fan-six a,.grade-7) { background:#9dbbb0; }
 
   /* Muted paper colours give cards depth against the darker canvas. */
   html:root[data-theme="dark"] :is(.fan-card a,.fan-card button,.grade-card) { color:#25392e; border-color:#526753; box-shadow:0 8px 22px #14201926; }

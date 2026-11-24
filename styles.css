@@ -74,19 +74,30 @@
   .grade-7{background:#c1d8cf}
   .fan-five{--x:420px;--r:14deg;--y:36px;--drift:26px;z-index:5;animation-delay:.6s}
   .fan-five a{background:#e4d1c2}
+  .fan-six{--drift:26px;z-index:6;animation-delay:.64s}
+  .fan-six a{background:#c1d8cf}
 }
 @layer responsive {
   @media(min-width:1000px){.grade-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
   @media(min-width:821px) and (max-width:999px){.grade-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
   @media(max-width:820px){.grade-grid>.grade-card:last-child{grid-column:auto}}
   @media(min-width:561px){
-    .hero-gallery .fan-card{width:230px;transform:translateX(calc(var(--x) - 115px + var(--drift) * var(--spread))) translateY(calc(var(--y) + var(--lift))) rotate(var(--r))}
-    .hero-gallery .fan-one{--x:-420px;--r:-13deg;--y:32px}
-    .hero-gallery .fan-two{--x:-210px;--r:-6deg;--y:8px}
-    .hero-gallery .fan-three{--x:0px;--r:0deg;--y:0px}
-    .hero-gallery .fan-four{--x:210px;--r:7deg;--y:12px}
+    .hero-gallery .fan-card{width:200px;transform:translateX(calc(var(--x) - 100px + var(--drift) * var(--spread))) translateY(calc(var(--y) + var(--lift))) rotate(var(--r))}
+    .hero-gallery .postcard-title{font-size:1.4rem}
+    .hero-gallery .postcard-top{font-size:.47rem}
+    .hero-gallery .postcard-bottom{font-size:.44rem}
+    .hero-gallery .postcard-art{height:137px;object-fit:contain}
+    .hero-gallery .fan-one{--x:-460px;--r:-13deg;--y:34px}
+    .hero-gallery .fan-two{--x:-276px;--r:-8deg;--y:12px}
+    .hero-gallery .fan-three{--x:-92px;--r:-3deg;--y:0px}
+    .hero-gallery .fan-four{--x:92px;--r:3deg;--y:0px}
+    .hero-gallery .fan-five{--x:276px;--r:8deg;--y:12px;--drift:18px}
+    .hero-gallery .fan-six{--x:460px;--r:13deg;--y:34px}
   }
-  @media(max-width:560px){.hero-gallery{height:555px}.fan-five{--x:0px;--r:-3deg;--y:324px}}
+  @media(min-width:901px) and (max-width:1200px){.hero-gallery{transform:scale(.74);transform-origin:center top;height:310px;margin-bottom:-20px}}
+  @media(min-width:701px) and (max-width:900px){.hero-gallery{transform:scale(.57);transform-origin:center top;height:275px;margin-bottom:-45px}}
+  @media(min-width:561px) and (max-width:700px){.hero-gallery{transform:scale(.44);transform-origin:center top;height:240px;margin-bottom:-60px}}
+  @media(max-width:560px){.hero-gallery{height:555px}.fan-five{--x:-83px;--r:-6deg;--y:324px}.fan-six{--x:83px;--r:6deg;--y:324px}.fan-six .postcard-art{object-fit:contain}}
 }
 
 @layer dark {
