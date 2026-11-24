@@ -7,7 +7,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Build an after-school routine with time for screens, play, learning and rest.",
     "topic": "Healthy habits",
     "type": "Planner",
-    "art": "balance",
+    "art": "my-balanced-day",
     "color": "#e9dfc9",
     "order": 1,
     "path": "Grade 2/Activities/My Balanced Day.html"
@@ -19,7 +19,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "A surprise pops up on your screen. Practise spotting the safest thing to do next.",
     "topic": "Online safety",
     "type": "Simulator",
-    "art": "shield",
+    "art": "pop-up-safety-simulator",
     "color": "#dce6d5",
     "order": 2,
     "path": "Grade 2/Activities/Pop-Up Safety Simulator.html"
@@ -31,7 +31,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Put your everyday tech choices to the test and discover habits that help you thrive.",
     "topic": "Digital wellbeing",
     "type": "Quiz",
-    "art": "explore",
+    "art": "smart-tech-habits-quiz",
     "color": "#dce5e9",
     "order": 3,
     "path": "Grade 2/Activities/Smart Tech Habits Quiz.html"
@@ -43,7 +43,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Sort information into what is safe to share, what needs a grown-up, and what stays private.",
     "topic": "Personal information",
     "type": "Sorting game",
-    "art": "shield",
+    "art": "info-sorter",
     "color": "#dce6d5",
     "order": 1,
     "path": "Grade 3/Activities/Info Sorter.html"
@@ -55,7 +55,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Think about who is asking before you decide what to share. Every choice matters.",
     "topic": "Sharing safely",
     "type": "Challenge",
-    "art": "chat",
+    "art": "share-circles",
     "color": "#e6deeb",
     "order": 2,
     "path": "Grade 3/Activities/Share Circles.html"
@@ -67,7 +67,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Create a pretend username that is fun, kind and keeps personal details out of sight.",
     "topic": "Online identity",
     "type": "Creative lab",
-    "art": "shield",
+    "art": "safe-username-maker",
     "color": "#e9dfc9",
     "order": 3,
     "path": "Grade 3/Activities/Safe Username Maker.html"
@@ -79,7 +79,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Mix made-up words, numbers and symbols to investigate what makes a password stronger.",
     "topic": "Account security",
     "type": "Interactive lab",
-    "art": "shield",
+    "art": "password-lab",
     "color": "#dce6d5",
     "order": 4,
     "path": "Grade 3/Activities/Password Lab.html"
@@ -91,7 +91,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Make thoughtful choices in everyday account situations and keep your digital world safe.",
     "topic": "Account security",
     "type": "Challenge",
-    "art": "shield",
+    "art": "account-guard",
     "color": "#dce5e9",
     "order": 5,
     "path": "Grade 3/Activities/Account Guard.html"
@@ -103,7 +103,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Look closely at a picture and find the little clues that could reveal personal information.",
     "topic": "Photo privacy",
     "type": "Detective game",
-    "art": "explore",
+    "art": "photo-clue-detective",
     "color": "#e9dfc9",
     "order": 6,
     "path": "Grade 3/Activities/Photo Clue Detective.html"
@@ -115,7 +115,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Before you post, take a moment. Decide what is thoughtful, safe and ready to share.",
     "topic": "Digital footprints",
     "type": "Challenge",
-    "art": "chat",
+    "art": "post-or-pause",
     "color": "#e6deeb",
     "order": 7,
     "path": "Grade 3/Activities/Post or Pause.html"
@@ -127,7 +127,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Bring your privacy skills together in twelve questions. How much have you discovered?",
     "topic": "Privacy essentials",
     "type": "Quiz",
-    "art": "explore",
+    "art": "privacy-champion-quiz",
     "color": "#dce6d5",
     "order": 8,
     "path": "Grade 3/Activities/Privacy Champion Quiz.html"
@@ -139,7 +139,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "An online conversation is heating up. Choose calmer replies and watch the temperature fall.",
     "topic": "Managing conflict",
     "type": "Simulator",
-    "art": "chat",
+    "art": "cool-it-down",
     "color": "#e9dfc9",
     "order": 1,
     "path": "Grade 4/Activities/Cool It Down.html"
@@ -151,7 +151,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Give a tricky message a fresh start. Rewrite it so it feels clearer, kinder and more thoughtful.",
     "topic": "Kind communication",
     "type": "Creative lab",
-    "art": "chat",
+    "art": "message-makeover-studio",
     "color": "#e6deeb",
     "order": 2,
     "path": "Grade 4/Activities/Message Makeover Studio.html"
@@ -163,7 +163,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Join a pretend team conversation and practise responding with care and confidence.",
     "topic": "Kind communication",
     "type": "Simulator",
-    "art": "chat",
+    "art": "group-chat-sandbox",
     "color": "#dce6d5",
     "order": 3,
     "path": "Grade 4/Activities/Group Chat Sandbox.html"
@@ -175,7 +175,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Is it a joke, a conflict or bullying? Sort the situations and think about what makes them different.",
     "topic": "Respect online",
     "type": "Sorting game",
-    "art": "chat",
+    "art": "sort-it-board",
     "color": "#dce5e9",
     "order": 4,
     "path": "Grade 4/Activities/Sort It Board.html"
@@ -187,7 +187,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Read pretend messages and uncover suspicious details before they catch you out.",
     "topic": "Spotting scams",
     "type": "Detective game",
-    "art": "explore",
+    "art": "red-flag-detective",
     "color": "#e9dfc9",
     "order": 5,
     "path": "Grade 4/Activities/Red Flag Detective.html"
@@ -199,7 +199,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Turn a made-up message into a secret code and watch how each letter changes with a key.",
     "topic": "Secret messages",
     "type": "Interactive lab",
-    "art": "shield",
+    "art": "encryption-machine",
     "color": "#dce6d5",
     "order": 6,
     "path": "Grade 4/Activities/Encryption Machine.html"
@@ -211,7 +211,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Explore how a coded message becomes readable again by working through the alphabet.",
     "topic": "Secret messages",
     "type": "Interactive lab",
-    "art": "explore",
+    "art": "decoder-machine",
     "color": "#dce5e9",
     "order": 7,
     "path": "Grade 4/Activities/Decoder Machine.html"
@@ -223,7 +223,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Choose protections for your digital castle and discover how different defences work together.",
     "topic": "Cyber security",
     "type": "Strategy game",
-    "art": "shield",
+    "art": "cyber-castle",
     "color": "#e6deeb",
     "order": 8,
     "path": "Grade 4/Activities/Cyber Castle.html"
@@ -235,7 +235,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Try different protections and see how they change a simulated outbreak on class computers.",
     "topic": "Device protection",
     "type": "Simulator",
-    "art": "balance",
+    "art": "virus-outbreak",
     "color": "#dce6d5",
     "order": 9,
     "path": "Grade 4/Activities/Virus Outbreak.html"
@@ -247,7 +247,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Investigate web addresses, spot lookalike sites and build your own safe-link checklist.",
     "topic": "Spotting scams",
     "type": "Detective game",
-    "art": "explore",
+    "art": "url-detective",
     "color": "#dce5e9",
     "order": 1,
     "path": "Grade 5/Activities/URL Detective.html"
@@ -259,7 +259,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Look past tempting tricks and practise recognising the signs of an online scam.",
     "topic": "Spotting scams",
     "type": "Challenge",
-    "art": "explore",
+    "art": "beat-the-trickster",
     "color": "#e9dfc9",
     "order": 2,
     "path": "Grade 5/Activities/Beat the Trickster.html"
@@ -271,7 +271,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Decide which permissions an app really needs and take a closer look at what it asks to access.",
     "topic": "Privacy & permissions",
     "type": "Challenge",
-    "art": "shield",
+    "art": "app-permission-checker",
     "color": "#dce6d5",
     "order": 3,
     "path": "Grade 5/Activities/App Permission Checker.html"
@@ -283,7 +283,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Test pretend passwords against simulated guessing methods and explore why length matters.",
     "topic": "Account security",
     "type": "Interactive lab",
-    "art": "shield",
+    "art": "password-cracker",
     "color": "#e6deeb",
     "order": 4,
     "path": "Grade 5/Activities/Password Cracker.html"
@@ -295,7 +295,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Try both sides of a pretend login and discover the difference an extra security step can make.",
     "topic": "Account security",
     "type": "Simulator",
-    "art": "shield",
+    "art": "two-step-login",
     "color": "#dce5e9",
     "order": 5,
     "path": "Grade 5/Activities/Two-Step Login.html"
@@ -307,7 +307,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Follow a pretend message across a network and compare what happens with and without encryption.",
     "topic": "Networks & encryption",
     "type": "Interactive lab",
-    "art": "explore",
+    "art": "network-explorer",
     "color": "#dce6d5",
     "order": 6,
     "path": "Grade 5/Activities/Network Explorer.html"
@@ -319,7 +319,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Change a scene, compare it with the original and discover why pictures deserve a closer look.",
     "topic": "Media literacy",
     "type": "Creative lab",
-    "art": "explore",
+    "art": "photo-edit-lab",
     "color": "#e9dfc9",
     "order": 7,
     "path": "Grade 5/Activities/Photo Edit Lab.html"
@@ -331,7 +331,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Watch how a story travels. Practise checking information before you decide to pass it on.",
     "topic": "Media literacy",
     "type": "Simulator",
-    "art": "chat",
+    "art": "rumour-spread-simulator",
     "color": "#e6deeb",
     "order": 8,
     "path": "Grade 5/Activities/Rumour Spread Simulator.html"
@@ -343,7 +343,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Piece together the clues behind a pretend account hack, build a timeline and solve the case.",
     "topic": "Cyber investigation",
     "type": "Detective game",
-    "art": "explore",
+    "art": "cyber-crime-scene",
     "color": "#dce5e9",
     "order": 9,
     "path": "Grade 5/Activities/Cyber Crime Scene.html"
@@ -355,7 +355,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Plan your school's digital defences, test them against an attack wave and strengthen the gaps.",
     "topic": "Cyber security",
     "type": "Strategy game",
-    "art": "shield",
+    "art": "cyber-defence-hq",
     "color": "#dce6d5",
     "order": 10,
     "path": "Grade 5/Activities/Cyber Defence HQ.html"
@@ -367,7 +367,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Inspect senders, links and attachments to separate trusted messages from phishing.",
     "topic": "Email & phishing",
     "type": "Detective game",
-    "art": "explore",
+    "art": "inbox-inspector",
     "color": "#dce5e9",
     "order": 1,
     "path": "Grade 6/Activities/Inbox Inspector.html"
@@ -379,7 +379,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Spot traps in text messages, phone calls and QR codes, and choose a trusted way to check.",
     "topic": "Mobile safety",
     "type": "Challenge",
-    "art": "chat",
+    "art": "phone-trap",
     "color": "#e6deeb",
     "order": 2,
     "path": "Grade 6/Activities/Phone Trap.html"
@@ -391,7 +391,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Reveal file extensions and details to decide what is safe to open, delete or ask about.",
     "topic": "Downloads & malware",
     "type": "Detective game",
-    "art": "explore",
+    "art": "file-inspector",
     "color": "#e9dfc9",
     "order": 3,
     "path": "Grade 6/Activities/File Inspector.html"
@@ -403,7 +403,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Set firewall rules and balance welcoming real visitors with stopping unwanted traffic.",
     "topic": "Network protection",
     "type": "Strategy game",
-    "art": "shield",
+    "art": "firewall-gatekeeper",
     "color": "#dce6d5",
     "order": 4,
     "path": "Grade 6/Activities/Firewall Gatekeeper.html"
@@ -415,7 +415,7 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Choose school defences, watch a simulated attack and practise recovery decisions.",
     "topic": "Resilience & recovery",
     "type": "Simulator",
-    "art": "shield",
+    "art": "ransomware-outbreak",
     "color": "#e8ddd4",
     "order": 5,
     "path": "Grade 6/Activities/Ransomware Outbreak.html"
@@ -427,9 +427,69 @@ window.DIGITAL_CITIZEN_ACTIVITIES = [
     "description": "Lead a team through detecting, containing and recovering from a school phishing incident.",
     "topic": "Incident response",
     "type": "Team challenge",
-    "art": "chat",
+    "art": "incident-room",
     "color": "#e2e8db",
     "order": 6,
     "path": "Grade 6/Activities/Incident Room.html"
+  },
+  {
+    "id": "7-malware-lab",
+    "grade": 7,
+    "title": "Malware Lab",
+    "description": "Investigate six infected devices, identify the malware and choose the right clean-up steps.",
+    "topic": "Malware investigation",
+    "type": "Interactive lab",
+    "art": "malware-lab",
+    "color": "#e6deeb",
+    "order": 1,
+    "path": "Grade 7/Activities/Malware Lab.html"
+  },
+  {
+    "id": "7-phone-security-checkup",
+    "grade": 7,
+    "title": "Phone Security Checkup",
+    "description": "Give a pretend phone a security checkup, review its apps and strengthen eight settings.",
+    "topic": "Mobile security",
+    "type": "Simulator",
+    "art": "phone-security-checkup",
+    "color": "#dce6d5",
+    "order": 2,
+    "path": "Grade 7/Activities/Phone Security Checkup.html"
+  },
+  {
+    "id": "7-account-rescue",
+    "grade": 7,
+    "title": "Account Rescue",
+    "description": "Spot an account takeover, put recovery steps in order and secure the account for the future.",
+    "topic": "Account recovery",
+    "type": "Challenge",
+    "art": "account-rescue",
+    "color": "#e8ddd4",
+    "order": 3,
+    "path": "Grade 7/Activities/Account Rescue.html"
+  },
+  {
+    "id": "7-hotspot-hunter",
+    "grade": 7,
+    "title": "Hotspot Hunter",
+    "description": "Compare public Wi-Fi networks, check VPN claims and secure a pretend home router.",
+    "topic": "Wi-Fi & network safety",
+    "type": "Simulator",
+    "art": "hotspot-hunter",
+    "color": "#dce5e9",
+    "order": 4,
+    "path": "Grade 7/Activities/Hotspot Hunter.html"
+  },
+  {
+    "id": "7-cyber-shield-challenge",
+    "grade": 7,
+    "title": "Cyber Shield Challenge",
+    "description": "Team up to match cyber security terms and solve eight cases using everything you have learned.",
+    "topic": "Cyber security skills",
+    "type": "Team challenge",
+    "art": "cyber-shield-challenge",
+    "color": "#e9dfc9",
+    "order": 5,
+    "path": "Grade 7/Activities/Cyber Shield Challenge.html"
   }
 ];

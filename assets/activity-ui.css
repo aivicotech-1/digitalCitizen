@@ -2,63 +2,85 @@
 @import url("theme-colors.css");
 @import url("theme-dark-soft.css");
 /* Shared presentation only. Each activity owns its controls and game state. */
-/* Grade 6 keeps its original game layouts and state colours within the shared theme. */
-body.activity-ui[data-grade="6"] { --acc:#547b62; --acc2:#b6c8a7; --acct:#294f40; --dim:#5b695f; --line:#dce1d6; --bg:#f3f1ec; }
-.activity-ui[data-grade="6"]::before { content:none; }
-.activity-ui[data-grade="6"] > .hud { position:relative; top:auto; backdrop-filter:none; box-shadow:none; }
-.activity-ui[data-grade="6"] .activity-status { display:flex; flex-wrap:wrap; gap:8px; }
-.activity-ui[data-grade="6"] .hud .chip { background:#ffffff0d; border:1px solid #ffffff35; box-shadow:none; color:#fffdf5; border-radius:8px; }
-.activity-ui[data-grade="6"] .hud .chip b { color:#fffdf5; }
-.activity-ui[data-grade="6"] .mission { flex-basis:100%; min-width:0; color:#dbe4d5; font-size:15px; }
-.activity-ui[data-grade="6"] > .prog { position:relative; margin:0; top:auto; height:5px; background:#dce1d6; }
-.activity-ui[data-grade="6"] :is(.mail,.lay,.exp,.wrap,.net,.item,.from) > * { min-width:0; }
-.activity-ui[data-grade="6"] .btn:not(.ghost):not(.good):not(.bad):not(.warn) { background:#294f40; color:#fffdf5; box-shadow:0 3px 0 #183d2d; }
-.activity-ui[data-grade="6"] .btn.ghost { border-color:#bfcabb; background:#f5f5ee; color:#294f40; }
-.activity-ui[data-grade="6"] .btn.good { background:#d8eee0; color:#18492c; box-shadow:none; }
-.activity-ui[data-grade="6"] .btn.bad { background:#f8dde3; color:#82283d; box-shadow:none; }
-.activity-ui[data-grade="6"] .btn.warn { background:#f5e6bd; color:#684900; box-shadow:none; }
-.activity-ui[data-grade="6"] :is(.feed,.log) { background:#f3f5ef; color:#354c3e; font-size:14px; }
-.activity-ui[data-grade="6"] .panel.list { padding:10px; }
-.activity-ui[data-grade="6"] .panel.win { padding:0; }
-.activity-ui[data-grade="6"] :is(.real,.tip,.body,.bub,.addr) { overflow-wrap:anywhere; }
-.activity-ui[data-grade="6"] .tip { max-width:min(320px,70vw); white-space:normal; }
-.activity-ui[data-grade="6"] .phone { max-width:100%; background:#d5decf; box-shadow:0 0 0 2px #b1bda9,0 12px 32px #263e3420; }
-.activity-ui[data-grade="6"] .scr { background:#f1f2e9; }
-.activity-ui[data-grade="6"] .bub { background:#e0e8d8; }
-.activity-ui[data-grade="6"] .out { font-family:inherit; }
-.activity-ui[data-grade="6"] .card:not(.good):not(.bad) { background:#f4f5ee; }
-.activity-ui[data-grade="6"] .file .ic { filter:none; }
-.activity-ui[data-grade="6"] .badge, .activity-ui[data-grade="6"] .badge span { animation:none; box-shadow:none; }
-.activity-ui[data-grade="6"] .mbox { max-height:calc(100dvh - 32px); overflow:auto; }
-.activity-ui[data-grade="6"] .foot { font-size:14px; }
-.activity-ui[data-grade="6"] .note { margin:0; }
-.activity-ui[data-grade="6"] .nbox { max-height:calc(100dvh - 32px); overflow:auto; box-shadow:0 14px 45px #82283d25; }
+/* Grade 7 uses the same calm surfaces for its new case and settings controls. */
+.activity-ui[data-grade="7"] :is(.dev,.al,.set,.rt,.tm,.df,.ty,.pill,.wifi,.clue,.term,.case) { border-color:#c4cebf; border-radius:10px; }
+.activity-ui[data-grade="7"] :is(.term,.case) { background:#e8ede1; }
+.activity-ui[data-grade="7"] .dev.on { border-color:#547b62; box-shadow:0 0 0 2px #a9bea5; }
+.activity-ui[data-grade="7"] :is(.term,.tm,.df,.ty,.pill,.ch button,.row small) { font-size:14px; }
+.activity-ui[data-grade="7"] :is(.al,.set) { flex-wrap:wrap; }
+.activity-ui[data-grade="7"] :is(.al,.set) .tx { min-width:150px; }
+.activity-ui[data-grade="7"] .back { color:var(--acct); }
+.activity-ui[data-grade="7"] .phone { height:auto; }
+.activity-ui[data-grade="7"] .scr { max-height:70dvh; }
+@media(max-width:600px) {
+  body.activity-ui[data-grade="7"] :is(.grid,.rt) { grid-template-columns:minmax(0,1fr); }
+  body.activity-ui[data-grade="7"] .phone { width:min(340px,100%); height:auto; }
+  .activity-ui[data-grade="7"] .rt select { max-width:100%; }
+}
+@media screen {
+  :root[data-theme="dark"] body.activity-ui[data-grade="7"] :is(.dev,.al,.set,.rt,.tm,.df,.ty,.pill,.wifi,.term,.case,.portal,.ch button) { background:var(--theme-raised); color:var(--theme-text); border-color:var(--theme-border); }
+  :root[data-theme="dark"] body.activity-ui[data-grade="7"] :is(.dev.on,.tm.sel) { border-color:var(--theme-accent); box-shadow:0 0 0 1px var(--theme-accent); }
+  :root[data-theme="dark"] body.activity-ui[data-grade="7"] :is(.dev.ok,.al.n,.set.ok,.rt.ok,.tm.done,.df.done,.opt.ok,.fx) { background:var(--theme-good-bg); color:var(--theme-good); border-color:#78ba8d; }
+  :root[data-theme="dark"] body.activity-ui[data-grade="7"] :is(.al.s,.opt.no) { background:var(--theme-bad-bg); color:var(--theme-bad); border-color:#d8808d; }
+  :root[data-theme="dark"] body.activity-ui[data-grade="7"] .case .ty { background:transparent; color:var(--theme-warn); }
+}
+/* Grades 6 and 7 retain their game layouts within the shared theme. */
+body.activity-ui:is([data-grade="6"],[data-grade="7"]) { --acc:#547b62; --acc2:#b6c8a7; --acct:#294f40; --dim:#5b695f; --line:#dce1d6; --bg:#f3f1ec; }
+.activity-ui:is([data-grade="6"],[data-grade="7"])::before { content:none; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) > .hud { position:relative; top:auto; backdrop-filter:none; box-shadow:none; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .activity-status { display:flex; flex-wrap:wrap; gap:8px; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .hud .chip { background:#ffffff0d; border:1px solid #ffffff35; box-shadow:none; color:#fffdf5; border-radius:8px; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .hud .chip b { color:#fffdf5; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .mission { flex-basis:100%; min-width:0; color:#dbe4d5; font-size:15px; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) > .prog { position:relative; margin:0; top:auto; height:5px; background:#dce1d6; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) :is(.mail,.lay,.exp,.wrap,.net,.item,.from) > * { min-width:0; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .btn:not(.ghost):not(.good):not(.bad):not(.warn) { background:#294f40; color:#fffdf5; box-shadow:0 3px 0 #183d2d; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .btn.ghost { border-color:#bfcabb; background:#f5f5ee; color:#294f40; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .btn.good { background:#d8eee0; color:#18492c; box-shadow:none; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .btn.bad { background:#f8dde3; color:#82283d; box-shadow:none; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .btn.warn { background:#f5e6bd; color:#684900; box-shadow:none; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) :is(.feed,.log) { background:#f3f5ef; color:#354c3e; font-size:14px; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .panel.list { padding:10px; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .panel.win { padding:0; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) :is(.real,.tip,.body,.bub,.addr) { overflow-wrap:anywhere; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .tip { max-width:min(320px,70vw); white-space:normal; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .phone { max-width:100%; background:#d5decf; box-shadow:0 0 0 2px #b1bda9,0 12px 32px #263e3420; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .scr { background:#f1f2e9; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .bub { background:#e0e8d8; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .out { font-family:inherit; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .card:not(.good):not(.bad) { background:#f4f5ee; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .file .ic { filter:none; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .badge, .activity-ui:is([data-grade="6"],[data-grade="7"]) .badge span { animation:none; box-shadow:none; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .mbox { max-height:calc(100dvh - 32px); overflow:auto; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .foot { font-size:14px; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .note { margin:0; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .nbox { max-height:calc(100dvh - 32px); overflow:auto; box-shadow:0 14px 45px #82283d25; }
 /* Native controls retain the card layouts and keyboard focus indicators. */
-.activity-ui[data-grade="6"] button:is(.item,.file,.def) { width:100%; color:inherit; font:inherit; text-align:left; }
-.activity-ui[data-grade="6"] button:is(.item,.file):not(.sel) { background:transparent; }
-.activity-ui[data-grade="6"] button.file { text-align:center; }
-.activity-ui[data-grade="6"] :is(.item .s,.file .ic,.file .nm) { display:block; }
-.activity-ui[data-grade="6"] button.sw { color:inherit; background:transparent; border:1px solid var(--line); padding:8px 10px; font-size:14px; }
-.activity-ui[data-grade="6"] button.reveal { background:transparent; font-size:13px; min-height:36px; }
-.activity-ui[data-grade="6"] button.link { border:0; color:#fff; }
-.activity-ui[data-grade="6"] button.att { color:inherit; }
-.activity-ui[data-grade="6"] .link:is(:focus-visible,.revealed) .tip { opacity:1; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) button:is(.item,.file,.def) { width:100%; color:inherit; font:inherit; text-align:left; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) button:is(.item,.file):not(.sel) { background:transparent; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) button.file { text-align:center; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) :is(.item .s,.file .ic,.file .nm) { display:block; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) button.sw { color:inherit; background:transparent; border:1px solid var(--line); padding:8px 10px; font-size:14px; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) button.reveal { background:transparent; font-size:13px; min-height:36px; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) button.link { border:0; color:#fff; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) button.att { color:inherit; }
+.activity-ui:is([data-grade="6"],[data-grade="7"]) .link:is(:focus-visible,.revealed) .tip { opacity:1; }
 @media (max-width:900px) {
   .activity-ui[data-activity="phone-trap"] .wrap { grid-template-columns:minmax(0,1fr); }
   .activity-ui[data-activity="phone-trap"] .phone { width:min(360px,100%); }
 }
 @media (max-width:600px) {
-  .activity-ui[data-grade="6"] .net { grid-template-columns:1fr; }
-  .activity-ui[data-grade="6"] .pcs { grid-template-columns:repeat(4,minmax(0,1fr)); }
-  .activity-ui[data-grade="6"] .zone { padding:8px; }
-  .activity-ui[data-grade="6"] .stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .activity-ui[data-grade="6"] .rule { grid-template-columns:1fr; }
-  .activity-ui[data-grade="6"] .tg { justify-self:start; }
-  .activity-ui[data-grade="6"] .grid { grid-template-columns:repeat(2,minmax(0,1fr)); padding:12px; gap:8px; }
-  .activity-ui[data-grade="6"] .item { grid-template-columns:34px minmax(0,1fr) auto; padding:10px 6px; gap:8px; font-size:15px; }
-  .activity-ui[data-grade="6"] .item .av { width:34px; height:34px; }
-  .activity-ui[data-grade="6"] .phone { height:650px; }
-  .activity-ui[data-grade="6"] .poster { max-width:100%; }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .net { grid-template-columns:1fr; }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .pcs { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .zone { padding:8px; }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .rule { grid-template-columns:1fr; }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .tg { justify-self:start; }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .grid { grid-template-columns:repeat(2,minmax(0,1fr)); padding:12px; gap:8px; }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .item { grid-template-columns:34px minmax(0,1fr) auto; padding:10px 6px; gap:8px; font-size:15px; }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .item .av { width:34px; height:34px; }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .phone { height:650px; }
+  .activity-ui:is([data-grade="6"],[data-grade="7"]) .poster { max-width:100%; }
 }
 body.activity-ui {
   --ink: #283e35;
@@ -322,7 +344,7 @@ body.activity-description-open { overflow: hidden; }
 
 /* Screen-only dark theme; game state and printed reports are unchanged. */
 @media screen {
-  :root[data-theme="dark"] body.activity-ui,:root[data-theme="dark"] body.activity-ui[data-grade="6"] {
+  :root[data-theme="dark"] body.activity-ui,:root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) {
     --ink:var(--theme-text); --ui-muted:var(--theme-muted); --ui-line:var(--theme-border);
     --bg:var(--theme-bg); --panel:var(--theme-surface); --dim:var(--theme-muted); --line:var(--theme-border);
     --acc:#91b99c; --acc2:#527a61; --acct:var(--theme-accent); --head:#325d48;
@@ -381,22 +403,22 @@ body.activity-description-open { overflow: hidden; }
   :root[data-theme="dark"] body.activity-ui[data-activity="cyber-crime-scene"] ol#line li { background:var(--theme-raised); }
   :root[data-theme="dark"] body.activity-ui[data-activity="cyber-crime-scene"] ol#line li.good { background:var(--theme-good-bg); }
   :root[data-theme="dark"] body.activity-ui[data-activity="cyber-crime-scene"] ol#line li.bad { background:var(--theme-bad-bg); }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .btn:not(.ghost):not(.good):not(.bad):not(.warn) { background:var(--theme-accent); color:var(--theme-accent-ink); box-shadow:0 3px 0 #52725b; }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .btn.ghost { background:var(--theme-raised); color:var(--theme-text); border-color:#607968; }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .btn.good { background:var(--theme-good-bg); color:var(--theme-good); }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .btn.bad { background:var(--theme-bad-bg); color:var(--theme-bad); }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .btn.warn { background:var(--theme-warn-bg); color:var(--theme-warn); }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .card:not(.good):not(.bad) { background:var(--theme-raised); }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] :is(.feed,.log) { background:#0c1510; color:#c8d8cc; }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .phone { background:#304136; box-shadow:0 0 0 2px #607968,0 12px 32px #0005; }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .scr { background:#15231b; }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .bub { background:#2b4031; }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] :is(.body,.tbar,.rule,.stat,.addr,.port,.att) { background:var(--theme-raised); }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .wall::after { color:var(--theme-warn); }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .badge { background:#365340; }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] > .prog { background:#304136; }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .clue { background:transparent; color:var(--theme-muted); border-color:var(--theme-border); }
-  :root[data-theme="dark"] body.activity-ui[data-grade="6"] .clue.on { color:var(--theme-warn); border-color:var(--theme-warn); }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .btn:not(.ghost):not(.good):not(.bad):not(.warn) { background:var(--theme-accent); color:var(--theme-accent-ink); box-shadow:0 3px 0 #52725b; }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .btn.ghost { background:var(--theme-raised); color:var(--theme-text); border-color:#607968; }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .btn.good { background:var(--theme-good-bg); color:var(--theme-good); }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .btn.bad { background:var(--theme-bad-bg); color:var(--theme-bad); }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .btn.warn { background:var(--theme-warn-bg); color:var(--theme-warn); }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .card:not(.good):not(.bad) { background:var(--theme-raised); }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) :is(.feed,.log) { background:#0c1510; color:#c8d8cc; }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .phone { background:#304136; box-shadow:0 0 0 2px #607968,0 12px 32px #0005; }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .scr { background:#15231b; }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .bub { background:#2b4031; }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) :is(.body,.tbar,.rule,.stat,.addr,.port,.att) { background:var(--theme-raised); }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .wall::after { color:var(--theme-warn); }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .badge { background:#365340; }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) > .prog { background:#304136; }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .clue { background:transparent; color:var(--theme-muted); border-color:var(--theme-border); }
+  :root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .clue.on { color:var(--theme-warn); border-color:var(--theme-warn); }
   :root[data-theme="dark"] body.activity-ui .strip .from { background:#314f69; }
   :root[data-theme="dark"] body.activity-ui .strip .to { background:#2c6041; }
   :root[data-theme="dark"] body.activity-ui .strip .hop { background:#e8c57f; }

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><script src="../../assets/theme.js"></script><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyber Shield Challenge</title>
+<style>
+:root{--acc:#fb923c;--acc2:#f472b6;--acct:color-mix(in srgb,var(--acc) 62%,#0b1630);--bg:#f4f7fd;--panel:#ffffff;--line:rgba(30,55,110,.14);--ink:#16213e;--dim:#5a6888;--good:#0e9f6e;--bad:#e11d48;--warn:#c27c0e}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 60%),radial-gradient(900px 500px at 110% 10%,color-mix(in srgb,var(--acc2) 12%,transparent),transparent 60%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.35;pointer-events:none;mask-image:linear-gradient(#000,transparent 85%)}
+.hud{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(30,55,110,.06)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:.5px}
+.logo .dot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 40%,transparent);font-size:18px}
+.logo small{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.mission{flex:1;min-width:220px;font-size:14px;color:var(--dim)}
+.chip{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap;box-shadow:0 2px 8px rgba(30,55,110,.06)}
+.chip b{color:var(--acct)}
+.prog{height:6px;background:rgba(30,55,110,.08);position:sticky;top:0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s}
+main{max-width:1200px;margin:22px auto;padding:0 18px;position:relative}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 40px rgba(30,55,110,.10)}
+.panel h2{margin:0 0 10px;font-size:19px;letter-spacing:.3px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--acct);margin-bottom:6px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:1px solid transparent;border-radius:12px;padding:11px 16px;cursor:pointer;color:#06101f;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 30%,transparent);transition:transform .12s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.good{background:linear-gradient(135deg,#34d399,#2dd4bf)}.btn.bad{background:linear-gradient(135deg,#fb7185,#fb923c)}.btn.warn{background:linear-gradient(135deg,#fcd34d,#fb923c)}
+.mono{font-family:Consolas,"Cascadia Mono",monospace}
+.muted{color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);opacity:0;z-index:60;max-width:min(680px,92vw);padding:14px 18px;border-radius:14px;font-weight:600;font-size:15px;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 14px 40px rgba(30,55,110,.18);transition:.35s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.g{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 14px 40px rgba(14,159,110,.2)}
+.toast.b{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad),0 14px 40px rgba(225,29,72,.2)}
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(22,33,62,.35);backdrop-filter:blur(6px)}
+.modal.on{display:grid}
+.mbox{width:min(560px,92vw);text-align:center;padding:30px;border-radius:24px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(30,55,110,.25);animation:pop .45s ease}
+.badge{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;font-size:54px;background:conic-gradient(from 0deg,var(--acc),var(--acc2),var(--acc));box-shadow:0 10px 30px color-mix(in srgb,var(--acc) 45%,transparent);animation:spin 6s linear infinite}
+.badge span{animation:spin 6s linear infinite reverse;display:block}
+.stars{font-size:34px;letter-spacing:6px;margin:6px 0}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes glow{50%{box-shadow:0 0 22px color-mix(in srgb,var(--acc) 60%,transparent)}}
+.shake{animation:shake .4s}
+.foot{max-width:1200px;margin:10px auto 30px;padding:0 18px;font-size:12px;color:var(--dim);text-align:center}
+@media(max-width:760px){.hud{padding:10px 14px}.logo{font-size:18px}}
+
+.inp{font:inherit;font-size:18px;padding:12px 14px;border-radius:12px;border:2px solid var(--line);width:min(420px,100%)}
+.match{display:grid;grid-template-columns:1fr 1.6fr;gap:14px}
+@media(max-width:860px){.match{grid-template-columns:1fr}}
+.tm,.df{display:block;width:100%;text-align:left;font:inherit;font-size:14px;padding:10px 12px;margin:6px 0;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.tm{font-weight:800}.tm.sel{background:#fef3c7;border-color:#fbbf24}.tm.done,.df.done{background:#f0fdf4;border-color:#bbf7d0;cursor:default;color:#166534}
+.case{border-radius:18px;padding:18px;background:linear-gradient(135deg,#fff7ed,#fef2f2);border:1px solid #fed7aa;font-size:17px;margin-bottom:12px}
+.case .ty{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#c2410c}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:14px;padding:10px 12px;margin:6px 0;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.opt.ok{background:#f0fdf4;border-color:#86efac}.opt.no{background:#fff1f2;border-color:#fecdd3}
+.team{font-size:13px;font-weight:800;color:var(--dim)}
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="7" data-activity="cyber-shield-challenge">
+<header class="hud"><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=7"><span aria-hidden="true">&larr;</span> Back to Grade 7 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 7 &middot; Digital citizenship</span></div><h1>Cyber Shield Challenge</h1><div class="activity-status"><div class="chip">Step <b id="step">0 / 0</b></div><div class="chip">Score <b id="score">0</b></div></div><div class="mission">Mission: prove your team knows the terms and can solve real cyber security cases.</div></header>
+<div class="prog"><i id="progbar"></i></div>
+<main><div class="panel" id="main"></div></main>
+<div class="foot">Cyber Shield training activity. Everything here is made up for practice. No real accounts are used.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><div class="badge"><span id="mIcon"></span></div><h2 id="mTitle" style="margin:6px 0"></h2><div class="stars" id="mStars"></div><p id="mText" class="muted" style="font-size:16px;line-height:1.5"></p>
+<button class="btn" onclick="location.reload()">Play again</button> <button class="btn ghost" onclick="document.getElementById('modal').className='modal'">Close</button></div></div>
+<script>
+var SCORE=0;
+function $(x){return document.getElementById(x)}
+var AC=null;function sfx(t){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);var f={good:[660,990],bad:[220,140],click:[520,520],alarm:[880,440],win:[523,1046]}[t]||[500,500];o.type=t==='bad'||t==='alarm'?'sawtooth':'sine';o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.18);g.gain.setValueAtTime(.08,n);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+var TT=null;function toast(m,k){var t=$('toast');t.innerHTML=m;t.className='toast on '+(k||'');clearTimeout(TT);TT=setTimeout(function(){t.className='toast'},3600)}
+function addScore(n){SCORE=Math.max(0,SCORE+n);$('score').textContent=SCORE}
+function prog(a,b){$('progbar').style.width=Math.round(a/b*100)+'%';$('step').textContent=a+' / '+b}
+function finish(icon,title,text,stars){sfx('win');$('mIcon').textContent=icon;$('mTitle').textContent=title;$('mText').innerHTML=text;$('mStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);$('modal').className='modal on'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+var TEAM='',st=0;
+var T=[['Trojan','Harmful program hidden inside something that looks useful'],['Worm','Malware that spreads across a network by itself'],['Spyware','Secretly watches what you do and reports it'],['Keylogger','Records every key you press'],['Stalkerware','Hidden phone app that tracks a person\'s location and messages'],['Sideloading','Installing an app from outside the official store'],['Session hijacking','Using a stolen "stay logged in" pass to enter an account'],['Passkey','A login using your device and fingerprint or PIN that cannot be phished'],['Evil twin','A fake Wi-Fi hotspot copying a real network name'],['VPN','Encrypts your traffic to a VPN company but does not stop scams']];
+var C=[
+ {ty:'Malware',q:'Bilal installed a "free" cracked game. Now a hidden program lets a stranger control his laptop at night.',t:['Worm','Trojan','Adware','Passkey'],ta:1,a:[['Remove the program and change passwords from a clean device',1],['Install another cracked game to fix it',0],['Leave it, the game works fine',0]]},
+ {ty:'Phone',q:'After a stranger borrowed Sana\'s unlocked phone, a hidden app shares her location all day.',t:['Stalkerware','Firmware','VPN','Worm'],ta:0,a:[['Remove it, set a screen lock and tell a trusted adult',1],['Turn the phone off for a week',0],['Message the stranger to ask why',0]]},
+ {ty:'Account',q:'Hamza changed his password but his account still posts spam from another device.',t:['Keylogger','Session hijacking','Sideloading','Evil twin'],ta:1,a:[['Sign out of all other sessions and devices',1],['Change the password again and again',0],['Delete all his posts and wait',0]]},
+ {ty:'Account',q:'Ayesha wants a login that a fake website cannot steal.',t:['Passkey','Spyware','WPS','Trojan'],ta:0,a:[['Add a passkey and keep backup codes safe at home',1],['Use her name and birthday as the password',0],['Share her password with a best friend',0]]},
+ {ty:'Wi-Fi',q:'In a café there is "CafeNet" (locked, password at the counter) and "CafeNet FREE" (open, asks for your email password).',t:['VPN','Evil twin','Worm','Firmware'],ta:1,a:[['Join CafeNet with the counter password or use mobile data',1],['Join CafeNet FREE because the signal is strong',0],['Type the email password just once',0]]},
+ {ty:'Phone',q:'Zara\'s SIM suddenly stops working. An hour later her account says a login code was used.',t:['SIM swap','Adware','Passkey','Captive portal'],ta:0,a:[['Use another phone to call the mobile company at once and tell a grown-up',1],['Wait until tomorrow',0],['Buy a new phone',0]]},
+ {ty:'Careers',q:'A bank needs someone to watch security alerts and logs all day to spot attacks early.',t:['Digital forensics analyst','SOC analyst','Malware writer','Game tester'],ta:1,a:[['A SOC analyst works in a Security Operations Centre',1],['Anyone can do it without training',0],['It is only for hackers who break the law',0]]},
+ {ty:'Law',q:'A classmate wants to guess the teacher\'s portal password "just for fun".',t:['Unauthorised access','Ethical hacking','Bug bounty','Backup'],ta:0,a:[['Refuse. It is a crime under PECA and tell the teacher about the risk',1],['Help, because it is only for fun',0],['Watch but do not type',0]]}];
+function start(){$('main').innerHTML='<div class="tag">Cyber Shield Challenge</div><h2>Name your team</h2><p class="muted">Work as a team of three or four. Talk before you click.</p><input class="inp" id="tn" placeholder="Team name" maxlength="24"><p><button class="btn" onclick="go()">Start the mission ▶</button></p>'}
+function go(){TEAM=$('tn').value.trim()||'Cyber Shield Team';sfx('click');match()}
+var sel=-1,mdone={},order=[];
+function match(){if(!order.length){order=T.map(function(_,i){return i}).sort(function(a,b){return ((a*7+3)%10)-((b*7+3)%10)})}
+ var h='<div class="team">TEAM: '+esc(TEAM)+'</div><div class="tag">Round 1 · Term match</div><h2>Match each term to its meaning</h2><p class="muted">Click a term, then its meaning.</p><div class="match"><div>';
+ T.forEach(function(t,i){h+='<button class="tm'+(mdone[i]?' done':'')+(sel===i?' sel':'')+'" onclick="pt('+i+')">'+t[0]+'</button>'});h+='</div><div>';
+ order.forEach(function(i){h+='<button class="df'+(mdone[i]?' done':'')+'" onclick="pd('+i+')">'+T[i][1]+'</button>'});$('main').innerHTML=h+'</div></div>'}
+function pt(i){if(mdone[i])return;sel=i;sfx('click');match()}
+function pd(i){if(mdone[i]||sel<0)return;if(i===sel){mdone[i]=1;addScore(5);sfx('good');sel=-1;match();if(Object.keys(mdone).length===10){st++;prog(st,9);toast('All 10 terms matched!','g');setTimeout(function(){ci=0;cs()},900)}}else{addScore(-2);sfx('bad');toast('Not a match. Read the meaning again.','b')}}
+var ci=0,tOK=false,aOK=false;
+function cs(){var c=C[ci];tOK=false;aOK=false;var h='<div class="team">TEAM: '+esc(TEAM)+'</div><div class="tag">Round 2 · Case '+(ci+1)+' of 8</div><div class="case"><div class="ty">'+c.ty+'</div>'+c.q+'</div><div class="grid"><div><b>1. Which term fits?</b>';
+ c.t.forEach(function(t,j){h+='<button class="opt" id="t'+j+'" onclick="ct('+j+')">'+t+'</button>'});h+='</div><div><b>2. What is the best action?</b>';c.a.forEach(function(a,j){h+='<button class="opt" id="a'+j+'" onclick="ca('+j+')">'+a[0]+'</button>'});$('main').innerHTML=h+'</div></div>'}
+function ct(j){if(tOK)return;var c=C[ci];if(j===c.ta){tOK=true;$('t'+j).className='opt ok';addScore(10);sfx('good')}else{$('t'+j).className='opt no';addScore(-3);sfx('bad')}chk()}
+function ca(j){if(aOK)return;var c=C[ci];if(c.a[j][1]){aOK=true;$('a'+j).className='opt ok';addScore(10);sfx('good')}else{$('a'+j).className='opt no';addScore(-3);sfx('bad')}chk()}
+function chk(){if(tOK&&aOK){st++;prog(st,9);ci++;setTimeout(ci<C.length?cs:end,900)}}
+function end(){finish('🛡️','Cyber Shield certificate','Team <b>'+esc(TEAM)+'</b> matched 10 cyber security terms and solved 8 cases on malware, phones, accounts, Wi-Fi, careers and the law.<br>Score: '+SCORE+'.',SCORE>=200?3:SCORE>=160?2:1)}
+start();prog(0,9);
+</script></body></html>

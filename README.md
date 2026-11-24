@@ -1,6 +1,6 @@
 # digitalCitizen · Skill2Success
 
-A digital citizenship website with **36 activities for Grades 2–6**, built with HTML, CSS and vanilla JavaScript. No account, database, API key or external packages are required.
+A digital citizenship website with **41 activities for Grades 2–7**, built with HTML, CSS and vanilla JavaScript. No account, database, API key or external packages are required.
 
 ## Features
 
@@ -17,6 +17,7 @@ A digital citizenship website with **36 activities for Grades 2–6**, built wit
 | 4 | 9 |
 | 5 | 10 |
 | 6 | 6 |
+| 7 | 5 |
 
 ## Run locally
 
@@ -50,16 +51,17 @@ On Windows, use `npm.cmd` instead of `npm` if PowerShell blocks `npm.ps1`.
 | `styles.css`, `app.js` | Main website design, navigation, filtering and animations. |
 | `catalog-details.json` | Card descriptions, topics, artwork and ordering. |
 | `activities.js` | Generated catalogue; regenerate instead of editing manually. |
-| `Grade 2/` through `Grade 6/` | Each grade's `Activities/` folder contains its HTML activities. |
+| `Grade 2/` through `Grade 7/` | Each grade's `Activities/` folder contains its HTML activities. |
 | `assets/activity-ui.css` | Shared activity styling. |
+| `assets/activity-art/` | A unique SVG illustration for each activity card. Rebuild with `node scripts/build-activity-art.mjs`. |
 | `assets/theme.js`, `assets/theme-*.css` | Theme toggle, saved preference and shared colours. |
 | `assets/activity-descriptions.js` | Activity-specific description dialogs. |
 | `scripts/` | Preview server, catalogue generator and checks/tests. |
 
 ## Add or update an activity
 
-1. Place the HTML file directly in `Grade N/Activities/` for a supported grade (2–6).
-2. Add its entry to `catalog-details.json`. The key must match the filename without `.html`. Follow an existing entry's `description`, `topic`, `type`, `art`, `color` and `order` fields.
+1. Place the HTML file directly in `Grade N/Activities/` for a supported grade (2–7).
+2. Add its entry to `catalog-details.json`. The key must match the filename without `.html`. Follow an existing entry's fields; `art` names a unique SVG in `assets/activity-art/` without `.svg`.
 3. Follow an existing activity's shared stylesheet, early `theme.js` script, header, Back link and Description button. Set the body's `data-grade` and unique `data-activity` value, and add the matching guide in `assets/activity-descriptions.js`.
 4. Run `npm run refresh`, `npm run check` and `npm test`.
 5. Open the activity and check gameplay, scoring, restart, keyboard controls, descriptions and mobile layout.

@@ -18,6 +18,8 @@
   html:root[data-theme="dark"] .activity-cover { background:color-mix(in srgb,var(--cover,#dce5d9) 27%,#34473c); }
   html:root[data-theme="dark"] .activity-card { background:#304238; }
 
+  html:root[data-theme="dark"] .grade-7 { background:#9dbbb0; }
+
   /* Muted paper colours give cards depth against the darker canvas. */
   html:root[data-theme="dark"] :is(.fan-card a,.fan-card button,.grade-card) { color:#25392e; border-color:#526753; box-shadow:0 8px 22px #14201926; }
   html:root[data-theme="dark"] :is(.fan-one a,.fan-one button,.grade-2) { background:#bdb08f; }
@@ -31,7 +33,7 @@
   html:root[data-theme="dark"] body.activity-ui > header { background:#293f32; border-bottom-color:#819786; }
   html:root[data-theme="dark"] body.activity-ui :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),textarea,select) { background:#26382d; }
   html:root[data-theme="dark"] body.activity-ui :is(.log,.feed),
-  html:root[data-theme="dark"] body.activity-ui[data-grade="6"] :is(.log,.feed) { background:#23332a; }
-  html:root[data-theme="dark"] body.activity-ui[data-grade="6"] .scr { background:#304337; }
-  html:root[data-theme="dark"] body.activity-ui[data-grade="6"] .bub { background:#435b49; }
+  html:root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) :is(.log,.feed) { background:#23332a; }
+  html:root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .scr { background:#304337; }
+  html:root[data-theme="dark"] body.activity-ui:is([data-grade="6"],[data-grade="7"]) .bub { background:#435b49; }
 }

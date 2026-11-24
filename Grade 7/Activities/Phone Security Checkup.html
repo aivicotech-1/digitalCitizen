@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><script src="../../assets/theme.js"></script><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phone Security Checkup</title>
+<style>
+:root{--acc:#60a5fa;--acc2:#34d399;--acct:color-mix(in srgb,var(--acc) 62%,#0b1630);--bg:#f4f7fd;--panel:#ffffff;--line:rgba(30,55,110,.14);--ink:#16213e;--dim:#5a6888;--good:#0e9f6e;--bad:#e11d48;--warn:#c27c0e}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 60%),radial-gradient(900px 500px at 110% 10%,color-mix(in srgb,var(--acc2) 12%,transparent),transparent 60%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.35;pointer-events:none;mask-image:linear-gradient(#000,transparent 85%)}
+.hud{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(30,55,110,.06)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:.5px}
+.logo .dot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 40%,transparent);font-size:18px}
+.logo small{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.mission{flex:1;min-width:220px;font-size:14px;color:var(--dim)}
+.chip{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap;box-shadow:0 2px 8px rgba(30,55,110,.06)}
+.chip b{color:var(--acct)}
+.prog{height:6px;background:rgba(30,55,110,.08);position:sticky;top:0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s}
+main{max-width:1200px;margin:22px auto;padding:0 18px;position:relative}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 40px rgba(30,55,110,.10)}
+.panel h2{margin:0 0 10px;font-size:19px;letter-spacing:.3px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--acct);margin-bottom:6px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:1px solid transparent;border-radius:12px;padding:11px 16px;cursor:pointer;color:#06101f;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 30%,transparent);transition:transform .12s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.good{background:linear-gradient(135deg,#34d399,#2dd4bf)}.btn.bad{background:linear-gradient(135deg,#fb7185,#fb923c)}.btn.warn{background:linear-gradient(135deg,#fcd34d,#fb923c)}
+.mono{font-family:Consolas,"Cascadia Mono",monospace}
+.muted{color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);opacity:0;z-index:60;max-width:min(680px,92vw);padding:14px 18px;border-radius:14px;font-weight:600;font-size:15px;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 14px 40px rgba(30,55,110,.18);transition:.35s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.g{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 14px 40px rgba(14,159,110,.2)}
+.toast.b{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad),0 14px 40px rgba(225,29,72,.2)}
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(22,33,62,.35);backdrop-filter:blur(6px)}
+.modal.on{display:grid}
+.mbox{width:min(560px,92vw);text-align:center;padding:30px;border-radius:24px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(30,55,110,.25);animation:pop .45s ease}
+.badge{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;font-size:54px;background:conic-gradient(from 0deg,var(--acc),var(--acc2),var(--acc));box-shadow:0 10px 30px color-mix(in srgb,var(--acc) 45%,transparent);animation:spin 6s linear infinite}
+.badge span{animation:spin 6s linear infinite reverse;display:block}
+.stars{font-size:34px;letter-spacing:6px;margin:6px 0}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes glow{50%{box-shadow:0 0 22px color-mix(in srgb,var(--acc) 60%,transparent)}}
+.shake{animation:shake .4s}
+.foot{max-width:1200px;margin:10px auto 30px;padding:0 18px;font-size:12px;color:var(--dim);text-align:center}
+@media(max-width:760px){.hud{padding:10px 14px}.logo{font-size:18px}}
+
+.lay{display:grid;grid-template-columns:380px 1fr;gap:22px;align-items:start}
+@media(max-width:960px){.lay{grid-template-columns:1fr}}
+.phone{width:340px;margin:0 auto;border-radius:44px;padding:14px;background:#1f2937ff;box-shadow:0 24px 50px rgba(30,55,110,.3)}
+.scr{border-radius:32px;background:#f8fafc;height:620px;overflow:auto;position:relative}
+.sb{display:flex;justify-content:space-between;padding:12px 22px 6px;font-size:12px;font-weight:700;color:#334}
+.ttl{padding:6px 18px 10px;font-size:22px;font-weight:800;display:flex;align-items:center;gap:8px}
+.back{font-size:14px;font-weight:700;color:#2563eb;cursor:pointer;padding:0 18px}
+.row{display:flex;align-items:center;gap:12px;margin:6px 12px;padding:12px;border-radius:16px;background:#fff;border:1px solid var(--line);cursor:pointer}
+.row .ic{font-size:22px;width:30px;text-align:center}.row .tx{flex:1}.row small{display:block;color:var(--dim);font-size:12px}
+.row .bd{font-size:11px;font-weight:800;padding:3px 7px;border-radius:999px;background:#fee2e2;color:#b91c1c}
+.row .bd.g{background:#dcfce7;color:#166534}
+.sw{width:44px;height:26px;border-radius:999px;background:#cbd5e1;position:relative;flex:none;transition:.2s}
+.sw:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:#22c55e}.sw.on:after{left:21px}
+.ch{margin:6px 12px;padding:10px 12px;border-radius:14px;background:#fff;border:1px solid var(--line)}
+.ch button{font:inherit;font-size:13px;margin:4px 4px 0 0;padding:7px 10px;border-radius:10px;border:1px solid var(--line);background:#f8fafc;cursor:pointer}
+.meter{height:16px;border-radius:999px;background:#eef2fb;overflow:hidden;margin:10px 0}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ef4444,#f59e0b,#22c55e);transition:width .6s}
+.big{font-size:46px;font-weight:900}
+.fx{padding:8px 12px;border-radius:10px;margin:6px 0;font-size:14px;background:#f0fdf4;border:1px solid #bbf7d0}
+.term{font-size:13px;padding:8px 10px;border-radius:10px;background:#eff6ff;border:1px solid #bfdbfe;margin:6px 0}
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="7" data-activity="phone-security-checkup">
+<header class="hud"><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=7"><span aria-hidden="true">&larr;</span> Back to Grade 7 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 7 &middot; Digital citizenship</span></div><h1>Phone Security Checkup</h1><div class="activity-status"><div class="chip">Step <b id="step">0 / 0</b></div><div class="chip">Score <b id="score">0</b></div></div><div class="mission">Mission: find and fix all 8 security problems on Ayesha's phone.</div></header>
+<div class="prog"><i id="progbar"></i></div>
+<main><div class="lay"><div class="phone"><div class="scr" id="scr"></div></div>
+<div class="panel"><div class="tag">Ayesha's phone</div><h2>Security score</h2><div class="big" id="sc">0%</div><div class="meter"><i id="mt"></i></div>
+<p class="muted">Ayesha's phone has 8 security problems. Open Settings and Apps on the phone and fix them all. Some buttons make things worse.</p>
+<div id="fixed"></div><div class="tag" style="margin-top:12px">Terms you will meet</div><div id="terms"></div></div></div></main>
+<div class="foot">Cyber Shield training activity. Everything here is made up for practice. No real accounts are used.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><div class="badge"><span id="mIcon"></span></div><h2 id="mTitle" style="margin:6px 0"></h2><div class="stars" id="mStars"></div><p id="mText" class="muted" style="font-size:16px;line-height:1.5"></p>
+<button class="btn" onclick="location.reload()">Play again</button> <button class="btn ghost" onclick="document.getElementById('modal').className='modal'">Close</button></div></div>
+<script>
+var SCORE=0;
+function $(x){return document.getElementById(x)}
+var AC=null;function sfx(t){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);var f={good:[660,990],bad:[220,140],click:[520,520],alarm:[880,440],win:[523,1046]}[t]||[500,500];o.type=t==='bad'||t==='alarm'?'sawtooth':'sine';o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.18);g.gain.setValueAtTime(.08,n);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+var TT=null;function toast(m,k){var t=$('toast');t.innerHTML=m;t.className='toast on '+(k||'');clearTimeout(TT);TT=setTimeout(function(){t.className='toast'},3600)}
+function addScore(n){SCORE=Math.max(0,SCORE+n);$('score').textContent=SCORE}
+function prog(a,b){$('progbar').style.width=Math.round(a/b*100)+'%';$('step').textContent=a+' / '+b}
+function finish(icon,title,text,stars){sfx('win');$('mIcon').textContent=icon;$('mTitle').textContent=title;$('mText').innerHTML=text;$('mStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);$('modal').className='modal on'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+var P={lock:0,unknown:0,ludo:0,spy:0,find:0,upd:0,preview:0,backup:0},N={lock:'Screen lock set',unknown:'Install unknown apps turned off',ludo:'Fake APK game removed',spy:'Stalkerware removed',find:'Find Hub turned on',upd:'Security update installed',preview:'Codes hidden on lock screen',backup:'Backup turned on'};
+var TERMS=[['APK','An Android app file. Apps from outside the official store are not checked for safety.'],['Sideloading','Installing an app from outside the official store.'],['Stalkerware','A hidden app that secretly tracks someone\'s location, messages or calls.'],['Find Hub','Google\'s service to locate, lock or erase a lost Android phone (Apple\'s is Find My).'],['Security patch','An update that closes a weak spot in the phone\'s software.'],['Encryption','With a screen lock, the phone scrambles its data so a thief cannot read it.']];
+var view='home';
+function count(){return Object.keys(P).filter(function(k){return P[k]}).length}
+function upd(){var n=count();$('sc').textContent=Math.round(n/8*100)+'%';$('mt').style.width=(n/8*100)+'%';prog(n,8);
+ $('fixed').innerHTML=Object.keys(P).filter(function(k){return P[k]}).map(function(k){return '<div class="fx">✓ '+N[k]+'</div>'}).join('');
+ if(n===8)setTimeout(function(){finish('📱','Phone Security report','Ayesha\'s phone went from 0% to 100%. Score: '+SCORE+'.<br>A screen lock also turns on encryption. Only install apps from the official store. Check for stalkerware, keep Find Hub on, install updates, hide codes on the lock screen and turn on backup.',SCORE>=110?3:SCORE>=80?2:1)},700)}
+function good(k,msg){if(P[k])return;P[k]=1;addScore(15);sfx('good');toast(msg,'g');upd();render()}
+function bad(msg){addScore(-5);sfx('bad');toast(msg,'b')}
+function hdr(t,b){return '<div class="sb"><span>9:41</span><span>📶 🔋 64%</span></div>'+(b?'<div class="back" onclick="go(\''+b+'\')">‹ Back</div>':'')+'<div class="ttl">'+t+'</div>'}
+function row(ic,t,s,on,k,badge){return '<div class="row" onclick="'+on+'"><div class="ic">'+ic+'</div><div class="tx"><b>'+t+'</b><small>'+s+'</small></div>'+(badge!==undefined?'<span class="bd'+(badge?' g':'')+'">'+(badge?'OK':'Check')+'</span>':'')+'</div>'}
+function go(v){view=v;sfx('click');render()}
+function render(){var h='';
+ if(view==='home'){h=hdr('Home')+'<div style="padding:8px 14px;color:var(--dim);font-size:13px">🔔 Lock screen: <b>"Your login code is 482913"</b> '+(P.preview?'<i>(now hidden)</i>':'')+'</div>'+row('⚙️','Settings','Security, updates, backup',"go('settings')")+row('🧩','Apps','See every installed app',"go('apps')")}
+ if(view==='settings'){h=hdr('Settings','home')+row('🔒','Screen lock',P.lock?'PIN set':'None','go(\'lock\')',0,P.lock)+row('🛡️','Install unknown apps',P.unknown?'Off':'Allowed for Browser','go(\'unknown\')',0,P.unknown)+row('📍','Find Hub',P.find?'On':'Off','go(\'find\')',0,P.find)+row('🔄','Software update',P.upd?'Up to date':'Security patch waiting','go(\'upd\')',0,P.upd)+row('🔔','Lock screen notifications',P.preview?'Hide sensitive content':'Show all content','go(\'preview\')',0,P.preview)+row('☁️','Backup',P.backup?'On':'Off','go(\'backup\')',0,P.backup)}
+ if(view==='lock'){h=hdr('Screen lock','settings')+'<div class="ch"><b>Choose a screen lock</b><br><button onclick="bad(\'Swipe is not a lock. Anyone can open the phone.\')">Swipe</button><button onclick="bad(\'1234 is one of the first PINs anyone tries.\')">PIN 1234</button><button onclick="good(\'lock\',\'A 6-digit PIN that is not a birthday. The phone also encrypts its data now.\')">6-digit PIN (not a birthday)</button></div>'}
+ if(view==='unknown'){h=hdr('Install unknown apps','settings')+'<div class="ch">Browser can install apps from outside the Play Store.<br><button onclick="good(\'unknown\',\'Sideloading blocked. Apps now come only from the official store, where they are checked.\')">Turn off</button><button onclick="bad(\'Leaving it on lets fake APKs install themselves.\')">Leave on</button></div>'}
+ if(view==='find'){h=hdr('Find Hub','settings')+'<div class="ch">Find Hub can locate, lock or erase this phone if it is lost.<br><button onclick="good(\'find\',\'If the phone is lost, a grown-up can locate, lock or erase it.\')">Turn on</button><button onclick="bad(\'Without it, a lost phone cannot be locked or erased from far away.\')">Keep off</button></div>'}
+ if(view==='upd'){h=hdr('Software update','settings')+'<div class="ch">Security patch waiting (fixes 14 weak spots).<br><button onclick="good(\'upd\',\'Patch installed. Known weak spots are closed.\')">Install and restart</button><button onclick="bad(\'Attackers target phones that skip patches.\')">Remind me next month</button></div>'}
+ if(view==='preview'){h=hdr('Lock screen','settings')+'<div class="ch">Anyone can read codes and messages on the lock screen.<br><button onclick="good(\'preview\',\'Codes are hidden until the phone is unlocked. Someone grabbing the phone cannot read them.\')">Hide sensitive content</button><button onclick="bad(\'A thief could read your login codes without unlocking.\')">Show all content</button></div>'}
+ if(view==='backup'){h=hdr('Backup','settings')+'<div class="ch">Photos and contacts are only on this phone.<br><button onclick="good(\'backup\',\'If the phone is lost or wiped, nothing important is lost.\')">Turn on backup</button><button onclick="bad(\'If the phone is lost, everything goes with it.\')">Not now</button></div>'}
+ if(view==='apps'){h=hdr('Apps','home')+row('💬','Messages','From Play Store','toast(\'This one is fine.\',\'\')')+row('🎲','Free Ludo Coins',P.ludo?'Removed':'Installed from an APK file · can read SMS','go(\'ludo\')',0,P.ludo)+row('⚙️','System Service',P.spy?'Removed':'No icon · location and microphone always','go(\'spy\')',0,P.spy)+row('📚','School Diary','From Play Store','toast(\'This one is fine.\',\'\')')}
+ if(view==='ludo'){h=hdr('Free Ludo Coins','apps')+'<div class="ch">Installed from <b>ludo-coins-free.test/app.apk</b>. Permissions: read SMS, display over other apps.<br><button onclick="good(\'ludo\',\'Fake APK removed. It could read SMS login codes.\')">Uninstall</button><button onclick="bad(\'A game does not need to read your SMS codes.\')">Keep it</button></div>'}
+ if(view==='spy'){h=hdr('System Service','apps')+'<div class="ch">No icon. Uses location and microphone all the time. Installed the day a stranger borrowed the phone.<br><button onclick="good(\'spy\',\'Stalkerware removed. Ayesha also tells a trusted adult and never lends her unlocked phone.\')">Uninstall and tell a trusted adult</button><button onclick="bad(\'Hidden apps that track you are stalkerware. Do not keep them.\')">Ignore, it says System</button></div>'}
+ $('scr').innerHTML=h}
+function terms(){$('terms').innerHTML=TERMS.map(function(t){return '<div class="term"><b>'+t[0]+':</b> '+t[1]+'</div>'}).join('')}
+terms();upd();render();
+</script></body></html>

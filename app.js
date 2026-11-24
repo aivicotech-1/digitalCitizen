@@ -10,6 +10,7 @@
     3: ['Grade 3 · The Protectors', 'Get curious about privacy, sharing and your online identity.'],
     4: ['Grade 4 · The Connectors', 'Practise kind connections and build your digital defences.'],
     5: ['Grade 5 · The Detectives', 'Investigate the clues and put your cyber skills into action.'],
+    7: ['Grade 7 · The Guardians', 'Investigate malware, secure devices and build the skills to protect your digital world.'],
     6: ['Grade 6 · The Responders', 'Investigate threats, protect networks and respond thoughtfully when something goes wrong.']
   };
   const gradeParam = new URLSearchParams(window.location.search).get('grade');
@@ -66,7 +67,7 @@
     document.title = `Grade ${selectedGrade} Activities — Skill2Success`;
     grid.querySelectorAll('.reveal-pending').forEach(revealElement);
     grid.innerHTML = matching.map(activity => `<article class="activity-card" style="--cover:${esc(activity.color)}">
-      <div class="activity-cover"><span class="activity-type">${esc(activity.type)}</span><svg aria-hidden="true" viewBox="0 0 320 220"><use href="#art-${esc(activity.art)}"/></svg></div>
+      <div class="activity-cover"><span class="activity-type">${esc(activity.type)}</span><img class="activity-illustration" src="assets/activity-art/${esc(activity.art)}.svg" alt="" width="320" height="220" decoding="async"></div>
       <div class="activity-content"><span class="activity-topic">${esc(activity.topic)}</span><h3>${esc(activity.title)}</h3><p>${esc(activity.description)}</p><div class="activity-action"><span>Grade ${activity.grade}</span><a class="start-activity" href="${fileUrl(activity)}" data-activity="${esc(activity.id)}" aria-label="Start ${esc(activity.title)}">Start activity <svg class="icon" aria-hidden="true"><use href="#icon-play"/></svg></a></div></div>
     </article>`).join('');
     watchReveals(grid.querySelectorAll('.activity-card'));

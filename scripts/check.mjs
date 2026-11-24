@@ -23,10 +23,16 @@ for (const page of ['index.html', 'activities.html', ...activities.map(activity 
   await access(path.resolve(root, path.dirname(page), theme[1]));
 }
 let inlineScripts = 0;
+assert.equal(new Set(activities.map(activity => activity.art)).size, activities.length, 'Each activity needs its own illustration');
+const artworkContents = new Set();
 for (const activity of activities) {
   const file = path.join(root, activity.path);
   await access(file);
-  assert(ids.includes(`art-${activity.art}`), `Missing illustration for ${activity.title}`);
+  assert(/^[a-z0-9-]+$/.test(activity.art), `Invalid illustration filename: ${activity.title}`);
+  const artwork = await readFile(path.join(root, 'assets/activity-art', `${activity.art}.svg`), 'utf8');
+  assert(artwork.includes('viewBox="0 0 320 220"'), `Invalid illustration for ${activity.title}`);
+  assert(!artworkContents.has(artwork), `Repeated artwork for ${activity.title}`);
+  artworkContents.add(artwork);
   assert(activity.path.startsWith(`Grade ${activity.grade}/Activities/`), `Grade mismatch: ${activity.path}`);
   const html = await readFile(file, 'utf8');
   for (const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)) {
@@ -35,7 +41,7 @@ for (const activity of activities) {
     inlineScripts++;
   }
 }
-for (const grade of [2, 3, 4, 5, 6]) {
+for (const grade of [2, 3, 4, 5, 6, 7]) {
   const files = (await readdir(path.join(root, `Grade ${grade}/Activities`))).filter(file => /\.html?$/i.test(file));
   assert.equal(activities.filter(activity => activity.grade === grade).length, files.length, `Stale catalogue for Grade ${grade}`);
 }

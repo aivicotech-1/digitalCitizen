@@ -2,6 +2,41 @@
 (() => {
   'use strict';
   const guides = {
+    'malware-lab': {
+      purpose: 'Investigate six pretend infected devices, identify the type of malware and select suitable clean-up actions.',
+      steps: ['Choose a device from the help desk queue and inspect at least two clues.', 'Select the malware type that fits the evidence. Read the feedback, then tick every helpful clean-up step and leave harmful steps unticked.', 'Select Clean device. You can investigate the devices in any order; solve all six for your report. Play again starts a new attempt.'],
+      learn: 'Distinguishing adware, cryptojackers, spyware, keyloggers, worms and Trojans using symptoms, downloads, programs and network clues.',
+      feedback: 'Identifying malware earns up to 15 points; opening more than two clues reduces that award. A correct clean-up earns 15 points. Incorrect diagnoses lose 5 points and incorrect clean-up choices lose 3; scores stay at or above zero. All devices are simulated.',
+      discussion: 'Why should you compare several clues before deciding what caused a device problem?'
+    },
+    'phone-security-checkup': {
+      purpose: 'Explore a pretend phone and strengthen eight security settings and app choices.',
+      steps: ['Open Settings or Apps on the simulated phone. Use its Back control to return to the previous phone screen.', 'Review the screen lock, app installation, device finding, updates, notifications and backup. Inspect suspicious apps and choose suitable actions.', 'Use the fixed-items list to track your progress. Complete all eight improvements to see the security report; Play again resets the phone.'],
+      learn: 'Reviewing device settings, limiting risky app access, protecting login codes and planning for a lost phone.',
+      feedback: 'Each new improvement earns 15 points and raises the security meter. Unsafe choices lose 5 points, with a minimum of zero. These controls change only the pretend phone, not your own device.',
+      discussion: 'Which settings help prevent a problem, and which help you recover afterwards?'
+    },
+    'account-rescue': {
+      purpose: 'Help a fictional account owner recognise a takeover, recover access and strengthen account security.',
+      steps: ['Classify each of the six alerts as a warning sign or normal activity.', 'Choose the six useful recovery steps in a sensible order. Read feedback if a step is premature or is a trap.', 'Complete the four security settings to receive the rescue report. Play again restarts all three parts.'],
+      learn: 'Recognising unexpected sign-ins and recovery changes, ending unwanted sessions, securing recovery options and reviewing connected apps.',
+      feedback: 'Correct alert classifications earn 5 points, recovery steps earn 10, and security improvements earn 10. Incorrect choices deduct points without taking the score below zero. No real accounts or credentials are used.',
+      discussion: 'Why might changing a password be only one part of recovering an account?'
+    },
+    'hotspot-hunter': {
+      purpose: 'Practise choosing networks in public places and improving a fictional home router configuration.',
+      steps: ['Read the network sign at each of three locations and compare the available connection choices.', 'Complete four true-or-false VPN questions, reading the explanation for each.', 'Choose safer values for all six home-router settings. Finish for a report, or use Play again for a fresh attempt.'],
+      learn: 'Spotting lookalike hotspot names, questioning unexpected login requests and comparing network settings.',
+      feedback: 'Suitable network choices earn 15 points, VPN answers earn 5, and router improvements earn 10. Mistakes deduct points, with the score never falling below zero. The router and networks are simulations; no real network settings change.',
+      discussion: 'How could you confirm a public network name before connecting?'
+    },
+    'cyber-shield-challenge': {
+      purpose: 'Bring cyber security vocabulary and decision-making together in a collaborative classroom challenge.',
+      steps: ['Work alone or with a team of three or four. Enter a made-up team name and select Start the mission.', 'Match each of ten terms to its meaning by selecting a term and then a definition.', 'For each of eight cases, choose the matching term and the appropriate action. Both correct choices advance the case. Complete them all for a team certificate; Play again restarts.'],
+      learn: 'Connecting security concepts to scenarios about malware, phones, accounts, networks and responsible digital decisions.',
+      feedback: 'Each term match earns 5 points. Each correct case term and action earns 10 points. Incorrect matches lose 2 points and incorrect case choices lose 3, with a minimum score of zero.',
+      discussion: 'Which clues helped your team agree on the safest action in a case?'
+    },
     'inbox-inspector': {
       purpose: 'Inspect a pretend inbox and decide which messages are trustworthy and which are phishing attempts.',
       steps: ['Select an email from the list. Use Inspect sender to reveal the full address, and inspect the link destination and any attachment name.', 'Choose Trust, Report phishing or Delete. Read the explanation before selecting another email.', 'Judge all eight emails to see your result. You can revisit completed emails to read their explanations; Play again starts a fresh attempt.'],

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><script src="../../assets/theme.js"></script><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account Rescue</title>
+<style>
+:root{--acc:#a78bfa;--acc2:#60a5fa;--acct:color-mix(in srgb,var(--acc) 62%,#0b1630);--bg:#f4f7fd;--panel:#ffffff;--line:rgba(30,55,110,.14);--ink:#16213e;--dim:#5a6888;--good:#0e9f6e;--bad:#e11d48;--warn:#c27c0e}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 60%),radial-gradient(900px 500px at 110% 10%,color-mix(in srgb,var(--acc2) 12%,transparent),transparent 60%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.35;pointer-events:none;mask-image:linear-gradient(#000,transparent 85%)}
+.hud{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(30,55,110,.06)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:.5px}
+.logo .dot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 40%,transparent);font-size:18px}
+.logo small{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.mission{flex:1;min-width:220px;font-size:14px;color:var(--dim)}
+.chip{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap;box-shadow:0 2px 8px rgba(30,55,110,.06)}
+.chip b{color:var(--acct)}
+.prog{height:6px;background:rgba(30,55,110,.08);position:sticky;top:0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s}
+main{max-width:1200px;margin:22px auto;padding:0 18px;position:relative}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 40px rgba(30,55,110,.10)}
+.panel h2{margin:0 0 10px;font-size:19px;letter-spacing:.3px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--acct);margin-bottom:6px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:1px solid transparent;border-radius:12px;padding:11px 16px;cursor:pointer;color:#06101f;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 30%,transparent);transition:transform .12s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.good{background:linear-gradient(135deg,#34d399,#2dd4bf)}.btn.bad{background:linear-gradient(135deg,#fb7185,#fb923c)}.btn.warn{background:linear-gradient(135deg,#fcd34d,#fb923c)}
+.mono{font-family:Consolas,"Cascadia Mono",monospace}
+.muted{color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);opacity:0;z-index:60;max-width:min(680px,92vw);padding:14px 18px;border-radius:14px;font-weight:600;font-size:15px;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 14px 40px rgba(30,55,110,.18);transition:.35s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.g{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 14px 40px rgba(14,159,110,.2)}
+.toast.b{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad),0 14px 40px rgba(225,29,72,.2)}
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(22,33,62,.35);backdrop-filter:blur(6px)}
+.modal.on{display:grid}
+.mbox{width:min(560px,92vw);text-align:center;padding:30px;border-radius:24px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(30,55,110,.25);animation:pop .45s ease}
+.badge{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;font-size:54px;background:conic-gradient(from 0deg,var(--acc),var(--acc2),var(--acc));box-shadow:0 10px 30px color-mix(in srgb,var(--acc) 45%,transparent);animation:spin 6s linear infinite}
+.badge span{animation:spin 6s linear infinite reverse;display:block}
+.stars{font-size:34px;letter-spacing:6px;margin:6px 0}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes glow{50%{box-shadow:0 0 22px color-mix(in srgb,var(--acc) 60%,transparent)}}
+.shake{animation:shake .4s}
+.foot{max-width:1200px;margin:10px auto 30px;padding:0 18px;font-size:12px;color:var(--dim);text-align:center}
+@media(max-width:760px){.hud{padding:10px 14px}.logo{font-size:18px}}
+
+.lay{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}
+@media(max-width:960px){.lay{grid-template-columns:1fr}}
+.al{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;margin:8px 0;background:#fff}
+.al .ic{font-size:26px}.al .tx{flex:1;font-size:14px}.al small{display:block;color:var(--dim)}
+.al.s{background:#fff1f2;border-color:#fecdd3}.al.n{background:#f0fdf4;border-color:#bbf7d0}
+.pill{font:inherit;font-size:13px;font-weight:700;padding:7px 10px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;margin-left:4px}
+.step{display:block;width:100%;text-align:left;font:inherit;font-size:14px;padding:11px 12px;margin:7px 0;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.step:hover{background:#f5f3ff}.step.used{opacity:.4;cursor:default}
+.ord{counter-reset:o;padding:0;margin:0;list-style:none}
+.ord li{counter-increment:o;padding:10px 12px 10px 44px;position:relative;border-radius:12px;margin:7px 0;background:#f5f3ff;border:1px solid #ddd6fe;font-size:14px}
+.ord li:before{content:counter(o);position:absolute;left:12px;top:9px;width:22px;height:22px;border-radius:50%;background:#8b5cf6;color:#fff;font-weight:800;font-size:12px;display:grid;place-items:center}
+.set{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;margin:8px 0;background:#fff}
+.set .tx{flex:1;font-size:14px}.set small{display:block;color:var(--dim)}
+.set.ok{background:#f0fdf4;border-color:#bbf7d0}
+.term{font-size:13px;padding:8px 10px;border-radius:10px;background:#f5f3ff;border:1px solid #ddd6fe;margin:6px 0}
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="7" data-activity="account-rescue">
+<header class="hud"><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=7"><span aria-hidden="true">&larr;</span> Back to Grade 7 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 7 &middot; Digital citizenship</span></div><h1>Account Rescue</h1><div class="activity-status"><div class="chip">Step <b id="step">0 / 0</b></div><div class="chip">Score <b id="score">0</b></div></div><div class="mission">Mission: Hamza's game account was taken over. Spot the signs, take it back and lock it down.</div></header>
+<div class="prog"><i id="progbar"></i></div>
+<main><div class="lay"><div class="panel" id="main"></div><div class="panel"><div class="tag">Hamza's PixelPlay account</div><h2 id="st">Status: 🔴 Taken over</h2><div id="side"></div>
+<div class="tag" style="margin-top:12px">Terms you will meet</div><div id="terms"></div></div></div></main>
+<div class="foot">Cyber Shield training activity. Everything here is made up for practice. No real accounts are used.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><div class="badge"><span id="mIcon"></span></div><h2 id="mTitle" style="margin:6px 0"></h2><div class="stars" id="mStars"></div><p id="mText" class="muted" style="font-size:16px;line-height:1.5"></p>
+<button class="btn" onclick="location.reload()">Play again</button> <button class="btn ghost" onclick="document.getElementById('modal').className='modal'">Close</button></div></div>
+<script>
+var SCORE=0;
+function $(x){return document.getElementById(x)}
+var AC=null;function sfx(t){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);var f={good:[660,990],bad:[220,140],click:[520,520],alarm:[880,440],win:[523,1046]}[t]||[500,500];o.type=t==='bad'||t==='alarm'?'sawtooth':'sine';o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.18);g.gain.setValueAtTime(.08,n);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+var TT=null;function toast(m,k){var t=$('toast');t.innerHTML=m;t.className='toast on '+(k||'');clearTimeout(TT);TT=setTimeout(function(){t.className='toast'},3600)}
+function addScore(n){SCORE=Math.max(0,SCORE+n);$('score').textContent=SCORE}
+function prog(a,b){$('progbar').style.width=Math.round(a/b*100)+'%';$('step').textContent=a+' / '+b}
+function finish(icon,title,text,stars){sfx('win');$('mIcon').textContent=icon;$('mTitle').textContent=title;$('mText').innerHTML=text;$('mStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);$('modal').className='modal on'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+var TERMS=[['Account takeover','When an attacker gets control of someone\'s account.'],['Session','The "stay logged in" pass a site gives your device. If it is stolen, the attacker is logged in without a password.'],['Session hijacking','Stealing a session so you can use an account without the password.'],['Recovery email','The address a site uses to reset your password. Attackers change it to lock you out.'],['Passkey','A login that uses your device and fingerprint or PIN instead of a password. It cannot be phished.'],['Backup codes','One-time codes you keep safe in case you lose your phone.']];
+var A=[['🌍','New sign-in on Windows PC, Karachi','You only use your phone in Lahore.',1],['🔑','Your password was changed','You did not change it.',1],['📧','Recovery email changed to h4mza.backup@mail.test','That is not your email.',1],['💬','Friend: "Why did you send me a free coins link?"','You never sent it.',1],['📰','PixelPlay weekly newsletter','New maps this week.',0],['🍪','School canteen app: your order is ready','You ordered a samosa.',0]];
+var phase=1,marked={},order=[],GROUPS=[[0],[1],[2,3],[4],[5]];
+var S=[['Use Forgot password from a device you trust and reset it',0],['Make a new long, unique passphrase',1],['Sign out of all other devices and sessions',2],['Remove the attacker\'s recovery email and check settings',3],['Turn on two-step login or a passkey and save backup codes',4],['Warn friends about the fake link and report it',5],['Pay the hacker who messaged you',-1],['Make a new account and leave the old one',-1],['Reply angrily to the hacker',-1]];
+var L={pk:0,bc:0,la:0,app:0};
+function terms(){$('terms').innerHTML=TERMS.map(function(t){return '<div class="term"><b>'+t[0]+':</b> '+t[1]+'</div>'}).join('')}
+function p1(){var h='<div class="tag">Part 1 · Warning signs</div><h2>Hamza\'s alerts</h2><p class="muted">Mark each alert as a warning sign or normal.</p>';
+ A.forEach(function(a,i){var m=marked[i];h+='<div class="al'+(m===undefined?'':(m?' s':' n'))+'"><div class="ic">'+a[0]+'</div><div class="tx"><b>'+a[1]+'</b><small>'+a[2]+'</small></div>'+(m===undefined?'<button class="pill" onclick="mark('+i+',1)">⚠️ Warning sign</button><button class="pill" onclick="mark('+i+',0)">✓ Normal</button>':'')+'</div>'});
+ $('main').innerHTML=h}
+function mark(i,v){if(v!==A[i][3]){addScore(-5);sfx('bad');toast(v?'That one is normal. Not every message is an attack.':'Look again. Would Hamza expect this?','b');return}
+ marked[i]=v;addScore(5);sfx('good');p1();if(Object.keys(marked).length===6){prog(1,6);toast('4 warning signs: a strange login, a changed password, a changed recovery email and messages Hamza did not send. This is an <b>account takeover</b>.','g');setTimeout(p2,1500)}}
+function p2(){phase=2;var h='<div class="tag">Part 2 · Take it back</div><h2>Choose the recovery steps in the right order</h2><p class="muted">Click the steps in order. Three steps are traps.</p>';
+ S.forEach(function(s,i){h+='<button class="step'+(order.indexOf(i)>=0?' used':'')+'" onclick="pickS('+i+')">'+s[0]+'</button>'});$('main').innerHTML=h;side()}
+function side(){$('side').innerHTML=order.length?'<ol class="ord">'+order.map(function(i){return '<li>'+S[i][0]+'</li>'}).join('')+'</ol>':'<p class="muted">Your recovery plan will appear here.</p>'}
+function pickS(i){if(order.indexOf(i)>=0)return;var s=S[i];if(s[1]<0){addScore(-5);sfx('bad');toast({6:'Never pay. It does not get the account back and funds crime.',7:'The attacker keeps using your old account to trick friends. Take it back.',8:'Do not talk to the attacker. Act and report.'}[i],'b');return}
+ var done=order.map(function(j){return S[j][1]}),g=0,need;for(g=0;g<GROUPS.length;g++){var left=GROUPS[g].filter(function(x){return done.indexOf(x)<0});if(left.length){need=left;break}}
+ if(need.indexOf(s[1])<0){addScore(-3);sfx('bad');toast('Good step, wrong time. '+(s[1]>1&&done.length<2?'First get back in and change the password.':'Think: what must happen before this?'),'b');return}
+ order.push(i);addScore(10);sfx('good');side();p2();if(order.length===6){prog(2,6);$('st').textContent='Status: 🟡 Back in, not yet locked down';toast('Signing out of all sessions kicks the attacker out, even if they stole a session.','g');setTimeout(p3,1400)}}
+function p3(){phase=3;var h='<div class="tag">Part 3 · Lock it down</div><h2>Security settings</h2>'+
+ set('pk','🔐','Passkey','Log in with your phone\'s fingerprint or PIN',[['Add a passkey',1,'Passkeys cannot be typed into a fake site, so phishing fails.'],['Skip',0,'Without it, a stolen password still works.']])+
+ set('bc','🧾','Backup codes','10 one-time codes for when you lose your phone',[['Print and keep at home with a grown-up',1,'Safe and offline if your phone is lost.'],['Post a screenshot in the group chat',0,'Anyone could use them to get in.']])+
+ set('la','🔔','Login alerts','Tell me when a new device signs in',[['Turn on',1,'You will know straight away next time.'],['Turn off',0,'You would not notice the next attack.']])+
+ set('app','🧩','Connected apps','"FreeCoins Generator" can read and post as you',[['Remove access',1,'The fake app can no longer use your account.'],['Keep it',0,'This app sent the spam links.']]);$('main').innerHTML=h}
+function set(k,ic,t,s,o){var h='<div class="set'+(L[k]?' ok':'')+'"><div style="font-size:24px">'+ic+'</div><div class="tx"><b>'+(L[k]?'✓ ':'')+t+'</b><small>'+s+'</small></div>';if(!L[k])o.forEach(function(x,j){h+='<button class="pill" onclick="lk(\''+k+'\','+j+')">'+x[0]+'</button>'});return h+'</div>'}
+var OPT={pk:[1,0],bc:[1,0],la:[1,0],app:[1,0]},MSG={pk:['Passkeys cannot be typed into a fake site, so phishing fails.','Without it, a stolen password still works.'],bc:['Safe and offline if your phone is lost.','Anyone could use them to get in.'],la:['You will know straight away next time.','You would not notice the next attack.'],app:['The fake app can no longer use your account.','This app sent the spam links.']};
+function lk(k,j){if(!OPT[k][j]){addScore(-5);sfx('bad');toast(MSG[k][1],'b');return}L[k]=1;addScore(10);sfx('good');toast(MSG[k][0],'g');p3();var n=Object.keys(L).filter(function(x){return L[x]}).length;prog(2+n,6);
+ if(n===4){$('st').textContent='Status: 🟢 Secured';setTimeout(function(){finish('🛟','Account Rescue report','Hamza spotted the takeover, took the account back in the right order and locked it down. Score: '+SCORE+'.<br>Change the password, sign out of every session, remove the attacker\'s recovery details, add two-step login or a passkey, keep backup codes safe and warn friends.',SCORE>=120?3:SCORE>=90?2:1)},800)}}
+terms();p1();side();prog(0,6);
+</script></body></html>

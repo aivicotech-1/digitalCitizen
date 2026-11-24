@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><script src="../../assets/theme.js"></script><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hotspot Hunter</title>
+<style>
+:root{--acc:#2dd4bf;--acc2:#38bdf8;--acct:color-mix(in srgb,var(--acc) 62%,#0b1630);--bg:#f4f7fd;--panel:#ffffff;--line:rgba(30,55,110,.14);--ink:#16213e;--dim:#5a6888;--good:#0e9f6e;--bad:#e11d48;--warn:#c27c0e}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 60%),radial-gradient(900px 500px at 110% 10%,color-mix(in srgb,var(--acc2) 12%,transparent),transparent 60%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;opacity:.35;pointer-events:none;mask-image:linear-gradient(#000,transparent 85%)}
+.hud{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 22px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(30,55,110,.06)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:.5px}
+.logo .dot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 40%,transparent);font-size:18px}
+.logo small{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.mission{flex:1;min-width:220px;font-size:14px;color:var(--dim)}
+.chip{padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap;box-shadow:0 2px 8px rgba(30,55,110,.06)}
+.chip b{color:var(--acct)}
+.prog{height:6px;background:rgba(30,55,110,.08);position:sticky;top:0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s}
+main{max-width:1200px;margin:22px auto;padding:0 18px;position:relative}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 40px rgba(30,55,110,.10)}
+.panel h2{margin:0 0 10px;font-size:19px;letter-spacing:.3px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--acct);margin-bottom:6px}
+.btn{font:inherit;font-weight:700;font-size:15px;border:1px solid transparent;border-radius:12px;padding:11px 16px;cursor:pointer;color:#06101f;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 30%,transparent);transition:transform .12s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.good{background:linear-gradient(135deg,#34d399,#2dd4bf)}.btn.bad{background:linear-gradient(135deg,#fb7185,#fb923c)}.btn.warn{background:linear-gradient(135deg,#fcd34d,#fb923c)}
+.mono{font-family:Consolas,"Cascadia Mono",monospace}
+.muted{color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);opacity:0;z-index:60;max-width:min(680px,92vw);padding:14px 18px;border-radius:14px;font-weight:600;font-size:15px;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:0 14px 40px rgba(30,55,110,.18);transition:.35s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.g{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 14px 40px rgba(14,159,110,.2)}
+.toast.b{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad),0 14px 40px rgba(225,29,72,.2)}
+.modal{position:fixed;inset:0;z-index:80;display:none;place-items:center;background:rgba(22,33,62,.35);backdrop-filter:blur(6px)}
+.modal.on{display:grid}
+.mbox{width:min(560px,92vw);text-align:center;padding:30px;border-radius:24px;background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(30,55,110,.25);animation:pop .45s ease}
+.badge{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;font-size:54px;background:conic-gradient(from 0deg,var(--acc),var(--acc2),var(--acc));box-shadow:0 10px 30px color-mix(in srgb,var(--acc) 45%,transparent);animation:spin 6s linear infinite}
+.badge span{animation:spin 6s linear infinite reverse;display:block}
+.stars{font-size:34px;letter-spacing:6px;margin:6px 0}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes glow{50%{box-shadow:0 0 22px color-mix(in srgb,var(--acc) 60%,transparent)}}
+.shake{animation:shake .4s}
+.foot{max-width:1200px;margin:10px auto 30px;padding:0 18px;font-size:12px;color:var(--dim);text-align:center}
+@media(max-width:760px){.hud{padding:10px 14px}.logo{font-size:18px}}
+
+.lay{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+@media(max-width:960px){.lay{grid-template-columns:1fr}}
+.scene{border-radius:16px;padding:16px;color:#fff;font-weight:800;font-size:20px;margin-bottom:12px}
+.sign{display:inline-block;margin-top:8px;padding:8px 12px;border-radius:10px;background:#fff;color:#334;font-size:14px;font-weight:600;border:2px dashed #94a3b8}
+.wifi{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;margin:8px 0;background:#fff;cursor:pointer;transition:.15s}
+.wifi:hover{transform:translateX(4px);background:#f0fdfa}
+.wifi .nm{flex:1;font-weight:700}.wifi small{display:block;color:var(--dim);font-weight:500}
+.bars{font-size:18px}
+.portal{border:2px solid #fca5a5;border-radius:14px;padding:14px;background:#fff1f2;margin-top:10px}
+.portal input{font:inherit;width:100%;padding:8px;margin:4px 0;border-radius:8px;border:1px solid var(--line)}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:14px;padding:10px 12px;margin:6px 0;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.opt:hover{background:#f0fdfa}
+.rt{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;margin:7px 0;background:#fff}
+.rt.ok{background:#f0fdf4;border-color:#bbf7d0}.rt small{display:block;color:var(--dim)}
+.rt select{font:inherit;font-size:14px;padding:6px;border-radius:8px;border:1px solid var(--line)}
+.term{font-size:13px;padding:8px 10px;border-radius:10px;background:#ecfeff;border:1px solid #a5f3fc;margin:6px 0}
+</style><link rel="stylesheet" href="../../assets/activity-ui.css"><script src="../../assets/activity-descriptions.js" defer></script></head>
+<body class="activity-ui" data-grade="7" data-activity="hotspot-hunter">
+<header class="hud"><nav class="activity-navigation" aria-label="Activity navigation"><a class="activity-back" href="../../activities.html?grade=7"><span aria-hidden="true">&larr;</span> Back to Grade 7 activities</a><button type="button" class="activity-description-trigger" aria-haspopup="dialog" aria-controls="activity-description-dialog">Description</button></nav><div class="activity-kicker">Skill2Success <span>Grade 7 &middot; Digital citizenship</span></div><h1>Hotspot Hunter</h1><div class="activity-status"><div class="chip">Step <b id="step">0 / 0</b></div><div class="chip">Score <b id="score">0</b></div></div><div class="mission">Mission: stay safe on Wi-Fi in a café, an airport and school, then secure a home router.</div></header>
+<div class="prog"><i id="progbar"></i></div>
+<main><div class="lay"><div class="panel" id="main"></div><div class="panel"><div class="tag">Mission log</div><div id="log"><p class="muted">Your choices will appear here.</p></div>
+<div class="tag" style="margin-top:12px">Terms you will meet</div><div id="terms"></div></div></div></main>
+<div class="foot">Cyber Shield training activity. Everything here is made up for practice. No real accounts are used.</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="mbox"><div class="badge"><span id="mIcon"></span></div><h2 id="mTitle" style="margin:6px 0"></h2><div class="stars" id="mStars"></div><p id="mText" class="muted" style="font-size:16px;line-height:1.5"></p>
+<button class="btn" onclick="location.reload()">Play again</button> <button class="btn ghost" onclick="document.getElementById('modal').className='modal'">Close</button></div></div>
+<script>
+var SCORE=0;
+function $(x){return document.getElementById(x)}
+var AC=null;function sfx(t){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);var f={good:[660,990],bad:[220,140],click:[520,520],alarm:[880,440],win:[523,1046]}[t]||[500,500];o.type=t==='bad'||t==='alarm'?'sawtooth':'sine';o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.18);g.gain.setValueAtTime(.08,n);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+var TT=null;function toast(m,k){var t=$('toast');t.innerHTML=m;t.className='toast on '+(k||'');clearTimeout(TT);TT=setTimeout(function(){t.className='toast'},3600)}
+function addScore(n){SCORE=Math.max(0,SCORE+n);$('score').textContent=SCORE}
+function prog(a,b){$('progbar').style.width=Math.round(a/b*100)+'%';$('step').textContent=a+' / '+b}
+function finish(icon,title,text,stars){sfx('win');$('mIcon').textContent=icon;$('mTitle').textContent=title;$('mText').innerHTML=text;$('mStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);$('modal').className='modal on'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+var TERMS=[['Public Wi-Fi','A network many strangers share, like in a café or airport.'],['Evil twin','A fake hotspot with a name like the real one, set up to spy on or trick users.'],['Captive portal','The sign-in page some Wi-Fi shows before you can browse.'],['WPA2 / WPA3','Types of Wi-Fi encryption. WPA3 is the newest and strongest.'],['VPN','A service that encrypts your traffic to the VPN company. It does not stop scams or malware.'],['WPS','A one-button way to join Wi-Fi that attackers can abuse. Best turned off.'],['Firmware','The software inside a router. It needs updates too.']];
+var LOG=[],stepN=0;
+function terms(){$('terms').innerHTML=TERMS.map(function(t){return '<div class="term"><b>'+t[0]+':</b> '+t[1]+'</div>'}).join('')}
+function log(t,g){LOG.push((g?'✅ ':'⚠️ ')+t);$('log').innerHTML=LOG.map(function(x){return '<div style="font-size:14px;margin:6px 0">'+x+'</div>'}).join('')}
+function step(){stepN++;prog(stepN,10)}
+var PL=[
+ {n:'☕ Chai Corner café',c:'linear-gradient(135deg,#f59e0b,#d97706)',sign:'Wi-Fi: <b>ChaiCorner_Guest</b> · ask the counter for the password',w:[['ChaiCorner_Guest','🔒 WPA2 · password from the counter',1,'The real network, and it is encrypted.'],['ChaiCorner_FREE','Open · strongest signal',0,'evil'],['ChaiCorner_Guest ','Open · same name, no lock',0,'evil'],['📱 Use my mobile data','Your own connection',1,'Mobile data is not shared with strangers. Always a safe choice.']]},
+ {n:'✈️ Airport',c:'linear-gradient(135deg,#0ea5e9,#2563eb)',sign:'Official Wi-Fi: <b>Airport-Free-WiFi</b> · sign in with a code sent to your phone',w:[['Airport FREE WiFi FAST','Open · strong signal',0,'evil'],['Airport-Free-WiFi','Open · official name from the sign',1,'The official network. It is open, so only use HTTPS sites and avoid banking.'],['Free_Internet_Airport','Open',0,'evil']]},
+ {n:'🏫 Sunrise School',c:'linear-gradient(135deg,#22c55e,#15803d)',sign:'Pupils join <b>Sunrise-Students</b> with their school login',w:[['Sunrise-Students-Free','Open · appeared this week',0,'evil'],['Sunrise-Students','🔒 WPA2 Enterprise · school login',1,'The real school network with your own school login.'],['Staff-Only','🔒 WPA3',0,'You are not allowed on the staff network. Using it without permission breaks school rules.']]}];
+var pi=0;
+function place(){var p=PL[pi],h='<div class="tag">Place '+(pi+1)+' of 3</div><div class="scene" style="background:'+p.c+'">'+p.n+'<br><span class="sign">'+p.sign+'</span></div><p><b>Which network do you join?</b></p>';
+ p.w.forEach(function(w,i){h+='<div class="wifi" onclick="join('+i+')"><span class="bars">📶</span><div class="nm">'+esc(w[0])+'<small>'+w[1]+'</small></div></div>'});$('main').innerHTML=h}
+function join(i){var w=PL[pi].w[i];if(w[2]){addScore(15);sfx('good');toast(w[3],'g');log(PL[pi].n+': joined '+w[0],1);step();pi++;setTimeout(pi<3?place:vpn,900);return}
+ if(w[3]==='evil'){addScore(-5);sfx('alarm');$('main').innerHTML+='<div class="portal"><b>📶 '+esc(w[0])+' · Sign in to get free Wi-Fi</b><p style="font-size:14px">Enter your email and email password to continue.</p><input placeholder="Email" disabled><input placeholder="Password" disabled><p style="font-size:14px;color:#b91c1c"><b>Trap!</b> This is an <b>evil twin</b>. Its name copies the real one. A real hotspot never needs your email password. The attacker can collect passwords and watch unencrypted traffic.</p><button class="btn" onclick="place()">Go back and choose again</button></div>';log(PL[pi].n+': nearly joined an evil twin ('+w[0]+')',0)}
+ else{addScore(-5);sfx('bad');toast(w[3],'b')}}
+var V=[['A VPN encrypts my traffic so the café Wi-Fi owner cannot read it.',1,'True. It creates an encrypted tunnel to the VPN company.'],['A VPN makes me completely anonymous and safe.',0,'False. The VPN company can see your traffic and you can still be tracked by accounts you log into.'],['A VPN stops phishing and malware.',0,'False. A fake website or bad download still works through a VPN.'],['In Pakistan, VPN services must be licensed by PTA. Only use one your family or school allows.',1,'True. PTA licenses VPN providers.']],vd=0;
+function vpn(){var h='<div class="tag">VPN check</div><h2>True or false?</h2>';V.forEach(function(v,i){h+='<div class="rt" id="v'+i+'"><div>'+v[0]+'</div><div><button class="btn good" onclick="vans('+i+',1)">True</button> <button class="btn bad" onclick="vans('+i+',0)">False</button></div></div>'});$('main').innerHTML=h}
+function vans(i,a){var e=$('v'+i);if(e.dataset.d)return;var v=V[i];if(a!==v[1]){addScore(-3);sfx('bad');toast('Think again: '+(v[1]?'this one is true.':'this one is false.'),'b');return}
+ e.dataset.d=1;e.className='rt ok';e.innerHTML='<div>'+v[0]+'<small>'+v[2]+'</small></div><div>✓</div>';addScore(5);sfx('good');vd++;if(vd===4){step();log('VPN facts checked',1);setTimeout(router,900)}}
+var R=[['Admin password','admin',['admin','password123','A long unique passphrase'],2,'Default router passwords are on the internet for anyone to find.'],
+ ['Wi-Fi encryption','WEP',['Open (none)','WEP','WPA3 (or WPA2)'],2,'WEP is old and can be cracked in minutes. WPA3 is strongest.'],
+ ['WPS button','On',['On','Off'],1,'WPS can be abused to join without the password.'],
+ ['Firmware','Update available',['Ignore','Update now'],1,'Router firmware updates close weak spots.'],
+ ['Network name','Khan_Family_House12',['Khan_Family_House12','StarFox Home'],1,'A network name should not reveal your family name or address.'],
+ ['Guest network','Off',['Off','On for visitors'],1,'Visitors and smart gadgets stay separate from family devices.']],rd={};
+function router(){var h='<div class="tag">Your home router</div><h2>Router admin page (192.168.1.1)</h2><p class="muted">Fix all six settings.</p>';
+ R.forEach(function(r,i){h+='<div class="rt'+(rd[i]?' ok':'')+'"><div><b>'+r[0]+'</b><small>'+(rd[i]?'✓ '+r[4]:'Now: '+r[1])+'</small></div>'+(rd[i]?'<div>✓</div>':'<select onchange="rset('+i+',this.value)"><option value="">Choose...</option>'+r[2].map(function(o,j){return '<option value="'+j+'">'+o+'</option>'}).join('')+'</select>')+'</div>'});$('main').innerHTML=h}
+function rset(i,v){if(v==='')return;var r=R[i];if(+v!==r[3]){addScore(-3);sfx('bad');toast(r[4],'b');router();return}rd[i]=1;addScore(10);sfx('good');step();router();
+ if(Object.keys(rd).length===6){log('Home router secured',1);setTimeout(function(){finish('📡','Hotspot Hunter report','You avoided the evil twins, chose safe networks in 3 places, checked the VPN facts and secured a home router. Score: '+SCORE+'.<br>Check the real network name, prefer mobile data for private things, never give passwords to a hotspot and secure the router with a new password, WPA3, updates and WPS off.',SCORE>=130?3:SCORE>=100?2:1)},700)}}
+terms();place();prog(0,10);
+</script></body></html>
